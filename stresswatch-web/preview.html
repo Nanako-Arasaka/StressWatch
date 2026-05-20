@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StressWatch Preview</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-width: 320px;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #14352e;
+        background:
+          radial-gradient(circle at 14% 10%, rgba(158, 232, 203, 0.72), transparent 28%),
+          linear-gradient(135deg, #f6fbf6 0%, #dff7ef 46%, #eefcfa 100%);
+        overflow-x: hidden;
+      }
+      main { min-height: 100vh; overflow: hidden; }
+      .page {
+        position: relative;
+        width: 100%;
+        max-width: 1440px;
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 32px 48px;
+        display: flex;
+        flex-direction: column;
+      }
+      .blob-a, .blob-b {
+        position: absolute;
+        border-radius: 999px;
+        filter: blur(72px);
+        pointer-events: none;
+      }
+      .blob-a { left: -96px; top: 112px; width: 288px; height: 288px; background: rgba(158, 232, 203, 0.45); }
+      .blob-b { right: -120px; top: 64px; width: 320px; height: 320px; background: rgba(139, 228, 232, 0.3); }
+      .hero-grid {
+        position: relative;
+        z-index: 1;
+        flex: 1;
+        display: grid;
+        grid-template-columns: 0.76fr 1.24fr;
+        gap: 40px;
+        align-items: center;
+      }
+      .hero-copy { max-width: 560px; animation: rise 700ms ease-out both; }
+      .logo {
+        width: 56px;
+        height: 56px;
+        display: grid;
+        place-items: center;
+        border-radius: 24px;
+        background: #20493f;
+        color: #9ee8cb;
+        font-size: 24px;
+        font-weight: 950;
+        box-shadow: 0 18px 48px rgba(25, 80, 68, 0.12);
+        margin-bottom: 28px;
+      }
+      h1 {
+        margin: 0;
+        max-width: 10ch;
+        font-size: clamp(58px, 7vw, 112px);
+        line-height: 0.92;
+        letter-spacing: 0;
+        font-weight: 950;
+      }
+      .lead {
+        margin: 28px 0 0;
+        max-width: 560px;
+        color: #20493f;
+        font-size: clamp(24px, 2.4vw, 36px);
+        line-height: 1.12;
+        font-weight: 750;
+      }
+      .sub {
+        margin: 20px 0 0;
+        max-width: 540px;
+        color: rgba(20, 53, 46, 0.68);
+        font-size: 18px;
+        line-height: 1.75;
+      }
+      .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 13px 24px;
+        font-size: 14px;
+        font-weight: 800;
+        text-decoration: none;
+        transition: transform 180ms ease, background 180ms ease;
+      }
+      .button:hover { transform: translateY(-2px); }
+      .button.primary { background: #20493f; color: #fff; box-shadow: 0 18px 48px rgba(25, 80, 68, 0.12); }
+      .button.secondary { border: 1px solid rgba(32, 73, 63, 0.15); background: rgba(255, 255, 255, 0.55); color: #20493f; backdrop-filter: blur(16px); }
+      .language-wrap {
+        position: relative;
+        z-index: 20;
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 24px;
+      }
+      .language-switch {
+        display: flex;
+        align-items: center;
+        padding: 4px;
+        border: 1px solid rgba(32, 73, 63, 0.1);
+        border-radius: 999px;
+        background: rgba(255,255,255,0.54);
+        box-shadow: 0 18px 48px rgba(25,80,68,0.12);
+      }
+      .language-switch button {
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        color: rgba(32,73,63,0.58);
+        cursor: pointer;
+        font: inherit;
+        font-size: 12px;
+        font-weight: 950;
+        padding: 8px 16px;
+      }
+      .language-switch button.active {
+        background: #20493f;
+        color: #fff;
+        box-shadow: 0 18px 48px rgba(25,80,68,0.12);
+      }
+      .liquid {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+        backdrop-filter: blur(22px) saturate(1.24);
+        -webkit-backdrop-filter: blur(22px) saturate(1.24);
+      }
+      .liquid::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        border-radius: inherit;
+        background:
+          linear-gradient(135deg, rgba(255,255,255,0.74), rgba(255,255,255,0.2) 42%, rgba(158,232,203,0.2)),
+          radial-gradient(circle at 18% 0%, rgba(255,255,255,0.92), transparent 32%),
+          radial-gradient(circle at 92% 100%, rgba(139,228,232,0.28), transparent 34%);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -26px 56px rgba(32,73,63,0.055);
+        pointer-events: none;
+      }
+      .liquid::after {
+        content: "";
+        position: absolute;
+        inset: 1px;
+        border-radius: inherit;
+        background: linear-gradient(120deg, rgba(255,255,255,0.62), transparent 32%, rgba(255,255,255,0.18) 68%, transparent);
+        opacity: 0.58;
+        pointer-events: none;
+      }
+      .dashboard-shell {
+        position: relative;
+        z-index: 1;
+        padding: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        border-radius: 38px;
+        background: rgba(255, 255, 255, 0.58);
+        box-shadow: 0 26px 80px rgba(22, 63, 53, 0.18);
+        backdrop-filter: blur(28px);
+        animation: float 6s ease-in-out infinite;
+      }
+      .dashboard {
+        min-height: 620px;
+        display: grid;
+        grid-template-columns: 184px minmax(0, 1fr) 250px;
+        overflow: hidden;
+        border-radius: 30px;
+        background: rgba(248, 252, 248, 0.88);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82);
+      }
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        padding: 24px 20px;
+        background: #20493f;
+        color: #fff;
+      }
+      .brand { display: flex; align-items: center; gap: 12px; }
+      .brand-mark {
+        width: 44px;
+        height: 44px;
+        display: grid;
+        place-items: center;
+        border-radius: 18px;
+        background: #9ee8cb;
+        color: #20493f;
+        font-size: 18px;
+        font-weight: 950;
+      }
+      .brand strong, .panel-title, .insight-title { font-size: 14px; font-weight: 950; }
+      .brand span { display: block; margin-top: 2px; font-size: 12px; color: rgba(255,255,255,0.5); }
+      nav { margin-top: 40px; display: grid; gap: 8px; }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-radius: 18px;
+        padding: 12px;
+        color: rgba(255,255,255,0.72);
+        font-size: 14px;
+        font-weight: 800;
+      }
+      .nav-item.active { background: #fff; color: #20493f; box-shadow: 0 18px 48px rgba(25, 80, 68, 0.12); }
+      .dot { width: 10px; height: 10px; border-radius: 999px; background: rgba(255,255,255,0.28); }
+      .active .dot { background: #f2cc4d; }
+      .local-box {
+        margin-top: auto;
+        padding: 16px;
+        border-radius: 24px;
+        background: rgba(255,255,255,0.1);
+        color: rgba(255,255,255,0.62);
+        font-size: 12px;
+        line-height: 1.65;
+      }
+      .local-art {
+        height: 80px;
+        margin-top: 16px;
+        border-radius: 18px;
+        background:
+          radial-gradient(circle at 50% 35%, rgba(242,204,77,0.45), transparent 34%),
+          linear-gradient(140deg, rgba(158,232,203,0.32), rgba(139,228,232,0.18));
+      }
+      .center { min-width: 0; padding: 20px 24px; }
+      .topbar { display: flex; justify-content: space-between; gap: 16px; align-items: center; }
+      .search {
+        border: 1px solid rgba(32,73,63,0.1);
+        border-radius: 999px;
+        background: #fff;
+        padding: 12px 16px;
+        color: rgba(20,53,46,0.55);
+        font-size: 14px;
+        font-weight: 700;
+        box-shadow: 0 10px 30px rgba(20,53,46,0.07);
+      }
+      .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+      .pill {
+        border-radius: 999px;
+        padding: 8px 16px;
+        background: rgba(158,232,203,0.45);
+        color: #20493f;
+        font-size: 12px;
+        font-weight: 950;
+      }
+      .pill.muted { background: rgba(32,73,63,0.08); color: rgba(32,73,63,0.6); }
+      .metrics { margin-top: 20px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+      .metric, .panel, .feature {
+        border: 1px solid rgba(255,255,255,0.75);
+        box-shadow: 0 18px 48px rgba(25,80,68,0.12);
+        transition: transform 180ms ease, background 180ms ease;
+      }
+      .metric:hover, .panel:hover, .feature:hover { transform: translateY(-4px); }
+      .metric {
+        border-radius: 22px;
+        padding: 16px;
+        animation: rise 620ms ease-out both;
+      }
+      .metric:nth-child(1) { background: rgba(242,204,77,0.25); }
+      .metric:nth-child(2) { background: rgba(158,232,203,0.35); }
+      .metric:nth-child(3) { background: rgba(139,228,232,0.3); }
+      .metric:nth-child(4) { background: rgba(255,255,255,0.7); }
+      .metric:nth-child(5) { background: rgba(47,126,112,0.1); }
+      .metric-label { font-size: 11px; font-weight: 950; text-transform: uppercase; color: rgba(20,53,46,0.45); }
+      .metric-value { margin-top: 12px; font-size: 26px; line-height: 1; font-weight: 950; }
+      .metric-detail { margin-top: 8px; font-size: 12px; font-weight: 800; color: rgba(20,53,46,0.48); }
+      .chart-grid { margin-top: 20px; display: grid; grid-template-columns: 1.35fr 0.85fr; gap: 16px; }
+      .chart-grid.bottom { margin-top: 16px; grid-template-columns: 0.9fr 1.1fr; }
+      .panel {
+        min-height: 246px;
+        border-radius: 26px;
+        padding: 20px;
+        background: rgba(255,255,255,0.7);
+        backdrop-filter: blur(16px);
+      }
+      .panel.small { min-height: 176px; }
+      .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+      .panel-title { color: #20493f; }
+      .panel-value {
+        border-radius: 999px;
+        background: rgba(32,73,63,0.07);
+        color: rgba(32,73,63,0.62);
+        padding: 4px 12px;
+        font-size: 12px;
+        font-weight: 950;
+      }
+      svg.chart { width: 100%; height: 176px; margin-top: 20px; }
+      .bars { height: 160px; display: flex; align-items: end; justify-content: space-between; gap: 12px; margin-top: 24px; }
+      .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+      .bar-track { height: 128px; width: 100%; display: flex; align-items: end; border-radius: 999px; background: rgba(32,73,63,0.06); padding: 6px; }
+      .bar-fill { width: 100%; border-radius: 999px; background: linear-gradient(to top, #20493f, #2f7e70, #8be4e8); }
+      .bar-col span { font-size: 10px; font-weight: 800; color: rgba(20,53,46,0.38); }
+      .timeline { margin-top: 28px; display: grid; gap: 16px; }
+      .track { height: 24px; border-radius: 999px; background: rgba(32,73,63,0.08); overflow: hidden; }
+      .track div { height: 100%; border-radius: 999px; }
+      .time-labels { display: flex; justify-content: space-between; font-size: 11px; font-weight: 800; color: rgba(20,53,46,0.4); }
+      .activity { margin-top: 20px; height: 96px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+      .act-track { display: flex; align-items: end; border-radius: 999px; background: rgba(32,73,63,0.05); padding: 4px; }
+      .act-track div { width: 100%; border-radius: 999px; background: linear-gradient(to top, #2f7e70, #9ee8cb); }
+      .right { padding: 20px; border-left: 1px solid rgba(32,73,63,0.08); background: rgba(255,255,255,0.52); }
+      .health-card {
+        border-radius: 28px;
+        background: #20493f;
+        color: #fff;
+        padding: 20px;
+        box-shadow: 0 18px 48px rgba(25,80,68,0.12);
+      }
+      .health-top { display: flex; justify-content: space-between; align-items: center; }
+      .health-light { width: 12px; height: 12px; border-radius: 999px; background: #9ee8cb; box-shadow: 0 0 0 6px rgba(158,232,203,0.16); }
+      .health-card p, .local-first p { margin: 10px 0 0; font-size: 12px; line-height: 1.65; color: rgba(255,255,255,0.58); }
+      .insight, .local-first {
+        margin-top: 16px;
+        border-radius: 28px;
+        padding: 20px;
+        box-shadow: 0 18px 48px rgba(25,80,68,0.12);
+      }
+      .insight { border: 1px solid rgba(255,255,255,0.7); background: rgba(255,255,255,0.72); }
+      .insight p { margin: 12px 0 0; color: rgba(20,53,46,0.62); font-size: 14px; line-height: 1.65; }
+      .rows { margin-top: 20px; display: grid; gap: 12px; }
+      .row { display: flex; justify-content: space-between; align-items: center; border-radius: 18px; background: rgba(32,73,63,0.05); padding: 12px; }
+      .row span:first-child { font-size: 12px; font-weight: 800; color: rgba(20,53,46,0.48); }
+      .row span:last-child { font-size: 14px; font-weight: 950; color: #20493f; }
+      .local-first { background: rgba(158,232,203,0.26); }
+      .local-first p { color: rgba(20,53,46,0.55); }
+      .features {
+        position: relative;
+        z-index: 1;
+        margin-top: 48px;
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 16px;
+      }
+      .feature {
+        border-radius: 24px;
+        background: rgba(255,255,255,0.48);
+        backdrop-filter: blur(16px);
+        padding: 20px;
+        animation: rise 640ms ease-out both;
+      }
+      .feature-icon { width: 36px; height: 36px; border-radius: 16px; margin-bottom: 20px; background: linear-gradient(135deg, #9ee8cb, #8be4e8); box-shadow: 0 10px 28px rgba(47,126,112,0.18); }
+      .feature h3 { margin: 0; color: #20493f; font-size: 14px; font-weight: 950; }
+      .feature p { margin: 12px 0 0; color: rgba(20,53,46,0.55); font-size: 12px; line-height: 1.65; }
+      .disclaimer {
+        position: relative;
+        z-index: 1;
+        margin-top: 24px;
+        border: 1px solid rgba(32,73,63,0.08);
+        border-radius: 24px;
+        background: rgba(255,255,255,0.42);
+        backdrop-filter: blur(16px);
+        padding: 20px;
+        color: rgba(20,53,46,0.64);
+        font-size: 14px;
+        line-height: 1.75;
+      }
+      @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+      @keyframes rise { 0% { opacity: 0; transform: translateY(22px); } 100% { opacity: 1; transform: translateY(0); } }
+      @keyframes draw { 0% { stroke-dashoffset: 440; } 100% { stroke-dashoffset: 0; } }
+      .line { animation: draw 1.4s ease-out both; }
+      @media (max-width: 1180px) {
+        .hero-grid { grid-template-columns: 1fr; }
+        .dashboard-shell { animation: rise 700ms ease-out both; }
+        .features { grid-template-columns: repeat(3, 1fr); }
+      }
+      @media (max-width: 1023px) {
+        .dashboard { grid-template-columns: 1fr; }
+        .sidebar { gap: 20px; }
+        nav { grid-template-columns: repeat(5, minmax(0, 1fr)); margin-top: 24px; }
+        .local-box { display: none; }
+        .right { border-left: 0; border-top: 1px solid rgba(32,73,63,0.08); }
+      }
+      @media (max-width: 760px) {
+        .page { padding: 24px 20px; }
+        .metrics, .chart-grid, .chart-grid.bottom, .features { grid-template-columns: 1fr; }
+        .topbar { align-items: stretch; flex-direction: column; }
+        nav { grid-template-columns: 1fr 1fr; }
+        .dashboard-shell { border-radius: 28px; padding: 10px; }
+        .dashboard { min-height: auto; border-radius: 22px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="page">
+        <div class="blob-a"></div>
+        <div class="blob-b"></div>
+        <div class="language-wrap">
+          <div class="language-switch liquid" aria-label="Language">
+            <button class="active" type="button" data-lang="en">EN</button>
+            <button type="button" data-lang="zh">中文</button>
+          </div>
+        </div>
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <div class="logo">S</div>
+            <h1>StressWatch</h1>
+            <p class="lead">Understand your wellness trends from Apple Watch data.</p>
+            <p class="sub">Track stress, recovery, HRV, sleep, and activity trends with a privacy-first HealthKit experience.</p>
+            <div class="actions">
+              <a class="button primary" href="#dashboard">View dashboard</a>
+              <a class="button secondary" href="#privacy">Privacy first</a>
+            </div>
+          </div>
+          <section id="dashboard" class="dashboard-shell liquid" aria-label="StressWatch dashboard mockup">
+            <div class="dashboard">
+              <aside class="sidebar">
+                <div class="brand">
+                  <div class="brand-mark">S</div>
+                  <div><strong>StressWatch</strong><span>HealthKit</span></div>
+                </div>
+                <nav>
+                  <div class="nav-item active"><i class="dot"></i>Dashboard</div>
+                  <div class="nav-item"><i class="dot"></i>Trends</div>
+                  <div class="nav-item"><i class="dot"></i>Metrics</div>
+                  <div class="nav-item"><i class="dot"></i>Privacy</div>
+                  <div class="nav-item"><i class="dot"></i>Settings</div>
+                </nav>
+                <div class="local-box">Demo / Local-first<div class="local-art"></div></div>
+              </aside>
+              <div class="center">
+                <div class="topbar">
+                  <div class="search liquid">Search wellness trends</div>
+                  <div class="pills">
+                    <span class="pill">Apple Health Connected</span>
+                    <span class="pill muted">Demo / Local-first</span>
+                  </div>
+                </div>
+                <div class="metrics">
+                  <article class="metric liquid"><div class="metric-label">Stress Score</div><div class="metric-value">68</div><div class="metric-detail">steady</div></article>
+                  <article class="metric liquid"><div class="metric-label">Recovery</div><div class="metric-value">74</div><div class="metric-detail">good</div></article>
+                  <article class="metric liquid"><div class="metric-label">HRV</div><div class="metric-value">52 ms</div><div class="metric-detail">+4%</div></article>
+                  <article class="metric liquid"><div class="metric-label">Sleep</div><div class="metric-value">7h 32m</div><div class="metric-detail">restful</div></article>
+                  <article class="metric liquid"><div class="metric-label">Steps</div><div class="metric-value">8,420</div><div class="metric-detail">active</div></article>
+                </div>
+                <div class="chart-grid">
+                  <article class="panel liquid">
+                    <div class="panel-head"><div class="panel-title">7-day Stress Trend</div><span class="panel-value">balanced</span></div>
+                    <svg class="chart" viewBox="0 0 520 180" role="img" aria-label="7-day stress trend line chart">
+                      <defs><linearGradient id="stressFillStatic" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#9ee8cb" stop-opacity="0.52"/><stop offset="100%" stop-color="#9ee8cb" stop-opacity="0"/></linearGradient></defs>
+                      <line x1="0" x2="520" y1="34" y2="34" stroke="#14352e" stroke-opacity="0.08"/><line x1="0" x2="520" y1="68" y2="68" stroke="#14352e" stroke-opacity="0.08"/><line x1="0" x2="520" y1="102" y2="102" stroke="#14352e" stroke-opacity="0.08"/><line x1="0" x2="520" y1="136" y2="136" stroke="#14352e" stroke-opacity="0.08"/>
+                      <path d="M12 136 C 72 118, 82 76, 138 86 S 220 134, 280 92 S 372 48, 430 72 S 486 104, 508 76 L 508 170 L 12 170 Z" fill="url(#stressFillStatic)"/>
+                      <path class="line" d="M12 136 C 72 118, 82 76, 138 86 S 220 134, 280 92 S 372 48, 430 72 S 486 104, 508 76" fill="none" stroke="#2f7e70" stroke-dasharray="440" stroke-linecap="round" stroke-width="7"/>
+                      <circle cx="12" cy="136" r="6" fill="#f2cc4d" stroke="#fff" stroke-width="4"/><circle cx="138" cy="86" r="6" fill="#f2cc4d" stroke="#fff" stroke-width="4"/><circle cx="280" cy="92" r="6" fill="#f2cc4d" stroke="#fff" stroke-width="4"/><circle cx="430" cy="72" r="6" fill="#f2cc4d" stroke="#fff" stroke-width="4"/><circle cx="508" cy="76" r="6" fill="#f2cc4d" stroke="#fff" stroke-width="4"/>
+                    </svg>
+                  </article>
+                  <article class="panel liquid">
+                    <div class="panel-head"><div class="panel-title">HRV</div><span class="panel-value">52 ms</span></div>
+                    <div class="bars">
+                      <div class="bar-col"><div class="bar-track"><div class="bar-fill" style="height:48%"></div></div><span>M</span></div>
+                      <div class="bar-col"><div class="bar-track"><div class="bar-fill" style="height:64%"></div></div><span>T</span></div>
+                      <div class="bar-col"><div class="bar-track"><div class="bar-fill" style="height:42%"></div></div><span>W</span></div>
+                      <div class="bar-col"><div class="bar-track"><div class="bar-fill" style="height:76%"></div></div><span>T</span></div>
+                      <div class="bar-col"><div class="bar-track"><div class="bar-fill" style="height:58%"></div></div><span>F</span></div>
+                      <div class="bar-col"><div class="bar-track"><div class="bar-fill" style="height:84%"></div></div><span>S</span></div>
+                      <div class="bar-col"><div class="bar-track"><div class="bar-fill" style="height:68%"></div></div><span>S</span></div>
+                    </div>
+                  </article>
+                </div>
+                <div class="chart-grid bottom">
+                  <article class="panel small liquid">
+                    <div class="panel-head"><div class="panel-title">Sleep Timeline</div><span class="panel-value">7h 32m</span></div>
+                    <div class="timeline"><div class="track"><div style="width:23%;background:#8be4e8"></div></div><div class="track"><div style="width:71%;background:#20493f"></div></div><div class="time-labels"><span>23:10</span><span>06:42</span></div></div>
+                  </article>
+                  <article class="panel small liquid">
+                    <div class="panel-head"><div class="panel-title">Activity context</div><span class="panel-value">8,420 steps</span></div>
+                    <div class="activity"><div class="act-track"><div style="height:34%"></div></div><div class="act-track"><div style="height:48%"></div></div><div class="act-track"><div style="height:42%"></div></div><div class="act-track"><div style="height:68%"></div></div><div class="act-track"><div style="height:58%"></div></div><div class="act-track"><div style="height:76%"></div></div><div class="act-track"><div style="height:62%"></div></div></div>
+                  </article>
+                </div>
+              </div>
+              <aside class="right">
+                <div class="health-card"><div class="health-top"><div class="insight-title">Apple Health</div><span class="health-light"></span></div><p>Heart rate, HRV, resting heart rate, sleep, and step trends.</p></div>
+                <div class="insight liquid"><div class="insight-title">Today&apos;s insight</div><p>Your wellness trend looks balanced. Use this as personal reference, not medical advice.</p><div class="rows"><div class="row"><span>Stress</span><span>68</span></div><div class="row"><span>Recovery</span><span>74</span></div><div class="row"><span>Sleep</span><span>7h 32m</span></div></div></div>
+                <div class="local-first liquid"><div class="insight-title">Local-first</div><p>No backend, no login, and no account-based data collection.</p></div>
+              </aside>
+            </div>
+          </section>
+        </div>
+        <section class="features" aria-label="StressWatch features">
+          <article class="feature liquid"><div class="feature-icon"></div><h3>Apple Health integration</h3><p>Read Apple Watch wellness signals through a HealthKit-first experience.</p></article>
+          <article class="feature liquid"><div class="feature-icon"></div><h3>HRV trend insights</h3><p>See HRV movement in context without turning it into clinical guidance.</p></article>
+          <article class="feature liquid"><div class="feature-icon"></div><h3>Recovery score</h3><p>A simple daily reference for rest, balance, and recent activity load.</p></article>
+          <article class="feature liquid"><div class="feature-icon"></div><h3>Sleep context</h3><p>Connect sleep duration with stress and recovery trend changes.</p></article>
+          <article class="feature liquid"><div class="feature-icon"></div><h3>Local-first privacy</h3><p>Designed around on-device data and no server-side collection.</p></article>
+          <article class="feature liquid"><div class="feature-icon"></div><h3>No account required</h3><p>Open the app, connect HealthKit, and keep your data personal.</p></article>
+        </section>
+        <section id="privacy" class="disclaimer liquid">This app is for personal wellness trend reference only. It does not provide medical diagnosis, treatment advice, or emergency services. Please consult a qualified professional for health concerns.</section>
+      </section>
+    </main>
+    <script>
+      const zh = new Map([
+        ["Understand your wellness trends from Apple Watch data.", "从 Apple Watch 数据理解你的身心趋势。"],
+        ["Track stress, recovery, HRV, sleep, and activity trends with a privacy-first HealthKit experience.", "以隐私优先的 HealthKit 体验追踪压力、恢复、HRV、睡眠和活动趋势。"],
+        ["View dashboard", "查看仪表盘"],
+        ["Privacy first", "隐私优先"],
+        ["HealthKit", "HealthKit"],
+        ["Dashboard", "仪表盘"],
+        ["Trends", "趋势"],
+        ["Metrics", "指标"],
+        ["Privacy", "隐私"],
+        ["Settings", "设置"],
+        ["Demo / Local-first", "演示数据 / 本地优先"],
+        ["Search wellness trends", "搜索健康趋势"],
+        ["Apple Health Connected", "Apple Health 已连接"],
+        ["Stress Score", "压力分数"],
+        ["steady", "平稳"],
+        ["Recovery", "恢复"],
+        ["good", "良好"],
+        ["Sleep", "睡眠"],
+        ["restful", "充分"],
+        ["Steps", "步数"],
+        ["active", "活跃"],
+        ["7-day Stress Trend", "7 天压力趋势"],
+        ["balanced", "较为平衡"],
+        ["Sleep Timeline", "睡眠时间线"],
+        ["Activity context", "活动参考"],
+        ["8,420 steps", "8,420 步"],
+        ["Heart rate, HRV, resting heart rate, sleep, and step trends.", "心率、HRV、静息心率、睡眠和步数趋势参考。"],
+        ["Today's insight", "今日解读"],
+        ["Your wellness trend looks balanced. Use this as personal reference, not medical advice.", "你的健康趋势看起来较为平衡。请将它作为个人参考，而不是医疗建议。"],
+        ["Stress", "压力"],
+        ["Local-first", "本地优先"],
+        ["No backend, no login, and no account-based data collection.", "不接后端、不需要登录，也不做账号级数据收集。"],
+        ["Apple Health integration", "Apple Health 集成"],
+        ["Read Apple Watch wellness signals through a HealthKit-first experience.", "通过 HealthKit 优先的体验读取 Apple Watch 健康趋势信号。"],
+        ["HRV trend insights", "HRV 趋势洞察"],
+        ["See HRV movement in context without turning it into clinical guidance.", "把 HRV 变化放在上下文里观察，不输出临床建议。"],
+        ["Recovery score", "恢复分数"],
+        ["A simple daily reference for rest, balance, and recent activity load.", "为休息、平衡和近期活动负荷提供简单的每日参考。"],
+        ["Sleep context", "睡眠背景"],
+        ["Connect sleep duration with stress and recovery trend changes.", "把睡眠时长与压力、恢复趋势变化联系起来观察。"],
+        ["Local-first privacy", "本地优先隐私"],
+        ["Designed around on-device data and no server-side collection.", "围绕本机数据设计，不进行服务器端收集。"],
+        ["No account required", "无需账号"],
+        ["Open the app, connect HealthKit, and keep your data personal.", "打开 App、连接 HealthKit，并把数据留在自己手里。"],
+        ["This app is for personal wellness trend reference only. It does not provide medical diagnosis, treatment advice, or emergency services. Please consult a qualified professional for health concerns.", "本应用仅用于个人健康趋势参考，不提供医疗诊断、治疗建议或紧急服务。如有健康问题，请咨询具备资质的专业人士。"]
+      ]);
+      const en = new Map(Array.from(zh, ([key, value]) => [value, key]));
+      function textNodes(root) {
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+          acceptNode(node) {
+            const parent = node.parentElement;
+            if (!parent || ["SCRIPT", "STYLE"].includes(parent.tagName)) return NodeFilter.FILTER_REJECT;
+            return node.nodeValue.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+          }
+        });
+        const nodes = [];
+        while (walker.nextNode()) nodes.push(walker.currentNode);
+        return nodes;
+      }
+      function setLanguage(lang) {
+        const map = lang === "zh" ? zh : en;
+        textNodes(document.body).forEach((node) => {
+          const value = node.nodeValue.trim();
+          if (map.has(value)) node.nodeValue = node.nodeValue.replace(value, map.get(value));
+        });
+        document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
+        document.querySelectorAll(".language-switch button").forEach((button) => {
+          button.classList.toggle("active", button.dataset.lang === lang);
+        });
+      }
+      document.querySelectorAll(".language-switch button").forEach((button) => {
+        button.addEventListener("click", () => setLanguage(button.dataset.lang));
+      });
+    </script>
+  </body>
+</html>

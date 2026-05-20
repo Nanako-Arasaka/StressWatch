@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "StressWatch",
+    "slug": "stress-watch",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "scheme": "stresswatch",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.stresswatch.demo",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSHealthShareUsageDescription": "StressWatch reads heart rate, HRV, resting heart rate, steps, and sleep data to visualize personal wellness trends.",
+        "NSHealthUpdateUsageDescription": "StressWatch does not write health data."
+      }
+    },
+    "android": {
+      "edgeToEdgeEnabled": true
+    },
+    "plugins": [
+      [
+        "@kingstinct/react-native-healthkit",
+        {
+          "NSHealthShareUsageDescription": "StressWatch reads heart rate, HRV, resting heart rate, steps, and sleep data to visualize personal wellness trends.",
+          "NSHealthUpdateUsageDescription": "StressWatch does not write health data."
+        }
+      ],
+      "expo-dev-client"
+    ],
+    "extra": {
+      "usesMockData": true,
+      "enableRealHealthKit": false,
+      "eas": {
+        "projectId": "replace-after-eas-init"
+      }
+    }
+  }
+}

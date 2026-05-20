@@ -1,0 +1,581 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000000000000000000001 /* StressWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* StressWatchApp.swift */; };
+		A10000000000000000000002 /* HealthMetric.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000002 /* HealthMetric.swift */; };
+		A10000000000000000000003 /* Baseline.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* Baseline.swift */; };
+		A10000000000000000000004 /* StressScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* StressScore.swift */; };
+		A10000000000000000000005 /* RecoveryScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000005 /* RecoveryScore.swift */; };
+		A10000000000000000000006 /* HealthKitDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000006 /* HealthKitDataProvider.swift */; };
+		A10000000000000000000007 /* LocalStorageProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000007 /* LocalStorageProtocol.swift */; };
+		A10000000000000000000008 /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* HealthKitService.swift */; };
+		A10000000000000000000009 /* MockHealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000009 /* MockHealthKitService.swift */; };
+		A1000000000000000000000A /* BaselineEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000A /* BaselineEngine.swift */; };
+		A1000000000000000000000B /* StressModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000B /* StressModel.swift */; };
+		A1000000000000000000000C /* RecoveryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000C /* RecoveryModel.swift */; };
+		A1000000000000000000000D /* LocalStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000D /* LocalStorage.swift */; };
+		A1000000000000000000000E /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000E /* DashboardViewModel.swift */; };
+		A1000000000000000000000F /* TrendViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000F /* TrendViewModel.swift */; };
+		A10000000000000000000010 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* SettingsViewModel.swift */; };
+		A10000000000000000000011 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000011 /* DashboardView.swift */; };
+		A10000000000000000000012 /* StressGaugeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000012 /* StressGaugeCard.swift */; };
+		A10000000000000000000013 /* RecoveryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000013 /* RecoveryCard.swift */; };
+		A10000000000000000000014 /* TodayMiniChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000014 /* TodayMiniChart.swift */; };
+		A10000000000000000000015 /* TrendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000015 /* TrendView.swift */; };
+		A10000000000000000000016 /* TrendChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000016 /* TrendChart.swift */; };
+		A10000000000000000000017 /* MetricDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000017 /* MetricDetailView.swift */; };
+		A10000000000000000000018 /* MetricChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000018 /* MetricChart.swift */; };
+		A10000000000000000000019 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000019 /* SettingsView.swift */; };
+		A1000000000000000000001A /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2000000000000000000001A /* HealthKit.framework */; };
+		A1000000000000000000001B /* Charts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2000000000000000000001B /* Charts.framework */; };
+		A1000000000000000000001C /* MathHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000001F /* MathHelpers.swift */; };
+		A1000000000000000000001D /* DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000020 /* DateExtensions.swift */; };
+		A1000000000000000000001E /* GlassCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000021 /* GlassCardView.swift */; };
+		A1000000000000000000001F /* LiquidMetricCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000022 /* LiquidMetricCard.swift */; };
+		A10000000000000000000020 /* AnimatedScoreRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000023 /* AnimatedScoreRing.swift */; };
+		A10000000000000000000021 /* GlassSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000024 /* GlassSectionHeader.swift */; };
+		A10000000000000000000022 /* DataSourceBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000025 /* DataSourceBadge.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A20000000000000000000001 /* StressWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/StressWatchApp.swift; sourceTree = "<group>"; };
+		A20000000000000000000002 /* HealthMetric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/HealthMetric.swift; sourceTree = "<group>"; };
+		A20000000000000000000003 /* Baseline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/Baseline.swift; sourceTree = "<group>"; };
+		A20000000000000000000004 /* StressScore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/StressScore.swift; sourceTree = "<group>"; };
+		A20000000000000000000005 /* RecoveryScore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/RecoveryScore.swift; sourceTree = "<group>"; };
+		A20000000000000000000006 /* HealthKitDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols/HealthKitDataProvider.swift; sourceTree = "<group>"; };
+		A20000000000000000000007 /* LocalStorageProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols/LocalStorageProtocol.swift; sourceTree = "<group>"; };
+		A20000000000000000000008 /* HealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/HealthKitService.swift; sourceTree = "<group>"; };
+		A20000000000000000000009 /* MockHealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/MockHealthKitService.swift; sourceTree = "<group>"; };
+		A2000000000000000000000A /* BaselineEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/BaselineEngine.swift; sourceTree = "<group>"; };
+		A2000000000000000000000B /* StressModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/StressModel.swift; sourceTree = "<group>"; };
+		A2000000000000000000000C /* RecoveryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/RecoveryModel.swift; sourceTree = "<group>"; };
+		A2000000000000000000000D /* LocalStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage/LocalStorage.swift; sourceTree = "<group>"; };
+		A2000000000000000000000E /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModels/DashboardViewModel.swift; sourceTree = "<group>"; };
+		A2000000000000000000000F /* TrendViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModels/TrendViewModel.swift; sourceTree = "<group>"; };
+		A20000000000000000000010 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModels/SettingsViewModel.swift; sourceTree = "<group>"; };
+		A20000000000000000000011 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Dashboard/DashboardView.swift; sourceTree = "<group>"; };
+		A20000000000000000000012 /* StressGaugeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Dashboard/StressGaugeCard.swift; sourceTree = "<group>"; };
+		A20000000000000000000013 /* RecoveryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Dashboard/RecoveryCard.swift; sourceTree = "<group>"; };
+		A20000000000000000000014 /* TodayMiniChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Dashboard/TodayMiniChart.swift; sourceTree = "<group>"; };
+		A20000000000000000000015 /* TrendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Trend/TrendView.swift; sourceTree = "<group>"; };
+		A20000000000000000000016 /* TrendChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Trend/TrendChart.swift; sourceTree = "<group>"; };
+		A20000000000000000000017 /* MetricDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Detail/MetricDetailView.swift; sourceTree = "<group>"; };
+		A20000000000000000000018 /* MetricChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Detail/MetricChart.swift; sourceTree = "<group>"; };
+		A20000000000000000000019 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Settings/SettingsView.swift; sourceTree = "<group>"; };
+		A2000000000000000000001A /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
+		A2000000000000000000001B /* Charts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Charts.framework; path = System/Library/Frameworks/Charts.framework; sourceTree = SDKROOT; };
+		A2000000000000000000001C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A2000000000000000000001D /* StressWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StressWatch.entitlements; sourceTree = "<group>"; };
+		A2000000000000000000001E /* StressWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StressWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2000000000000000000001F /* MathHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils/MathHelpers.swift; sourceTree = "<group>"; };
+		A20000000000000000000020 /* DateExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils/DateExtensions.swift; sourceTree = "<group>"; };
+		A20000000000000000000021 /* GlassCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/GlassCardView.swift; sourceTree = "<group>"; };
+		A20000000000000000000022 /* LiquidMetricCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/LiquidMetricCard.swift; sourceTree = "<group>"; };
+		A20000000000000000000023 /* AnimatedScoreRing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/AnimatedScoreRing.swift; sourceTree = "<group>"; };
+		A20000000000000000000024 /* GlassSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/GlassSectionHeader.swift; sourceTree = "<group>"; };
+		A20000000000000000000025 /* DataSourceBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/DataSourceBadge.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A30000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000000000000000000001A /* HealthKit.framework in Frameworks */,
+				A1000000000000000000001B /* Charts.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A40000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				A40000000000000000000002 /* StressWatch */,
+				A40000000000000000000003 /* Frameworks */,
+				A40000000000000000000004 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A40000000000000000000002 /* StressWatch */ = {
+			isa = PBXGroup;
+			children = (
+				A40000000000000000000010 /* App */,
+				A40000000000000000000011 /* Models */,
+				A40000000000000000000012 /* Protocols */,
+				A40000000000000000000013 /* Services */,
+				A40000000000000000000014 /* Storage */,
+				A40000000000000000000015 /* ViewModels */,
+				A40000000000000000000016 /* Views */,
+				A4000000000000000000001B /* Utils */,
+				A4000000000000000000001C /* Supporting Files */,
+			);
+			path = StressWatch;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000010 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000001 /* StressWatchApp.swift */,
+			);
+			name = App;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000011 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000002 /* HealthMetric.swift */,
+				A20000000000000000000003 /* Baseline.swift */,
+				A20000000000000000000004 /* StressScore.swift */,
+				A20000000000000000000005 /* RecoveryScore.swift */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000012 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000006 /* HealthKitDataProvider.swift */,
+				A20000000000000000000007 /* LocalStorageProtocol.swift */,
+			);
+			name = Protocols;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000013 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000008 /* HealthKitService.swift */,
+				A20000000000000000000009 /* MockHealthKitService.swift */,
+				A2000000000000000000000A /* BaselineEngine.swift */,
+				A2000000000000000000000B /* StressModel.swift */,
+				A2000000000000000000000C /* RecoveryModel.swift */,
+			);
+			name = Services;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000014 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				A2000000000000000000000D /* LocalStorage.swift */,
+			);
+			name = Storage;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000015 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				A2000000000000000000000E /* DashboardViewModel.swift */,
+				A2000000000000000000000F /* TrendViewModel.swift */,
+				A20000000000000000000010 /* SettingsViewModel.swift */,
+			);
+			name = ViewModels;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000016 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A40000000000000000000017 /* Components */,
+				A40000000000000000000018 /* Dashboard */,
+				A40000000000000000000019 /* Trend */,
+				A4000000000000000000001A /* Detail */,
+				A4000000000000000000001D /* Settings */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000017 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000021 /* GlassCardView.swift */,
+				A20000000000000000000022 /* LiquidMetricCard.swift */,
+				A20000000000000000000023 /* AnimatedScoreRing.swift */,
+				A20000000000000000000024 /* GlassSectionHeader.swift */,
+				A20000000000000000000025 /* DataSourceBadge.swift */,
+			);
+			name = Components;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000018 /* Dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000011 /* DashboardView.swift */,
+				A20000000000000000000012 /* StressGaugeCard.swift */,
+				A20000000000000000000013 /* RecoveryCard.swift */,
+				A20000000000000000000014 /* TodayMiniChart.swift */,
+			);
+			name = Dashboard;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000019 /* Trend */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000015 /* TrendView.swift */,
+				A20000000000000000000016 /* TrendChart.swift */,
+			);
+			name = Trend;
+			sourceTree = "<group>";
+		};
+		A4000000000000000000001A /* Detail */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000017 /* MetricDetailView.swift */,
+				A20000000000000000000018 /* MetricChart.swift */,
+			);
+			name = Detail;
+			sourceTree = "<group>";
+		};
+		A4000000000000000000001B /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				A2000000000000000000001F /* MathHelpers.swift */,
+				A20000000000000000000020 /* DateExtensions.swift */,
+			);
+			name = Utils;
+			sourceTree = "<group>";
+		};
+		A4000000000000000000001C /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				A2000000000000000000001C /* Info.plist */,
+				A2000000000000000000001D /* StressWatch.entitlements */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		A4000000000000000000001D /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000019 /* SettingsView.swift */,
+			);
+			name = Settings;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000003 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A2000000000000000000001A /* HealthKit.framework */,
+				A2000000000000000000001B /* Charts.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000004 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A2000000000000000000001E /* StressWatch.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A50000000000000000000001 /* StressWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A90000000000000000000002 /* Build configuration list for PBXNativeTarget "StressWatch" */;
+			buildPhases = (
+				A30000000000000000000002 /* Sources */,
+				A30000000000000000000001 /* Frameworks */,
+				A30000000000000000000003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StressWatch;
+			productName = StressWatch;
+			productReference = A2000000000000000000001E /* StressWatch.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A60000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1530;
+				LastUpgradeCheck = 1530;
+				TargetAttributes = {
+					A50000000000000000000001 = {
+						CreatedOnToolsVersion = 15.3;
+						SystemCapabilities = {
+							com.apple.HealthKit = {
+								enabled = 1;
+							};
+						};
+					};
+				};
+			};
+			buildConfigurationList = A90000000000000000000001 /* Build configuration list for PBXProject "StressWatch" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A40000000000000000000001;
+			productRefGroup = A40000000000000000000004 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A50000000000000000000001 /* StressWatch */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A30000000000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A30000000000000000000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000001 /* StressWatchApp.swift in Sources */,
+				A10000000000000000000002 /* HealthMetric.swift in Sources */,
+				A10000000000000000000003 /* Baseline.swift in Sources */,
+				A10000000000000000000004 /* StressScore.swift in Sources */,
+				A10000000000000000000005 /* RecoveryScore.swift in Sources */,
+				A10000000000000000000006 /* HealthKitDataProvider.swift in Sources */,
+				A10000000000000000000007 /* LocalStorageProtocol.swift in Sources */,
+				A10000000000000000000008 /* HealthKitService.swift in Sources */,
+				A10000000000000000000009 /* MockHealthKitService.swift in Sources */,
+				A1000000000000000000000A /* BaselineEngine.swift in Sources */,
+				A1000000000000000000000B /* StressModel.swift in Sources */,
+				A1000000000000000000000C /* RecoveryModel.swift in Sources */,
+				A1000000000000000000000D /* LocalStorage.swift in Sources */,
+				A1000000000000000000000E /* DashboardViewModel.swift in Sources */,
+				A1000000000000000000000F /* TrendViewModel.swift in Sources */,
+				A10000000000000000000010 /* SettingsViewModel.swift in Sources */,
+				A10000000000000000000011 /* DashboardView.swift in Sources */,
+				A10000000000000000000012 /* StressGaugeCard.swift in Sources */,
+				A10000000000000000000013 /* RecoveryCard.swift in Sources */,
+				A10000000000000000000014 /* TodayMiniChart.swift in Sources */,
+				A10000000000000000000015 /* TrendView.swift in Sources */,
+				A10000000000000000000016 /* TrendChart.swift in Sources */,
+				A10000000000000000000017 /* MetricDetailView.swift in Sources */,
+				A10000000000000000000018 /* MetricChart.swift in Sources */,
+				A10000000000000000000019 /* SettingsView.swift in Sources */,
+				A1000000000000000000001C /* MathHelpers.swift in Sources */,
+				A1000000000000000000001D /* DateExtensions.swift in Sources */,
+				A1000000000000000000001E /* GlassCardView.swift in Sources */,
+				A1000000000000000000001F /* LiquidMetricCard.swift in Sources */,
+				A10000000000000000000020 /* AnimatedScoreRing.swift in Sources */,
+				A10000000000000000000021 /* GlassSectionHeader.swift in Sources */,
+				A10000000000000000000022 /* DataSourceBadge.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A70000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A70000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A80000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = StressWatch/StressWatch.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = StressWatch/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stresswatch.demo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A80000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = StressWatch/StressWatch.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = StressWatch/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stresswatch.demo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A90000000000000000000001 /* Build configuration list for PBXProject "StressWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A70000000000000000000001 /* Debug */,
+				A70000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A90000000000000000000002 /* Build configuration list for PBXNativeTarget "StressWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A80000000000000000000001 /* Debug */,
+				A80000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A60000000000000000000001 /* Project object */;
+}

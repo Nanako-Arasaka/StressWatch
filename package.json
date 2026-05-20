@@ -1,0 +1,28 @@
+{
+  "name": "stress-watch-expo",
+  "version": "0.1.0",
+  "private": true,
+  "main": "expo/AppEntry",
+  "scripts": {
+    "start": "npx expo start",
+    "prebuild:ios": "npx expo prebuild -p ios",
+    "android": "npx expo start --android",
+    "ios": "npx expo start --ios",
+    "web": "npx expo start --web"
+  },
+  "dependencies": {
+    "@kingstinct/react-native-healthkit": "^14.0.1",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "expo": "~54.0.0",
+    "expo-dev-client": "~6.0.0",
+    "react": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-nitro-modules": "^0.35.6",
+    "react-native-svg": "15.12.1"
+  },
+  "devDependencies": {
+    "@types/react": "~19.1.0",
+    "babel-plugin-module-resolver": "^5.0.2",
+    "typescript": "~5.9.2"
+  }
+}
