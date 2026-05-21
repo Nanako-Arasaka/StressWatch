@@ -1,6 +1,72 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 type Language = "en" | "zh";
+type SectionId = "dashboard" | "trends" | "metrics" | "privacy" | "settings";
+
+const sectionIds: SectionId[] = ["dashboard", "trends", "metrics", "privacy", "settings"];
+
+const stressTrendData = [
+  { day: "Mon", date: "5/15", score: 42 },
+  { day: "Tue", date: "5/16", score: 58 },
+  { day: "Wed", date: "5/17", score: 51 },
+  { day: "Thu", date: "5/18", score: 64 },
+  { day: "Fri", date: "5/19", score: 72 },
+  { day: "Sat", date: "5/20", score: 60 },
+  { day: "Sun", date: "5/21", score: 68 }
+];
+
+const hrvTrendData = [48, 51, 47, 54, 52, 56, 52];
+const hrvTrendPoints = [
+  { date: "5/15", time: "07:12", value: 48 },
+  { date: "5/16", time: "07:04", value: 51 },
+  { date: "5/17", time: "06:58", value: 47 },
+  { date: "5/18", time: "07:20", value: 54 },
+  { date: "5/19", time: "06:49", value: 52 },
+  { date: "5/20", time: "07:08", value: 56 },
+  { date: "5/21", time: "07:16", value: 52 }
+];
+const stressSparkData = [38, 44, 51, 57, 62, 60, 68];
+const recoverySparkData = [62, 66, 64, 70, 72, 76, 74];
+
+function getStressStatus(score: number, language: Language) {
+  if (score <= 35) {
+    return language === "zh" ? "状态稳定" : "Stable";
+  }
+  if (score <= 60) {
+    return language === "zh" ? "轻微压力" : "Light stress";
+  }
+  if (score <= 80) {
+    return language === "zh" ? "注意压力" : "Watch stress";
+  }
+  return language === "zh" ? "压力较高" : "Higher stress";
+}
+
+function useRevealOnView<T extends Element>() {
+  const ref = useRef<T | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || isVisible) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "0px 0px -12% 0px", threshold: 0.22 }
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [isVisible]);
+
+  return { isVisible, ref };
+}
 
 const copy = {
   en: {
@@ -140,11 +206,47 @@ const copy = {
 
 function App() {
   const [language, setLanguage] = useState<Language>("en");
+  const [activeSection, setActiveSection] = useState<SectionId>("dashboard");
   const t = copy[language];
+
+  useEffect(() => {
+    const updateActiveSection = () => {
+      const activationLine = window.scrollY + window.innerHeight * 0.22;
+      const sections = sectionIds
+        .map((id) => {
+          const element = document.getElementById(id);
+          if (!element) {
+            return null;
+          }
+
+          return {
+            id,
+            top: element.getBoundingClientRect().top + window.scrollY
+          };
+        })
+        .filter((section): section is { id: SectionId; top: number } => section !== null)
+        .sort((a, b) => a.top - b.top);
+
+      const active = sections.reduce<SectionId>((current, section) => {
+        return section.top <= activationLine ? section.id : current;
+      }, "dashboard");
+
+      setActiveSection(active);
+    };
+
+    updateActiveSection();
+    window.addEventListener("scroll", updateActiveSection, { passive: true });
+    window.addEventListener("resize", updateActiveSection);
+
+    return () => {
+      window.removeEventListener("scroll", updateActiveSection);
+      window.removeEventListener("resize", updateActiveSection);
+    };
+  }, []);
 
   return (
     <main
-      className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_14%_10%,rgba(158,232,203,0.72),transparent_28%),linear-gradient(135deg,#f6fbf6_0%,#dff7ef_46%,#eefcfa_100%)] text-ink"
+      className="font-apple-body min-h-screen overflow-hidden bg-[radial-gradient(circle_at_14%_10%,rgba(158,232,203,0.72),transparent_28%),linear-gradient(135deg,#f6fbf6_0%,#dff7ef_46%,#eefcfa_100%)] text-ink"
       lang={language === "zh" ? "zh-CN" : "en"}
     >
       <section className="relative mx-auto flex min-h-screen w-full max-w-[1440px] flex-col px-5 py-8 sm:px-8 lg:px-12">
@@ -153,9 +255,9 @@ function App() {
 
         <LanguageSwitch language={language} setLanguage={setLanguage} label={t.languageLabel} />
 
-        <div className="relative z-10 grid flex-1 items-center gap-10 lg:grid-cols-[0.76fr_1.24fr]">
+        <div className="relative z-10 grid flex-1 items-center gap-10 [@media(min-width:1180px)]:grid-cols-[minmax(300px,0.58fr)_minmax(720px,1.42fr)]">
           <HeroCopy t={t} />
-          <DashboardMockup t={t} />
+          <DashboardMockup activeSection={activeSection} language={language} setActiveSection={setActiveSection} t={t} />
         </div>
 
         <FeatureStrip features={t.features} />
@@ -178,14 +280,19 @@ function LanguageSwitch({
     <div className="relative z-20 mb-6 flex justify-end">
       <div
         aria-label={label}
-        className="liquid-glass liquid-glass-soft flex items-center rounded-full border border-pine/10 bg-white/54 p-1 text-xs font-black text-pine shadow-soft"
+        className="liquid-glass liquid-glass-soft relative flex items-center rounded-full border border-pine/10 bg-white/54 p-1 text-xs font-black text-pine shadow-soft"
       >
+        <span
+          className={`absolute bottom-1 top-1 w-[52px] rounded-full bg-pine shadow-soft transition-transform duration-300 ease-out ${
+            language === "zh" ? "translate-x-[52px]" : "translate-x-0"
+          }`}
+        />
         {(["en", "zh"] as const).map((item) => (
           <button
             key={item}
             aria-pressed={language === item}
-            className={`rounded-full px-4 py-2 transition ${
-              language === item ? "bg-pine text-white shadow-soft" : "text-pine/58 hover:text-pine"
+            className={`relative z-10 w-[52px] rounded-full py-2 transition duration-300 ease-out hover:scale-105 ${
+              language === item ? "text-white" : "text-pine/58 hover:text-pine"
             }`}
             onClick={() => setLanguage(item)}
             type="button"
@@ -200,17 +307,17 @@ function LanguageSwitch({
 
 function HeroCopy({ t }: { t: (typeof copy)[Language] }) {
   return (
-    <div className="max-w-xl animate-rise">
+    <div className="max-w-xl animate-rise [@media(min-width:1180px)]:max-w-[320px] min-[1320px]:max-w-md min-[1500px]:max-w-xl">
       <div className="mb-7 flex h-14 w-14 items-center justify-center rounded-3xl bg-pine text-2xl font-black text-mint shadow-soft">
         S
       </div>
-      <h1 className="max-w-[10ch] text-6xl font-black leading-[0.92] tracking-normal text-ink sm:text-7xl lg:text-8xl">
+      <h1 className="type-hero-title max-w-[10ch] text-6xl leading-[0.92] text-ink sm:text-7xl [@media(min-width:1180px)]:text-5xl min-[1320px]:text-6xl min-[1500px]:text-8xl">
         {t.heroTitle}
       </h1>
-      <p className="mt-7 max-w-xl text-2xl font-semibold leading-tight text-pine sm:text-3xl">
+      <p className="type-section-title mt-7 max-w-xl text-2xl leading-tight text-pine min-[1500px]:text-3xl">
         {t.heroLead}
       </p>
-      <p className="mt-5 max-w-lg text-base leading-8 text-ink/68 sm:text-lg">{t.heroSub}</p>
+      <p className="type-body mt-5 max-w-lg text-base leading-8 text-ink/68 min-[1500px]:text-lg">{t.heroSub}</p>
       <div className="mt-9 flex flex-wrap gap-3">
         <a
           className="rounded-full bg-pine px-6 py-3 text-sm font-bold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-ink"
@@ -229,53 +336,86 @@ function HeroCopy({ t }: { t: (typeof copy)[Language] }) {
   );
 }
 
-function DashboardMockup({ t }: { t: (typeof copy)[Language] }) {
+function DashboardMockup({
+  activeSection,
+  language,
+  setActiveSection,
+  t
+}: {
+  activeSection: SectionId;
+  language: Language;
+  setActiveSection: (section: SectionId) => void;
+  t: (typeof copy)[Language];
+}) {
   return (
     <section
       id="dashboard"
       className="dashboard-shell liquid-glass liquid-glass-strong relative z-10 animate-float rounded-[2.35rem] border border-white/70 bg-white/58 p-3 shadow-glass sm:p-4"
       aria-label="StressWatch dashboard mockup"
     >
-      <div className="grid min-h-[620px] overflow-hidden rounded-[1.8rem] bg-[#f8fcf8]/88 shadow-[inset_0_1px_0_rgba(255,255,255,0.82)] lg:grid-cols-[184px_minmax(0,1fr)_250px]">
-        <Sidebar t={t} />
-        <DashboardCenter t={t} />
+      <div className="grid min-h-[620px] overflow-hidden rounded-[1.8rem] bg-[#f8fcf8]/88 shadow-[inset_0_1px_0_rgba(255,255,255,0.82)] [@media(min-width:1180px)]:grid-cols-[164px_minmax(0,1fr)_230px]">
+        <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} t={t} />
+        <DashboardCenter language={language} t={t} />
         <InsightPanel t={t} />
       </div>
     </section>
   );
 }
 
-function Sidebar({ t }: { t: (typeof copy)[Language] }) {
+function Sidebar({
+  activeSection,
+  setActiveSection,
+  t
+}: {
+  activeSection: SectionId;
+  setActiveSection: (section: SectionId) => void;
+  t: (typeof copy)[Language];
+}) {
+  const handleNavClick = (section: SectionId) => {
+    setActiveSection(section);
+    document.getElementById(section)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
-    <aside className="flex flex-col bg-pine px-5 py-6 text-white lg:rounded-l-[1.8rem]">
+    <aside className="flex flex-col bg-pine px-5 py-6 text-white max-[1179px]:rounded-t-[1.8rem] [@media(min-width:1180px)]:rounded-l-[1.8rem]">
       <div className="flex items-center gap-3">
         <div className="grid h-11 w-11 place-items-center rounded-2xl bg-mint text-lg font-black text-pine">
           S
         </div>
         <div>
-          <p className="text-sm font-black">StressWatch</p>
+          <p className="text-xs font-black min-[1320px]:text-sm">StressWatch</p>
           <p className="text-xs text-white/50">{t.healthKit}</p>
         </div>
       </div>
 
-      <nav className="mt-10 space-y-2">
-        {t.nav.map((item, index) => (
+      <nav className="mt-10 space-y-2 max-[1179px]:mt-6 max-[1179px]:grid max-[1179px]:grid-cols-2 max-[1179px]:gap-2 max-[1179px]:space-y-0 min-[640px]:grid-cols-5">
+        {t.nav.map((item, index) => {
+          const section = sectionIds[index];
+          const isActive = activeSection === section;
+
+          return (
           <button
-            className={`flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left text-sm font-bold transition hover:bg-white/12 ${
-              index === 0 ? "bg-white text-pine shadow-soft" : "text-white/72"
+            className={`group flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left text-xs font-bold transition duration-300 hover:scale-[1.02] hover:bg-white/12 min-[1320px]:text-sm ${
+              isActive ? "bg-white text-pine shadow-soft" : "text-white/72"
             }`}
             key={item}
+            onClick={() => handleNavClick(section)}
             type="button"
           >
             <span
-              className={`h-2.5 w-2.5 rounded-full ${index === 0 ? "bg-sun" : "bg-white/28"}`}
+              className={`h-2.5 w-2.5 rounded-full transition duration-300 ${
+                isActive
+                  ? "bg-sun shadow-[0_0_18px_rgba(242,204,77,0.75)]"
+                  : "bg-white/28 group-hover:bg-mint/70"
+              }`}
             />
             {item}
           </button>
-        ))}
+          );
+        })}
       </nav>
 
-      <div className="mt-auto rounded-3xl bg-white/10 p-4 text-xs leading-5 text-white/62">
+      <div className="mt-auto rounded-3xl bg-white/10 p-4 text-xs leading-5 text-white/62 max-[1179px]:hidden">
         {t.localFirst}
         <div className="mt-4 h-20 rounded-2xl bg-[radial-gradient(circle_at_50%_35%,rgba(242,204,77,0.45),transparent_34%),linear-gradient(140deg,rgba(158,232,203,0.32),rgba(139,228,232,0.18))]" />
       </div>
@@ -283,10 +423,10 @@ function Sidebar({ t }: { t: (typeof copy)[Language] }) {
   );
 }
 
-function DashboardCenter({ t }: { t: (typeof copy)[Language] }) {
+function DashboardCenter({ language, t }: { language: Language; t: (typeof copy)[Language] }) {
   return (
     <div className="min-w-0 px-4 py-5 sm:px-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 min-[1320px]:flex-row min-[1320px]:items-center min-[1320px]:justify-between">
         <div className="liquid-glass liquid-glass-soft rounded-full border border-pine/10 bg-white/70 px-4 py-3 text-sm font-semibold text-ink/55 shadow-[0_10px_30px_rgba(20,53,46,0.07)]">
           {t.search}
         </div>
@@ -296,42 +436,33 @@ function DashboardCenter({ t }: { t: (typeof copy)[Language] }) {
         </div>
       </div>
 
-      <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+      <div id="metrics" className="scroll-mt-24 mt-5 grid gap-3 sm:grid-cols-2 [@media(min-width:1180px)]:grid-cols-3 min-[1320px]:grid-cols-5">
         {t.metrics.map((metric, index) => (
-          <MetricCard key={metric.label} metric={metric} index={index} />
+          <MetricCard key={metric.label} language={language} metric={metric} index={index} />
         ))}
       </div>
 
-      <div className="mt-5 grid gap-4 xl:grid-cols-[1.35fr_0.85fr]">
+      <div id="trends" className="scroll-mt-24 mt-5 grid gap-4 xl:grid-cols-[1.35fr_0.85fr]">
         <GlassPanel className="min-h-[246px]">
           <PanelHeader title={t.panels.stressTrend} value={t.panels.balanced} />
-          <StressLineChart />
+          <StressLineChart language={language} />
         </GlassPanel>
 
         <GlassPanel className="min-h-[246px]">
-          <PanelHeader title={t.panels.hrv} value="52 ms" />
-          <BarChart />
+          <PanelHeader title={t.panels.hrv} value="52 ms · +4%" />
+          <HRVTrendCard language={language} />
         </GlassPanel>
       </div>
 
       <div className="mt-4 grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
         <GlassPanel className="min-h-[176px]">
           <PanelHeader title={t.panels.sleepTimeline} value="7h 32m" />
-          <SleepTimeline />
+          <SleepPanel language={language} />
         </GlassPanel>
 
         <GlassPanel className="min-h-[176px]">
           <PanelHeader title={t.panels.activityContext} value={t.panels.stepsValue} />
-          <div className="mt-5 grid grid-cols-7 gap-2">
-            {[34, 48, 42, 68, 58, 76, 62].map((height, index) => (
-              <div className="flex h-24 items-end rounded-full bg-pine/5 p-1" key={index}>
-                <div
-                  className="w-full rounded-full bg-gradient-to-t from-teal to-mint"
-                  style={{ height: `${height}%` }}
-                />
-              </div>
-            ))}
-          </div>
+          <ActivityBars />
         </GlassPanel>
       </div>
     </div>
@@ -340,7 +471,7 @@ function DashboardCenter({ t }: { t: (typeof copy)[Language] }) {
 
 function InsightPanel({ t }: { t: (typeof copy)[Language] }) {
   return (
-    <aside className="border-t border-pine/8 bg-white/52 p-5 lg:border-l lg:border-t-0">
+    <aside className="border-t border-pine/8 bg-white/52 p-5 [@media(min-width:1180px)]:border-l [@media(min-width:1180px)]:border-t-0">
       <div className="rounded-[1.7rem] bg-pine p-5 text-white shadow-soft">
         <div className="flex items-center justify-between">
           <p className="text-sm font-black">Apple Health</p>
@@ -359,7 +490,7 @@ function InsightPanel({ t }: { t: (typeof copy)[Language] }) {
         </div>
       </div>
 
-      <div className="liquid-glass liquid-glass-soft mt-4 rounded-[1.7rem] bg-mint/26 p-5">
+      <div id="settings" className="liquid-glass liquid-glass-soft mt-4 scroll-mt-24 rounded-[1.7rem] bg-mint/26 p-5">
         <p className="text-sm font-black text-pine">{t.localTitle}</p>
         <p className="mt-2 text-xs leading-5 text-ink/55">{t.localBody}</p>
       </div>
@@ -380,20 +511,39 @@ function StatusPill({ label, muted = false }: { label: string; muted?: boolean }
 }
 
 function MetricCard({
+  language,
   metric,
   index
 }: {
+  language: Language;
   metric: { label: string; value: string; tone: string; detail: string };
   index: number;
 }) {
+  const variant = ["stress", "recovery", "hrv", "sleep", "steps"][index] ?? "default";
+  const helper =
+    language === "zh"
+      ? ["趋势上行", "恢复良好", "高于基线", "Sleep Score 84", "活动稳定"][index]
+      : ["Trending up", "Good recovery", "Above baseline", "Sleep Score 84", "Steady activity"][index];
+
   return (
     <article
-      className={`liquid-glass liquid-glass-soft rounded-[1.35rem] border border-white/75 p-4 shadow-soft transition hover:-translate-y-1 ${metric.tone}`}
+      className={`liquid-glass liquid-glass-soft group rounded-[1.35rem] border border-white/75 p-4 shadow-soft transition duration-300 hover:-translate-y-1.5 hover:scale-[1.015] ${metric.tone}`}
       style={{ animation: `rise 620ms ease-out ${index * 80}ms both` }}
     >
-      <p className="text-[11px] font-black uppercase text-ink/45">{metric.label}</p>
-      <p className="mt-3 text-2xl font-black leading-none">{metric.value}</p>
-      <p className="mt-2 text-xs font-bold text-ink/48">{metric.detail}</p>
+      <p className="type-caption text-[11px] uppercase text-ink/45">{metric.label}</p>
+      <p className="type-metric-number metric-value-pulse mt-3 text-2xl leading-none transition duration-300 group-hover:text-teal">
+        {metric.value}
+      </p>
+      <div className="mt-2 flex items-center justify-between gap-3">
+        <p className="type-caption text-xs text-ink/48">{metric.detail}</p>
+        <span className="rounded-full bg-white/55 px-2 py-1 text-[10px] font-black text-pine/58">
+          {helper}
+        </span>
+      </div>
+      {variant === "stress" ? <MiniSparkline values={stressSparkData} color="#2f7e70" /> : null}
+      {variant === "recovery" ? <MiniSparkline values={recoverySparkData} color="#40a884" /> : null}
+      {variant === "hrv" ? <MiniSparkline values={hrvTrendData} color="#1d91a6" /> : null}
+      {variant === "sleep" ? <SleepMiniRings /> : null}
     </article>
   );
 }
@@ -411,42 +561,476 @@ function GlassPanel({ children, className = "" }: { children: ReactNode; classNa
 function PanelHeader({ title, value }: { title: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-4">
-      <h2 className="text-sm font-black text-pine">{title}</h2>
-      <span className="rounded-full bg-pine/7 px-3 py-1 text-xs font-black text-pine/62">{value}</span>
+      <h2 className="type-card-title text-sm text-pine">{title}</h2>
+      <span className="type-caption rounded-full bg-pine/7 px-3 py-1 text-xs text-pine/62">{value}</span>
     </div>
   );
 }
 
-function StressLineChart() {
+function StressLineChart({ language }: { language: Language }) {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
+  const points = stressTrendData.map((item, index) => ({
+    ...item,
+    x: 18 + index * 80,
+    y: 152 - ((item.score - 30) / 55) * 112
+  }));
+  const linePath = buildSmoothPath(points);
+  const areaPath = `${linePath} L ${points[points.length - 1].x} 170 L ${points[0].x} 170 Z`;
+  const hovered = hoveredIndex === null ? null : points[hoveredIndex];
+  const tooltip = hovered
+    ? {
+        x: Math.min(Math.max(hovered.x - 72, 8), 372),
+        y: Math.max(hovered.y - 78, 8),
+        status: getStressStatus(hovered.score, language),
+        date: language === "zh" ? hovered.date : `${hovered.day} ${hovered.date}`
+      }
+    : null;
+
   return (
-    <svg className="mt-5 h-44 w-full" viewBox="0 0 520 180" role="img" aria-label="7-day stress trend line chart">
-      <defs>
-        <linearGradient id="stressFill" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="#9ee8cb" stopOpacity="0.52" />
-          <stop offset="100%" stopColor="#9ee8cb" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      {[34, 68, 102, 136].map((y) => (
-        <line key={y} x1="0" x2="520" y1={y} y2={y} stroke="#14352e" strokeOpacity="0.08" />
-      ))}
+    <div className="relative mt-5 h-44 w-full" ref={ref}>
+      <svg className="h-full w-full" viewBox="0 0 520 180" role="img" aria-label="7-day stress trend line chart">
+        <defs>
+          <linearGradient id="stressLine" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stopColor="#8be4e8" />
+            <stop offset="45%" stopColor="#2f7e70" />
+            <stop offset="100%" stopColor="#f2cc4d" />
+          </linearGradient>
+          <linearGradient id="stressFill" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stopColor="#9ee8cb" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="#9ee8cb" stopOpacity="0" />
+          </linearGradient>
+          <filter id="tooltipShadow" x="-20%" y="-20%" width="140%" height="150%">
+            <feDropShadow dx="0" dy="8" floodColor="#14352e" floodOpacity="0.16" stdDeviation="8" />
+          </filter>
+        </defs>
+        {[34, 68, 102, 136].map((y) => (
+          <line key={y} x1="0" x2="520" y1={y} y2={y} stroke="#14352e" strokeOpacity="0.08" />
+        ))}
+        <path d={areaPath} fill="url(#stressFill)" />
+        <path
+          className={isVisible ? "animate-draw" : "chart-line-hidden"}
+          d={linePath}
+          fill="none"
+          stroke="url(#stressLine)"
+          strokeDasharray="620"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="5"
+        />
+        {points.map((point, index) => {
+          const isHovered = hoveredIndex === index;
+
+          return (
+            <g
+              className="cursor-pointer transition-transform duration-300"
+              key={point.date}
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
+              <circle cx={point.x} cy={point.y} r="16" fill="transparent" />
+              <circle
+                className="transition-all duration-300"
+                cx={point.x}
+                cy={point.y}
+                fill={isHovered ? "#20493f" : "#f2cc4d"}
+                r={isHovered ? "9" : "6"}
+                stroke="#fff"
+                strokeWidth="4"
+              />
+            </g>
+          );
+        })}
+        {hovered && tooltip ? (
+          <g className="animate-tooltip-svg pointer-events-none" filter="url(#tooltipShadow)">
+            <rect
+              fill="rgba(255,255,255,0.82)"
+              height="58"
+              rx="14"
+              stroke="rgba(255,255,255,0.78)"
+              strokeWidth="1"
+              width="140"
+              x={tooltip.x}
+              y={tooltip.y}
+            />
+            <text fill="#14352e" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="11" fontWeight="800" x={tooltip.x + 14} y={tooltip.y + 18}>
+              {tooltip.date}
+            </text>
+            <text fill="#20493f" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="20" fontWeight="900" x={tooltip.x + 14} y={tooltip.y + 41}>
+              {hovered.score}
+            </text>
+            <text fill="#2f7e70" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="11" fontWeight="800" x={tooltip.x + 52} y={tooltip.y + 39}>
+              {tooltip.status}
+            </text>
+          </g>
+        ) : null}
+      </svg>
+    </div>
+  );
+}
+
+function HRVTrendCard({ language }: { language: Language }) {
+  return (
+    <div className="mt-5">
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <p className="type-metric-number text-4xl text-pine">52</p>
+          <p className="type-caption text-xs text-ink/45">
+            ms · {language === "zh" ? "今日 07:16" : "today 07:16"}
+          </p>
+        </div>
+        <div className="rounded-2xl bg-mint/35 px-3 py-2 text-right">
+          <p className="type-caption text-xs text-pine">+4%</p>
+          <p className="text-[11px] font-bold text-ink/45">
+            {language === "zh" ? "高于基线" : "above baseline"}
+          </p>
+        </div>
+      </div>
+      <HRVTrendChart language={language} />
+    </div>
+  );
+}
+
+function HRVTrendChart({ language }: { language: Language }) {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
+  const baseline = 50;
+  const min = 42;
+  const max = 58;
+  const points = hrvTrendPoints.map((point, index) => ({
+    ...point,
+    x: 18 + index * 38,
+    y: 96 - ((point.value - min) / (max - min)) * 76
+  }));
+  const path = buildSmoothPath(points);
+  const baselineY = 96 - ((baseline - min) / (max - min)) * 76;
+  const hovered = hoveredIndex === null ? null : points[hoveredIndex];
+  const tooltip = hovered
+    ? {
+        x: Math.min(Math.max(hovered.x - 68, 8), 374),
+        y: Math.max(hovered.y - 76, 6),
+        status:
+          hovered.value >= baseline
+            ? language === "zh"
+              ? "高于基线"
+              : "above baseline"
+            : language === "zh"
+              ? "低于基线"
+              : "below baseline"
+      }
+    : null;
+
+  return (
+    <div className="mt-6" ref={ref}>
+      <svg className="h-36 w-full overflow-visible" viewBox="0 0 280 132" aria-label="HRV seven day trend with baseline">
+        <defs>
+          <linearGradient id="hrvLine" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stopColor="#8be4e8" />
+            <stop offset="100%" stopColor="#20493f" />
+          </linearGradient>
+          <linearGradient id="hrvGlow" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stopColor="#8be4e8" stopOpacity="0.32" />
+            <stop offset="100%" stopColor="#8be4e8" stopOpacity="0" />
+          </linearGradient>
+          <filter id="hrvTooltipShadow" x="-20%" y="-20%" width="140%" height="150%">
+            <feDropShadow dx="0" dy="8" floodColor="#14352e" floodOpacity="0.16" stdDeviation="8" />
+          </filter>
+        </defs>
+        <line
+          className="baseline-dash"
+          stroke="#20493f"
+          strokeDasharray="6 7"
+          strokeLinecap="round"
+          strokeOpacity="0.28"
+          strokeWidth="2"
+          x1="10"
+          x2="270"
+          y1={baselineY}
+          y2={baselineY}
+        />
+        <g className="pointer-events-none">
+          <rect
+            fill="rgba(255,255,255,0.74)"
+            height="20"
+            rx="10"
+            stroke="rgba(255,255,255,0.78)"
+            strokeWidth="1"
+            width={language === "zh" ? "76" : "94"}
+            x={language === "zh" ? "190" : "172"}
+            y={baselineY - 28}
+          />
+          <text
+            fill="#20493f"
+            fontFamily="Nunito Sans, Noto Sans SC, sans-serif"
+            fontSize="10"
+            fontWeight="900"
+            opacity="0.68"
+            x={language === "zh" ? "202" : "184"}
+            y={baselineY - 14}
+          >
+            {language === "zh" ? "基线 50 ms" : "baseline 50 ms"}
+          </text>
+        </g>
+        <path d={`${path} L ${points[points.length - 1].x} 120 L ${points[0].x} 120 Z`} fill="url(#hrvGlow)" />
+        <path
+          className={isVisible ? "hrv-line-draw" : "chart-line-hidden"}
+          d={path}
+          fill="none"
+          stroke="url(#hrvLine)"
+          strokeDasharray="280"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="5"
+        />
+        {points.map((point, index) => {
+          const isHovered = hoveredIndex === index;
+
+          return (
+            <g
+              className="cursor-pointer"
+              key={point.date}
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
+              <circle cx={point.x} cy={point.y} fill="transparent" r="15" />
+              <circle
+                className={`${isVisible ? "hrv-point-pop" : "chart-point-hidden"} transition-all duration-300`}
+                cx={point.x}
+                cy={point.y}
+                fill={point.value >= baseline ? "#8be4e8" : "#f2cc4d"}
+                r={isHovered ? "7.5" : "4.8"}
+                stroke="#fff"
+                strokeWidth="3"
+                style={{ animationDelay: `${240 + index * 55}ms` }}
+              />
+            </g>
+          );
+        })}
+        {hovered && tooltip ? (
+          <g className="animate-tooltip-svg pointer-events-none" filter="url(#hrvTooltipShadow)">
+            <rect
+              fill="rgba(255,255,255,0.84)"
+              height="58"
+              rx="14"
+              stroke="rgba(255,255,255,0.78)"
+              strokeWidth="1"
+              width="132"
+              x={tooltip.x}
+              y={tooltip.y}
+            />
+            <text fill="#14352e" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="11" fontWeight="800" x={tooltip.x + 12} y={tooltip.y + 18}>
+              {hovered.date} · {hovered.time}
+            </text>
+            <text fill="#20493f" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="20" fontWeight="900" x={tooltip.x + 12} y={tooltip.y + 42}>
+              {hovered.value}
+            </text>
+            <text fill="#2f7e70" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="11" fontWeight="800" x={tooltip.x + 48} y={tooltip.y + 40}>
+              {tooltip.status}
+            </text>
+          </g>
+        ) : null}
+      </svg>
+    </div>
+  );
+}
+
+function SleepPanel({ language }: { language: Language }) {
+  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
+
+  return (
+    <div className="mt-4 grid gap-5 sm:grid-cols-[128px_minmax(0,1fr)]" ref={ref}>
+      <div className="flex justify-center">
+        <MultiRing score={84} />
+      </div>
+      <div className="space-y-2">
+        <SleepStage color="bg-sun" delay={0} isVisible={isVisible} label={language === "zh" ? "清醒" : "Awake"} percent={18} value="18m" />
+        <SleepStage color="bg-aqua" delay={80} isVisible={isVisible} label="REM" percent={58} value="1h 32m" />
+        <SleepStage color="bg-teal" delay={160} isVisible={isVisible} label="Core" percent={86} value="4h 44m" />
+        <SleepStage color="bg-pine" delay={240} isVisible={isVisible} label="Deep" percent={42} value="58m" />
+        <p className="type-caption pt-1 text-xs text-ink/48">
+          {language === "zh" ? "今日睡眠状态：恢复良好" : "Sleep state: restorative"}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function MiniSparkline({
+  className = "mt-4 h-10",
+  color,
+  values
+}: {
+  className?: string;
+  color: string;
+  values: number[];
+}) {
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const points = values.map((value, index) => ({
+    x: 8 + index * (104 / Math.max(values.length - 1, 1)),
+    y: 38 - ((value - min) / Math.max(max - min, 1)) * 28
+  }));
+  const path = buildSmoothPath(points);
+
+  return (
+    <svg className={`w-full ${className}`} viewBox="0 0 120 46" aria-hidden="true">
       <path
-        d="M12 136 C 72 118, 82 76, 138 86 S 220 134, 280 92 S 372 48, 430 72 S 486 104, 508 76 L 508 170 L 12 170 Z"
-        fill="url(#stressFill)"
-      />
-      <path
-        className="animate-draw"
-        d="M12 136 C 72 118, 82 76, 138 86 S 220 134, 280 92 S 372 48, 430 72 S 486 104, 508 76"
+        className="animate-draw-fast"
+        d={path}
         fill="none"
-        stroke="#2f7e70"
-        strokeDasharray="440"
+        stroke={color}
+        strokeDasharray="160"
         strokeLinecap="round"
-        strokeWidth="7"
+        strokeLinejoin="round"
+        strokeWidth="4"
       />
-      {[12, 138, 280, 430, 508].map((x, index) => (
-        <circle key={x} cx={x} cy={[136, 86, 92, 72, 76][index]} r="6" fill="#f2cc4d" stroke="#fff" strokeWidth="4" />
-      ))}
+      <circle cx={points[points.length - 1].x} cy={points[points.length - 1].y} r="4.5" fill={color} />
     </svg>
   );
+}
+
+function SleepMiniRings() {
+  return (
+    <div className="mt-4 flex items-center gap-3">
+      <MultiRing compact score={84} />
+      <div className="type-caption text-[11px] leading-5 text-ink/50">
+        <p>REM 1h 32m</p>
+        <p>Deep 58m</p>
+      </div>
+    </div>
+  );
+}
+
+function MultiRing({ compact = false, score }: { compact?: boolean; score: number }) {
+  const size = compact ? 62 : 118;
+  const center = size / 2;
+  const rings = [
+    { color: "#8be4e8", radius: compact ? 27 : 52, value: 0.78 },
+    { color: "#2f7e70", radius: compact ? 21 : 42, value: 0.72 },
+    { color: "#20493f", radius: compact ? 15 : 32, value: 0.56 }
+  ];
+
+  return (
+    <div
+      className="group relative shrink-0 transition duration-300 hover:-translate-y-1 hover:scale-[1.03]"
+      style={{ height: size, width: size }}
+    >
+      <svg className="block" height={size} viewBox={`0 0 ${size} ${size}`} width={size}>
+        {rings.map((ring, index) => {
+          const circumference = 2 * Math.PI * ring.radius;
+
+          return (
+            <g key={ring.color} style={{ animationDelay: `${index * 80}ms` }}>
+              <circle
+                cx={center}
+                cy={center}
+                fill="none"
+                r={ring.radius}
+                stroke="rgba(20,53,46,0.08)"
+                strokeWidth={compact ? 4 : 7}
+              />
+              <circle
+                className="ring-progress"
+                cx={center}
+                cy={center}
+                fill="none"
+                r={ring.radius}
+                stroke={ring.color}
+                strokeDasharray={circumference}
+                strokeDashoffset={circumference * (1 - ring.value)}
+                strokeLinecap="round"
+                strokeWidth={compact ? 4 : 7}
+                transform={`rotate(-90 ${center} ${center})`}
+              />
+            </g>
+          );
+        })}
+      </svg>
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+        <div className="max-w-[54px] text-center leading-none">
+          <p className={`type-metric-number text-pine ${compact ? "text-sm" : "text-3xl"}`}>{score}</p>
+        </div>
+      </div>
+      {!compact ? (
+        <p className="type-caption absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap text-[10px] text-ink/42">
+          Sleep Score
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function SleepStage({
+  color,
+  delay,
+  isVisible,
+  label,
+  percent,
+  value
+}: {
+  color: string;
+  delay: number;
+  isVisible: boolean;
+  label: string;
+  percent: number;
+  value: string;
+}) {
+  return (
+    <div
+      className={`${isVisible ? "sleep-stage-cell" : "sleep-stage-hidden"} group rounded-2xl bg-pine/5 px-3 py-2 transition duration-300 hover:-translate-y-0.5 hover:bg-white/58 hover:shadow-soft`}
+      style={{ animationDelay: `${delay}ms` }}
+    >
+      <div className="flex items-center justify-between">
+        <span className="flex items-center gap-2 text-xs font-bold text-ink/55">
+          <span className={`h-2.5 w-2.5 rounded-full ${color} transition duration-300 group-hover:scale-125`} />
+          {label}
+        </span>
+        <span className="type-metric-number text-sm text-pine">{value}</span>
+      </div>
+      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-pine/8">
+        <div
+          className={`${isVisible ? "sleep-stage-fill" : "sleep-stage-fill-hidden"} h-full rounded-full ${color}`}
+          style={{ "--stage-width": `${percent}%`, animationDelay: `${delay + 120}ms` } as CSSProperties}
+        />
+      </div>
+    </div>
+  );
+}
+
+function ActivityBars() {
+  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
+
+  return (
+    <div className="mt-5 grid grid-cols-7 gap-2" ref={ref}>
+      {[34, 48, 42, 68, 58, 76, 62].map((height, index) => (
+        <div
+          className="group flex h-24 items-end rounded-full bg-pine/5 p-1 transition duration-300 hover:-translate-y-1 hover:bg-white/55"
+          key={index}
+        >
+          <div
+            className={`${isVisible ? "activity-bar" : "activity-bar-hidden"} w-full rounded-full bg-gradient-to-t from-teal to-mint transition duration-300 group-hover:scale-x-110`}
+            style={{ "--bar-height": `${height}%`, animationDelay: `${index * 70}ms` } as CSSProperties}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function buildSmoothPath(points: Array<{ x: number; y: number }>) {
+  if (points.length === 0) {
+    return "";
+  }
+
+  return points.reduce((path, point, index) => {
+    if (index === 0) {
+      return `M ${point.x} ${point.y}`;
+    }
+
+    const previous = points[index - 1];
+    const controlX = (previous.x + point.x) / 2;
+    return `${path} C ${controlX} ${previous.y}, ${controlX} ${point.y}, ${point.x} ${point.y}`;
+  }, "");
 }
 
 function BarChart() {
@@ -496,7 +1080,7 @@ function InsightRow({ label, value }: { label: string; value: string }) {
 
 function FeatureStrip({ features }: { features: string[][] }) {
   return (
-    <section className="relative z-10 mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-6" aria-label="StressWatch features">
+    <section className="scroll-reveal relative z-10 mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-6" aria-label="StressWatch features">
       {features.map(([title, body], index) => (
         <article
           className="liquid-glass liquid-glass-soft rounded-[1.5rem] border border-white/72 bg-white/48 p-5 shadow-soft transition hover:-translate-y-1 hover:bg-white/68"
@@ -516,7 +1100,7 @@ function Disclaimer({ text }: { text: string }) {
   return (
     <section
       id="privacy"
-      className="liquid-glass liquid-glass-soft relative z-10 mt-6 rounded-[1.5rem] border border-pine/8 bg-white/42 p-5 text-sm leading-7 text-ink/64"
+      className="liquid-glass liquid-glass-soft scroll-reveal relative z-10 mt-6 scroll-mt-24 rounded-[1.5rem] border border-pine/8 bg-white/42 p-5 text-sm leading-7 text-ink/64"
     >
       {text}
     </section>

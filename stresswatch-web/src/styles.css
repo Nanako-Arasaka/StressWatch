@@ -21,6 +21,7 @@ html {
 body {
   margin: 0;
   min-width: 320px;
+  font-family: var(--font-body);
 }
 
 .liquid-glass {
@@ -68,6 +69,219 @@ body {
 button,
 a {
   -webkit-tap-highlight-color: transparent;
+}
+
+.chart-tooltip {
+  animation: tooltipFade 220ms ease-out both;
+}
+
+.animate-tooltip-svg {
+  animation: svgTooltipFade 220ms ease-out both;
+}
+
+.animate-draw-fast {
+  animation: drawFast 520ms ease-out both;
+}
+
+.chart-line-hidden {
+  opacity: 0;
+  stroke-dashoffset: 620;
+}
+
+.chart-point-hidden {
+  opacity: 0;
+  transform: scale(0.4);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.ring-progress {
+  animation: ringLoad 520ms ease-out both;
+}
+
+.sleep-stage-hidden {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+}
+
+.sleep-stage-cell {
+  animation: sleepStageIn 360ms ease-out both;
+}
+
+.sleep-stage-fill-hidden {
+  width: var(--stage-width);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.sleep-stage-fill {
+  animation: sleepStageFill 520ms ease-out both;
+  width: var(--stage-width);
+  transform-origin: left center;
+}
+
+.hrv-line-draw {
+  animation: hrvLineDraw 620ms ease-out both;
+}
+
+.baseline-dash {
+  animation: baselineDrift 1.8s linear infinite;
+}
+
+.hrv-point-pop {
+  animation: pointPop 320ms ease-out both;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.activity-bar {
+  animation: activityBarRise 520ms ease-out both;
+  height: var(--bar-height);
+  transform-origin: bottom center;
+}
+
+.activity-bar-hidden {
+  height: var(--bar-height);
+  opacity: 0;
+  transform: scaleY(0);
+  transform-origin: bottom center;
+}
+
+.metric-value-pulse {
+  background: linear-gradient(90deg, #14352e, #2f7e70, #14352e);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: metricTone 2.4s ease-in-out infinite;
+}
+
+.scroll-reveal {
+  animation: sectionReveal 520ms ease-out both;
+}
+
+@supports (animation-timeline: view()) {
+  .scroll-reveal {
+    animation-timeline: view();
+    animation-range: entry 0% cover 28%;
+  }
+}
+
+@keyframes tooltipFade {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(6px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+@keyframes svgTooltipFade {
+  from {
+    opacity: 0;
+    transform: translateY(5px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes drawFast {
+  from {
+    stroke-dashoffset: 160;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes ringLoad {
+  from {
+    stroke-dashoffset: 320;
+  }
+}
+
+@keyframes sleepStageIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes sleepStageFill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes hrvLineDraw {
+  from {
+    stroke-dashoffset: 280;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes baselineDrift {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -26;
+  }
+}
+
+@keyframes pointPop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes activityBarRise {
+  from {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes metricTone {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes sectionReveal {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 1180px) {
