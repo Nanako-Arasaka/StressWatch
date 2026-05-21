@@ -1,0 +1,49 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="glass" x1="85" y1="64" x2="426" y2="445" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#CFFFF0"/>
+      <stop offset="0.52" stop-color="#71D5BC"/>
+      <stop offset="1" stop-color="#0D5C55"/>
+    </linearGradient>
+    <linearGradient id="leaf" x1="174" y1="150" x2="338" y2="361" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F3FFF7"/>
+      <stop offset="0.46" stop-color="#B8F4D2"/>
+      <stop offset="1" stop-color="#309D86"/>
+    </linearGradient>
+    <linearGradient id="leafDark" x1="169" y1="362" x2="354" y2="162" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0D655E"/>
+      <stop offset="1" stop-color="#BFFFF0"/>
+    </linearGradient>
+    <filter id="softShadow" x="36" y="42" width="440" height="434" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="22" stdDeviation="28" flood-color="#063E39" flood-opacity="0.34"/>
+    </filter>
+    <filter id="lineGlow" x="73" y="175" width="366" height="177" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#0A4C46" flood-opacity="0.35"/>
+    </filter>
+    <radialGradient id="shine" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(166 139) rotate(51.9) scale(214 189)">
+      <stop stop-color="white" stop-opacity="0.86"/>
+      <stop offset="0.5" stop-color="white" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <g filter="url(#softShadow)">
+    <rect x="80" y="72" width="352" height="352" rx="74" fill="url(#glass)"/>
+    <rect x="84" y="76" width="344" height="344" rx="70" stroke="white" stroke-opacity="0.76" stroke-width="8"/>
+    <rect x="94" y="86" width="324" height="324" rx="62" stroke="#BFFFEF" stroke-opacity="0.55" stroke-width="2"/>
+    <rect x="80" y="72" width="352" height="352" rx="74" fill="url(#shine)"/>
+  </g>
+
+  <path d="M172 356C177 275 207 219 269 194C331 169 366 142 382 116C390 204 346 264 269 292C224 309 192 330 172 356Z" fill="url(#leaf)" stroke="white" stroke-opacity="0.55" stroke-width="4"/>
+  <path d="M171 356C218 295 269 257 344 164C309 246 258 302 171 356Z" fill="url(#leafDark)" opacity="0.68"/>
+  <path d="M193 343C234 285 291 244 355 172" stroke="white" stroke-opacity="0.55" stroke-width="5" stroke-linecap="round"/>
+
+  <g filter="url(#lineGlow)">
+    <path d="M101 256H184C191 256 197 244 202 239C206 235 210 236 213 242L226 270C231 281 244 280 248 268L267 201C271 187 284 187 287 202L309 312C312 327 326 328 331 314L347 260C351 247 364 246 369 259L377 278C381 287 390 288 397 281L414 264H439" stroke="white" stroke-width="19" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M101 256H184C191 256 197 244 202 239C206 235 210 236 213 242L226 270C231 281 244 280 248 268L267 201C271 187 284 187 287 202L309 312C312 327 326 328 331 314L347 260C351 247 364 246 369 259L377 278C381 287 390 288 397 281L414 264H439" stroke="#DFFFF5" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <circle cx="148" cy="154" r="12" fill="white" fill-opacity="0.72"/>
+  <circle cx="128" cy="218" r="15" fill="white" fill-opacity="0.34"/>
+  <circle cx="358" cy="343" r="9" fill="#CFFFF0" fill-opacity="0.62"/>
+</svg>

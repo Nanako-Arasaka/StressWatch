@@ -31,7 +31,7 @@ export default {
       keyframes: {
         float: {
           "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-14px)" }
+          "50%": { transform: "translateY(-2px)" }
         },
         rise: {
           "0%": { opacity: "0", transform: "translateY(22px)" },
@@ -43,7 +43,7 @@ export default {
         }
       },
       animation: {
-        float: "float 6s ease-in-out infinite",
+        float: "float 14s ease-in-out infinite",
         rise: "rise 700ms ease-out both",
         draw: "draw 1.4s ease-out both"
       }

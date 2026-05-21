@@ -27,6 +27,15 @@ const hrvTrendPoints = [
 ];
 const stressSparkData = [38, 44, 51, 57, 62, 60, 68];
 const recoverySparkData = [62, 66, 64, 70, 72, 76, 74];
+const activityWeekData = [
+  { day: "M", date: "5/15", energy: 410, exercise: 28, stand: 10, energyGoal: 500, exerciseGoal: 30, standGoal: 12 },
+  { day: "T", date: "5/16", energy: 520, exercise: 36, stand: 12, energyGoal: 500, exerciseGoal: 30, standGoal: 12 },
+  { day: "W", date: "5/17", energy: 455, exercise: 24, stand: 11, energyGoal: 500, exerciseGoal: 30, standGoal: 12 },
+  { day: "T", date: "5/18", energy: 610, exercise: 42, stand: 13, energyGoal: 500, exerciseGoal: 30, standGoal: 12 },
+  { day: "F", date: "5/19", energy: 575, exercise: 34, stand: 12, energyGoal: 500, exerciseGoal: 30, standGoal: 12 },
+  { day: "S", date: "5/20", energy: 690, exercise: 48, stand: 14, energyGoal: 500, exerciseGoal: 30, standGoal: 12 },
+  { day: "S", date: "5/21", energy: 620, exercise: 39, stand: 13, energyGoal: 500, exerciseGoal: 30, standGoal: 12 }
+];
 
 function getStressStatus(score: number, language: Language) {
   if (score <= 35) {
@@ -246,7 +255,7 @@ function App() {
 
   return (
     <main
-      className="font-apple-body min-h-screen overflow-hidden bg-[radial-gradient(circle_at_14%_10%,rgba(158,232,203,0.72),transparent_28%),linear-gradient(135deg,#f6fbf6_0%,#dff7ef_46%,#eefcfa_100%)] text-ink"
+      className="font-apple-body min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_14%_10%,rgba(158,232,203,0.72),transparent_28%),linear-gradient(135deg,#f6fbf6_0%,#dff7ef_46%,#eefcfa_100%)] text-ink"
       lang={language === "zh" ? "zh-CN" : "en"}
     >
       <section className="relative mx-auto flex min-h-screen w-full max-w-[1440px] flex-col px-5 py-8 sm:px-8 lg:px-12">
@@ -255,7 +264,7 @@ function App() {
 
         <LanguageSwitch language={language} setLanguage={setLanguage} label={t.languageLabel} />
 
-        <div className="relative z-10 grid flex-1 items-center gap-10 [@media(min-width:1180px)]:grid-cols-[minmax(300px,0.58fr)_minmax(720px,1.42fr)]">
+        <div className="relative z-10 grid flex-1 items-start gap-10">
           <HeroCopy t={t} />
           <DashboardMockup activeSection={activeSection} language={language} setActiveSection={setActiveSection} t={t} />
         </div>
@@ -308,9 +317,7 @@ function LanguageSwitch({
 function HeroCopy({ t }: { t: (typeof copy)[Language] }) {
   return (
     <div className="max-w-xl animate-rise [@media(min-width:1180px)]:max-w-[320px] min-[1320px]:max-w-md min-[1500px]:max-w-xl">
-      <div className="mb-7 flex h-14 w-14 items-center justify-center rounded-3xl bg-pine text-2xl font-black text-mint shadow-soft">
-        S
-      </div>
+      <LogoMark className="mb-7 h-16 w-16 shadow-soft" />
       <h1 className="type-hero-title max-w-[10ch] text-6xl leading-[0.92] text-ink sm:text-7xl [@media(min-width:1180px)]:text-5xl min-[1320px]:text-6xl min-[1500px]:text-8xl">
         {t.heroTitle}
       </h1>
@@ -350,10 +357,10 @@ function DashboardMockup({
   return (
     <section
       id="dashboard"
-      className="dashboard-shell liquid-glass liquid-glass-strong relative z-10 animate-float rounded-[2.35rem] border border-white/70 bg-white/58 p-3 shadow-glass sm:p-4"
+      className="dashboard-shell liquid-glass liquid-glass-strong relative z-10 w-full max-w-[760px] justify-self-start animate-float rounded-[2.35rem] border border-white/70 bg-white/58 p-3 shadow-glass sm:p-4"
       aria-label="StressWatch dashboard mockup"
     >
-      <div className="grid min-h-[620px] overflow-hidden rounded-[1.8rem] bg-[#f8fcf8]/88 shadow-[inset_0_1px_0_rgba(255,255,255,0.82)] [@media(min-width:1180px)]:grid-cols-[164px_minmax(0,1fr)_230px]">
+      <div className="grid min-h-[620px] overflow-visible rounded-[1.8rem] bg-[#f8fcf8]/88 shadow-[inset_0_1px_0_rgba(255,255,255,0.82)]">
         <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} t={t} />
         <DashboardCenter language={language} t={t} />
         <InsightPanel t={t} />
@@ -377,25 +384,23 @@ function Sidebar({
   };
 
   return (
-    <aside className="flex flex-col bg-pine px-5 py-6 text-white max-[1179px]:rounded-t-[1.8rem] [@media(min-width:1180px)]:rounded-l-[1.8rem]">
+    <aside className="flex flex-col rounded-t-[1.8rem] bg-pine px-5 py-6 text-white">
       <div className="flex items-center gap-3">
-        <div className="grid h-11 w-11 place-items-center rounded-2xl bg-mint text-lg font-black text-pine">
-          S
-        </div>
+        <LogoMark className="h-12 w-12" />
         <div>
-          <p className="text-xs font-black min-[1320px]:text-sm">StressWatch</p>
+          <p className="text-sm font-black">StressWatch</p>
           <p className="text-xs text-white/50">{t.healthKit}</p>
         </div>
       </div>
 
-      <nav className="mt-10 space-y-2 max-[1179px]:mt-6 max-[1179px]:grid max-[1179px]:grid-cols-2 max-[1179px]:gap-2 max-[1179px]:space-y-0 min-[640px]:grid-cols-5">
+      <nav className="mt-6 grid grid-cols-2 gap-2 min-[640px]:grid-cols-5">
         {t.nav.map((item, index) => {
           const section = sectionIds[index];
           const isActive = activeSection === section;
 
           return (
           <button
-            className={`group flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left text-xs font-bold transition duration-300 hover:scale-[1.02] hover:bg-white/12 min-[1320px]:text-sm ${
+            className={`group flex w-full items-center justify-center gap-2 rounded-2xl px-3 py-3 text-center text-xs font-bold transition duration-300 hover:scale-[1.02] hover:bg-white/12 min-[640px]:justify-start min-[640px]:text-left ${
               isActive ? "bg-white text-pine shadow-soft" : "text-white/72"
             }`}
             key={item}
@@ -415,11 +420,22 @@ function Sidebar({
         })}
       </nav>
 
-      <div className="mt-auto rounded-3xl bg-white/10 p-4 text-xs leading-5 text-white/62 max-[1179px]:hidden">
+      <div className="hidden">
         {t.localFirst}
         <div className="mt-4 h-20 rounded-2xl bg-[radial-gradient(circle_at_50%_35%,rgba(242,204,77,0.45),transparent_34%),linear-gradient(140deg,rgba(158,232,203,0.32),rgba(139,228,232,0.18))]" />
       </div>
     </aside>
+  );
+}
+
+function LogoMark({ className = "" }: { className?: string }) {
+  return (
+    <img
+      alt="StressWatch logo"
+      className={`rounded-[1.15rem] object-cover ${className}`}
+      draggable={false}
+      src="./stresswatch-logo.svg"
+    />
   );
 }
 
@@ -454,15 +470,15 @@ function DashboardCenter({ language, t }: { language: Language; t: (typeof copy)
         </GlassPanel>
       </div>
 
-      <div className="mt-4 grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
+      <div className="mt-4 grid gap-4">
         <GlassPanel className="min-h-[176px]">
           <PanelHeader title={t.panels.sleepTimeline} value="7h 32m" />
           <SleepPanel language={language} />
         </GlassPanel>
 
-        <GlassPanel className="min-h-[176px]">
+        <GlassPanel className="min-h-[236px]">
           <PanelHeader title={t.panels.activityContext} value={t.panels.stepsValue} />
-          <ActivityBars />
+          <ActivityPanel language={language} />
         </GlassPanel>
       </div>
     </div>
@@ -471,7 +487,7 @@ function DashboardCenter({ language, t }: { language: Language; t: (typeof copy)
 
 function InsightPanel({ t }: { t: (typeof copy)[Language] }) {
   return (
-    <aside className="border-t border-pine/8 bg-white/52 p-5 [@media(min-width:1180px)]:border-l [@media(min-width:1180px)]:border-t-0">
+    <aside className="border-t border-pine/8 bg-white/52 p-5">
       <div className="rounded-[1.7rem] bg-pine p-5 text-white shadow-soft">
         <div className="flex items-center justify-between">
           <p className="text-sm font-black">Apple Health</p>
@@ -997,22 +1013,141 @@ function SleepStage({
   );
 }
 
-function ActivityBars() {
+function ActivityPanel({ language }: { language: Language }) {
+  const [selectedIndex, setSelectedIndex] = useState(activityWeekData.length - 1);
+  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
+  const selectedDay = activityWeekData[selectedIndex];
+  const averages = activityWeekData.reduce(
+    (total, day) => ({
+      energy: total.energy + day.energy,
+      exercise: total.exercise + day.exercise,
+      stand: total.stand + day.stand
+    }),
+    { energy: 0, exercise: 0, stand: 0 }
+  );
+  const weeklyAverage = {
+    energy: Math.round(averages.energy / activityWeekData.length),
+    exercise: Math.round(averages.exercise / activityWeekData.length),
+    stand: Math.round(averages.stand / activityWeekData.length)
+  };
+
+  return (
+    <div className="mt-5 grid gap-5 min-[700px]:grid-cols-[1.15fr_0.85fr]" ref={ref}>
+      <ActivityBars selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} />
+
+      <div className="grid gap-3">
+        <div
+          className={`liquid-glass liquid-glass-soft rounded-[1.2rem] bg-white/58 p-4 ${
+            isVisible ? "scroll-reveal" : "opacity-0"
+          }`}
+        >
+          <p className="type-caption text-[11px] uppercase text-ink/42">
+            {language === "zh" ? "本周平均" : "Weekly average"}
+          </p>
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            <ActivityStat label={language === "zh" ? "活动千焦" : "kJ"} value={`${weeklyAverage.energy}`} />
+            <ActivityStat label={language === "zh" ? "锻炼" : "Exercise"} value={`${weeklyAverage.exercise}m`} />
+            <ActivityStat label={language === "zh" ? "站立" : "Stand"} value={`${weeklyAverage.stand}`} />
+          </div>
+        </div>
+
+        <div
+          className={`rounded-[1.2rem] bg-pine/5 p-4 ${isVisible ? "scroll-reveal" : "opacity-0"}`}
+          style={{ animationDelay: "120ms" }}
+        >
+          <div className="flex items-center justify-between gap-3">
+            <p className="type-card-title text-sm text-pine">
+              {language === "zh" ? `${selectedDay.date} 活动` : `${selectedDay.date} activity`}
+            </p>
+            <span className="rounded-full bg-mint/45 px-3 py-1 text-[11px] font-black text-pine">
+              {selectedDay.day}
+            </span>
+          </div>
+          <div className="mt-3 space-y-2">
+            <GoalRow label={language === "zh" ? "活动千焦" : "Active energy"} value={`${selectedDay.energy} kJ`} goal={`${selectedDay.energyGoal} kJ`} ratio={selectedDay.energy / selectedDay.energyGoal} />
+            <GoalRow label={language === "zh" ? "锻炼时长" : "Exercise"} value={`${selectedDay.exercise} min`} goal={`${selectedDay.exerciseGoal} min`} ratio={selectedDay.exercise / selectedDay.exerciseGoal} />
+            <GoalRow label={language === "zh" ? "站立次数" : "Stand"} value={`${selectedDay.stand} h`} goal={`${selectedDay.standGoal} h`} ratio={selectedDay.stand / selectedDay.standGoal} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ActivityStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-pine/5 px-3 py-3 text-center">
+      <p className="type-metric-number text-lg text-pine">{value}</p>
+      <p className="type-caption mt-1 text-[10px] text-ink/42">{label}</p>
+    </div>
+  );
+}
+
+function GoalRow({ goal, label, ratio, value }: { goal: string; label: string; ratio: number; value: string }) {
+  return (
+    <div>
+      <div className="flex items-center justify-between gap-3 text-xs">
+        <span className="font-bold text-ink/52">{label}</span>
+        <span className="type-metric-number text-pine">
+          {value}
+          <span className="ml-1 text-[10px] font-bold text-ink/38">/ {goal}</span>
+        </span>
+      </div>
+      <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-pine/8">
+        <div className="h-full rounded-full bg-gradient-to-r from-teal to-mint" style={{ width: `${Math.min(ratio, 1) * 100}%` }} />
+      </div>
+    </div>
+  );
+}
+
+function ActivityBars({
+  selectedIndex,
+  setSelectedIndex
+}: {
+  selectedIndex: number;
+  setSelectedIndex: (index: number) => void;
+}) {
   const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
 
   return (
-    <div className="mt-5 grid grid-cols-7 gap-2" ref={ref}>
-      {[34, 48, 42, 68, 58, 76, 62].map((height, index) => (
-        <div
-          className="group flex h-24 items-end rounded-full bg-pine/5 p-1 transition duration-300 hover:-translate-y-1 hover:bg-white/55"
-          key={index}
-        >
-          <div
-            className={`${isVisible ? "activity-bar" : "activity-bar-hidden"} w-full rounded-full bg-gradient-to-t from-teal to-mint transition duration-300 group-hover:scale-x-110`}
-            style={{ "--bar-height": `${height}%`, animationDelay: `${index * 70}ms` } as CSSProperties}
-          />
-        </div>
-      ))}
+    <div ref={ref}>
+      <div className="grid grid-cols-7 gap-2">
+        {activityWeekData.map((day, index) => {
+          const height = (day.energy / 720) * 100;
+          const isSelected = selectedIndex === index;
+
+          return (
+            <button
+              aria-label={`${day.date} activity ${day.energy} kJ`}
+              className={`group flex h-32 items-end rounded-full p-1 transition duration-300 hover:-translate-y-1 hover:bg-white/55 ${
+                isSelected ? "bg-mint/35 shadow-soft" : "bg-pine/5"
+              }`}
+              key={`${day.date}-${index}`}
+              onClick={() => setSelectedIndex(index)}
+              type="button"
+            >
+              <div
+                className={`${isVisible ? "activity-bar" : "activity-bar-hidden"} w-full rounded-full bg-gradient-to-t from-teal to-mint transition duration-300 group-hover:scale-x-110`}
+                style={{ "--bar-height": `${height}%`, animationDelay: `${index * 70}ms` } as CSSProperties}
+              />
+            </button>
+          );
+        })}
+      </div>
+      <div className="mt-2 grid grid-cols-7 gap-2 text-center">
+        {activityWeekData.map((day, index) => (
+          <button
+            className={`type-caption rounded-full py-1 text-[10px] transition duration-300 ${
+              selectedIndex === index ? "bg-pine text-white" : "text-ink/42 hover:bg-pine/7"
+            }`}
+            key={`${day.date}-label`}
+            onClick={() => setSelectedIndex(index)}
+            type="button"
+          >
+            {day.day}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
