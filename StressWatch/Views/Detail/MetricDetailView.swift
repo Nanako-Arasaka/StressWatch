@@ -20,6 +20,18 @@ struct MetricDetailView: View {
             return "步数"
         case .sleep:
             return "睡眠"
+        case .activeEnergyBurned:
+            return "活动能量"
+        case .appleExerciseTime:
+            return "锻炼时间"
+        case .sleepREM:
+            return "REM"
+        case .sleepCore:
+            return "Core 睡眠"
+        case .sleepDeep:
+            return "Deep 睡眠"
+        case .sleepAwake:
+            return "清醒"
         }
     }
 
@@ -35,6 +47,14 @@ struct MetricDetailView: View {
             return "figure.walk"
         case .sleep:
             return "moon"
+        case .activeEnergyBurned:
+            return "flame"
+        case .appleExerciseTime:
+            return "figure.run"
+        case .sleepREM, .sleepCore, .sleepDeep:
+            return "bed.double"
+        case .sleepAwake:
+            return "sun.max"
         }
     }
 
@@ -50,6 +70,18 @@ struct MetricDetailView: View {
             return "步数用于描述每日活动负荷变化。"
         case .sleep:
             return "睡眠时长用于观察恢复趋势参考。"
+        case .activeEnergyBurned:
+            return "活动能量用于描述每日活动负荷变化。"
+        case .appleExerciseTime:
+            return "锻炼时间用于辅助观察每日活动强度。"
+        case .sleepREM:
+            return "REM 睡眠用于展示睡眠分阶段参考。"
+        case .sleepCore:
+            return "Core 睡眠用于展示睡眠分阶段参考。"
+        case .sleepDeep:
+            return "Deep 睡眠用于展示睡眠分阶段参考。"
+        case .sleepAwake:
+            return "清醒时间用于辅助理解夜间睡眠连续性。"
         }
     }
 
@@ -65,6 +97,14 @@ struct MetricDetailView: View {
             return "活动量偏离个人基线时，会影响活动负荷因子。"
         case .sleep:
             return "睡眠时长偏低会影响睡眠负债因子和恢复趋势参考。"
+        case .activeEnergyBurned:
+            return "活动能量偏离个人基线时，可辅助理解活动负荷变化。"
+        case .appleExerciseTime:
+            return "锻炼时间变化可作为活动负荷趋势参考。"
+        case .sleepREM, .sleepCore, .sleepDeep:
+            return "睡眠阶段变化可辅助观察恢复趋势参考。"
+        case .sleepAwake:
+            return "夜间清醒时间偏多时，可作为睡眠连续性参考。"
         }
     }
 

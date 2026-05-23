@@ -56,7 +56,9 @@ struct SettingsView: View {
 
                             VStack(spacing: 10) {
                                 Button("使用 Apple Health") {
-                                    viewModel.useAppleHealth()
+                                    Task {
+                                        await viewModel.useAppleHealth()
+                                    }
                                 }
                                 .buttonStyle(.borderedProminent)
                                 .frame(maxWidth: .infinity)

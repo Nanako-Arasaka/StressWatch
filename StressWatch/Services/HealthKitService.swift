@@ -3,11 +3,12 @@ import HealthKit
 
 class HealthKitService: HealthKitDataProvider {
     private let healthStore: HKHealthStore
-    private var isAuthorized: Bool
+    private let authorizationRequestedKey = "StressWatch.HealthKitAuthorizationRequested"
+    private let calendar: Calendar
 
-    init(healthStore: HKHealthStore = HKHealthStore()) {
+    init(healthStore: HKHealthStore = HKHealthStore(), calendar: Calendar = .current) {
         self.healthStore = healthStore
-        self.isAuthorized = false
+        self.calendar = calendar
     }
 
     func requestAuthorization() async throws {
@@ -15,32 +16,16 @@ class HealthKitService: HealthKitDataProvider {
             throw HealthKitServiceError.unavailable
         }
 
-        guard let heartRate = HKObjectType.quantityType(forIdentifier: .heartRate),
-              let hrv = HKObjectType.quantityType(forIdentifier: .heartRateVariabilitySDNN),
-              let restingHeartRate = HKObjectType.quantityType(forIdentifier: .restingHeartRate),
-              let steps = HKObjectType.quantityType(forIdentifier: .stepCount),
-              let sleep = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)
-        else {
-            throw HealthKitServiceError.unavailable
-        }
-
-        let readTypes: Set<HKObjectType> = [
-            heartRate,
-            hrv,
-            restingHeartRate,
-            steps,
-            sleep
-        ]
-
-        try await requestAuthorization(readTypes: readTypes)
-        isAuthorized = true
+        try await requestAuthorization(readTypes: try makeReadTypes())
+        UserDefaults.standard.set(true, forKey: authorizationRequestedKey)
     }
 
     func authorizationStatus() -> HealthKitAuthStatus {
         guard HKHealthStore.isHealthDataAvailable() else {
             return .unavailable
         }
-        return isAuthorized ? .authorized : .notDetermined
+
+        return UserDefaults.standard.bool(forKey: authorizationRequestedKey) ? .authorized : .notDetermined
     }
 
     func fetchMetrics(types: [MetricType], from: Date, to: Date) async throws -> [HealthMetric] {
@@ -48,59 +33,86 @@ class HealthKitService: HealthKitDataProvider {
             throw HealthKitServiceError.unavailable
         }
 
-        if !isAuthorized {
+        if !UserDefaults.standard.bool(forKey: authorizationRequestedKey) {
             try await requestAuthorization()
         }
 
         var metrics: [HealthMetric] = []
 
+        // 单项指标读取失败时只跳过该指标，避免一个缺失项拖垮整个 Dashboard。
         for type in types {
-            switch type {
-            case .heartRate:
-                metrics += try await fetchQuantityMetrics(
-                    type: .heartRate,
-                    quantityIdentifier: .heartRate,
-                    unit: HKUnit.count().unitDivided(by: .minute()),
-                    unitLabel: "bpm",
-                    from: from,
-                    to: to
-                )
-            case .hrv:
-                metrics += try await fetchQuantityMetrics(
-                    type: .hrv,
-                    quantityIdentifier: .heartRateVariabilitySDNN,
-                    unit: .secondUnit(with: .milli),
-                    unitLabel: "ms",
-                    from: from,
-                    to: to
-                )
-            case .restingHeartRate:
-                metrics += try await fetchQuantityMetrics(
-                    type: .restingHeartRate,
-                    quantityIdentifier: .restingHeartRate,
-                    unit: HKUnit.count().unitDivided(by: .minute()),
-                    unitLabel: "bpm",
-                    from: from,
-                    to: to
-                )
-            case .steps:
-                metrics += try await fetchQuantityMetrics(
-                    type: .steps,
-                    quantityIdentifier: .stepCount,
-                    unit: .count(),
-                    unitLabel: "steps",
-                    from: from,
-                    to: to
-                )
-            case .sleep:
-                metrics += try await fetchSleepMetrics(from: from, to: to)
+            do {
+                switch type {
+                case .heartRate:
+                    metrics += try await fetchQuantitySamples(
+                        type: .heartRate,
+                        quantityIdentifier: .heartRate,
+                        unit: HKUnit.count().unitDivided(by: .minute()),
+                        unitLabel: "bpm",
+                        from: from,
+                        to: to
+                    )
+                case .hrv:
+                    metrics += try await fetchQuantitySamples(
+                        type: .hrv,
+                        quantityIdentifier: .heartRateVariabilitySDNN,
+                        unit: .secondUnit(with: .milli),
+                        unitLabel: "ms",
+                        from: from,
+                        to: to
+                    )
+                case .restingHeartRate:
+                    metrics += try await fetchQuantitySamples(
+                        type: .restingHeartRate,
+                        quantityIdentifier: .restingHeartRate,
+                        unit: HKUnit.count().unitDivided(by: .minute()),
+                        unitLabel: "bpm",
+                        from: from,
+                        to: to
+                    )
+                case .steps:
+                    metrics += try await fetchDailyStepTotals(from: from, to: to)
+                case .sleep:
+                    metrics += try await fetchDailySleepAnalysis(from: from, to: to)
+                case .activeEnergyBurned:
+                    metrics += try await fetchDailyActiveEnergyTotals(from: from, to: to)
+                case .appleExerciseTime:
+                    metrics += try await fetchDailyExerciseTimeTotals(from: from, to: to)
+                case .sleepREM, .sleepCore, .sleepDeep, .sleepAwake:
+                    continue
+                }
+            } catch {
+                continue
             }
         }
 
         return metrics.sorted { $0.date < $1.date }
     }
 
-    private func fetchQuantityMetrics(
+    private func makeReadTypes() throws -> Set<HKObjectType> {
+        guard let heartRate = HKObjectType.quantityType(forIdentifier: .heartRate),
+              let hrv = HKObjectType.quantityType(forIdentifier: .heartRateVariabilitySDNN),
+              let restingHeartRate = HKObjectType.quantityType(forIdentifier: .restingHeartRate),
+              let steps = HKObjectType.quantityType(forIdentifier: .stepCount),
+              let sleep = HKObjectType.categoryType(forIdentifier: .sleepAnalysis),
+              let activeEnergy = HKObjectType.quantityType(forIdentifier: .activeEnergyBurned),
+              let exerciseTime = HKObjectType.quantityType(forIdentifier: .appleExerciseTime)
+        else {
+            throw HealthKitServiceError.unavailable
+        }
+
+        return [
+            heartRate,
+            hrv,
+            restingHeartRate,
+            steps,
+            sleep,
+            activeEnergy,
+            exerciseTime
+        ]
+    }
+
+    private func fetchQuantitySamples(
         type: MetricType,
         quantityIdentifier: HKQuantityTypeIdentifier,
         unit: HKUnit,
@@ -130,7 +142,76 @@ class HealthKitService: HealthKitDataProvider {
         }
     }
 
-    private func fetchSleepMetrics(from: Date, to: Date) async throws -> [HealthMetric] {
+    private func fetchDailyStepTotals(from: Date, to: Date) async throws -> [HealthMetric] {
+        guard let quantityType = HKObjectType.quantityType(forIdentifier: .stepCount) else {
+            throw HealthKitServiceError.unavailable
+        }
+
+        let dailyTotals = try await executeStatisticsCollectionQuery(
+            quantityType: quantityType,
+            unit: .count(),
+            from: from,
+            to: to
+        )
+
+        return dailyTotals.map { day, value in
+            HealthMetric(
+                id: UUID(),
+                type: .steps,
+                value: value,
+                unit: "steps",
+                date: calendar.endOfDay(for: day)
+            )
+        }
+    }
+
+    private func fetchDailyActiveEnergyTotals(from: Date, to: Date) async throws -> [HealthMetric] {
+        guard let quantityType = HKObjectType.quantityType(forIdentifier: .activeEnergyBurned) else {
+            throw HealthKitServiceError.unavailable
+        }
+
+        let dailyTotals = try await executeStatisticsCollectionQuery(
+            quantityType: quantityType,
+            unit: .kilocalorie(),
+            from: from,
+            to: to
+        )
+
+        return dailyTotals.map { day, value in
+            HealthMetric(
+                id: UUID(),
+                type: .activeEnergyBurned,
+                value: value,
+                unit: "kcal",
+                date: calendar.endOfDay(for: day)
+            )
+        }
+    }
+
+    private func fetchDailyExerciseTimeTotals(from: Date, to: Date) async throws -> [HealthMetric] {
+        guard let quantityType = HKObjectType.quantityType(forIdentifier: .appleExerciseTime) else {
+            throw HealthKitServiceError.unavailable
+        }
+
+        let dailyTotals = try await executeStatisticsCollectionQuery(
+            quantityType: quantityType,
+            unit: .minute(),
+            from: from,
+            to: to
+        )
+
+        return dailyTotals.map { day, value in
+            HealthMetric(
+                id: UUID(),
+                type: .appleExerciseTime,
+                value: value,
+                unit: "min",
+                date: calendar.endOfDay(for: day)
+            )
+        }
+    }
+
+    private func fetchDailySleepAnalysis(from: Date, to: Date) async throws -> [HealthMetric] {
         guard let categoryType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) else {
             throw HealthKitServiceError.unavailable
         }
@@ -142,23 +223,106 @@ class HealthKitService: HealthKitDataProvider {
             sortDescriptors: [sortDescriptor]
         ).compactMap { $0 as? HKCategorySample }
 
-        return samples.compactMap { sample in
-            guard sample.value == HKCategoryValueSleepAnalysis.asleepUnspecified.rawValue
-                || sample.value == HKCategoryValueSleepAnalysis.asleepCore.rawValue
-                || sample.value == HKCategoryValueSleepAnalysis.asleepDeep.rawValue
-                || sample.value == HKCategoryValueSleepAnalysis.asleepREM.rawValue
-            else {
-                return nil
-            }
+        // 总睡眠只累计真正 asleep 阶段；awake 只作为阶段摘要展示，不计入总时长。
+        var totalsByDay: [Date: Double] = [:]
+        var stageHoursByTypeAndDay: [MetricType: [Date: Double]] = [
+            .sleepREM: [:],
+            .sleepCore: [:],
+            .sleepDeep: [:],
+            .sleepAwake: [:]
+        ]
 
+        samples.forEach { sample in
             let hours = max(0, sample.endDate.timeIntervalSince(sample.startDate) / 3600)
-            return HealthMetric(
-                id: sample.uuid,
+            let day = calendar.startOfDay(for: sample.endDate)
+
+            switch sample.value {
+            case HKCategoryValueSleepAnalysis.asleepUnspecified.rawValue:
+                totalsByDay[day, default: 0] += hours
+            case HKCategoryValueSleepAnalysis.asleepREM.rawValue:
+                totalsByDay[day, default: 0] += hours
+                stageHoursByTypeAndDay[.sleepREM, default: [:]][day, default: 0] += hours
+            case HKCategoryValueSleepAnalysis.asleepCore.rawValue:
+                totalsByDay[day, default: 0] += hours
+                stageHoursByTypeAndDay[.sleepCore, default: [:]][day, default: 0] += hours
+            case HKCategoryValueSleepAnalysis.asleepDeep.rawValue:
+                totalsByDay[day, default: 0] += hours
+                stageHoursByTypeAndDay[.sleepDeep, default: [:]][day, default: 0] += hours
+            case HKCategoryValueSleepAnalysis.awake.rawValue:
+                stageHoursByTypeAndDay[.sleepAwake, default: [:]][day, default: 0] += hours
+            default:
+                break
+            }
+        }
+
+        var metrics = totalsByDay.map { day, hours in
+            HealthMetric(
+                id: UUID(),
                 type: .sleep,
                 value: hours,
                 unit: "hours",
-                date: sample.endDate
+                date: calendar.endOfDay(for: day)
             )
+        }
+
+        stageHoursByTypeAndDay.forEach { type, dailyHours in
+            metrics += dailyHours.map { day, hours in
+                HealthMetric(
+                    id: UUID(),
+                    type: type,
+                    value: hours,
+                    unit: "hours",
+                    date: calendar.endOfDay(for: day)
+                )
+            }
+        }
+
+        return metrics
+    }
+
+    private func executeStatisticsCollectionQuery(
+        quantityType: HKQuantityType,
+        unit: HKUnit,
+        from: Date,
+        to: Date
+    ) async throws -> [Date: Double] {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[Date: Double], Error>) in
+            let predicate = HKQuery.predicateForSamples(withStart: from, end: to)
+            let anchorDate = calendar.startOfDay(for: from)
+            var interval = DateComponents()
+            interval.day = 1
+
+            let query = HKStatisticsCollectionQuery(
+                quantityType: quantityType,
+                quantitySamplePredicate: predicate,
+                options: .cumulativeSum,
+                anchorDate: anchorDate,
+                intervalComponents: interval
+            )
+
+            query.initialResultsHandler = { _, collection, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+
+                guard let collection else {
+                    continuation.resume(returning: [:])
+                    return
+                }
+
+                var values: [Date: Double] = [:]
+                collection.enumerateStatistics(from: from, to: to) { statistics, _ in
+                    let value = statistics.sumQuantity()?.doubleValue(for: unit) ?? 0
+                    if value > 0 {
+                        values[self.calendar.startOfDay(for: statistics.startDate)] = value
+                    }
+                }
+
+                continuation.resume(returning: values)
+            }
+
+            healthStore.execute(query)
         }
     }
 

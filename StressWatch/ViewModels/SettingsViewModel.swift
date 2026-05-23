@@ -48,13 +48,17 @@ class SettingsViewModel: ObservableObject {
         }
     }
 
-    func useAppleHealth() {
+    func useAppleHealth() async {
         do {
+            try await healthDataProvider.requestAuthorization()
             try storage.savePreferredDataSource(.appleHealth)
             useMockData = false
+            healthKitStatusText = Self.statusText(for: healthDataProvider.authorizationStatus())
             errorMessage = nil
         } catch {
-            errorMessage = "无法保存数据源设置"
+            useMockData = true
+            healthKitStatusText = Self.statusText(for: healthDataProvider.authorizationStatus())
+            errorMessage = "无法启用 Apple Health，当前继续使用演示数据"
         }
     }
 

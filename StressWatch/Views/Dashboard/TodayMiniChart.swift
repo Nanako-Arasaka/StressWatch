@@ -37,6 +37,18 @@ struct TodayMiniChart: View {
             return "步数"
         case .sleep:
             return "睡眠"
+        case .activeEnergyBurned:
+            return "活动能量"
+        case .appleExerciseTime:
+            return "锻炼时间"
+        case .sleepREM:
+            return "REM"
+        case .sleepCore:
+            return "Core"
+        case .sleepDeep:
+            return "Deep"
+        case .sleepAwake:
+            return "Awake"
         }
     }
 }

@@ -41,6 +41,10 @@
 		A10000000000000000000020 /* AnimatedScoreRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000023 /* AnimatedScoreRing.swift */; };
 		A10000000000000000000021 /* GlassSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000024 /* GlassSectionHeader.swift */; };
 		A10000000000000000000022 /* DataSourceBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000025 /* DataSourceBadge.swift */; };
+		A10000000000000000000023 /* DashboardMetric.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000026 /* DashboardMetric.swift */; };
+		A10000000000000000000024 /* DashboardSparklineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000027 /* DashboardSparklineView.swift */; };
+		A10000000000000000000025 /* DashboardMetricCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000028 /* DashboardMetricCardView.swift */; };
+		A10000000000000000000026 /* DashboardTrendChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000029 /* DashboardTrendChartView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -81,6 +85,10 @@
 		A20000000000000000000023 /* AnimatedScoreRing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/AnimatedScoreRing.swift; sourceTree = "<group>"; };
 		A20000000000000000000024 /* GlassSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/GlassSectionHeader.swift; sourceTree = "<group>"; };
 		A20000000000000000000025 /* DataSourceBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/DataSourceBadge.swift; sourceTree = "<group>"; };
+		A20000000000000000000026 /* DashboardMetric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/DashboardMetric.swift; sourceTree = "<group>"; };
+		A20000000000000000000027 /* DashboardSparklineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/DashboardSparklineView.swift; sourceTree = "<group>"; };
+		A20000000000000000000028 /* DashboardMetricCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/DashboardMetricCardView.swift; sourceTree = "<group>"; };
+		A20000000000000000000029 /* DashboardTrendChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/DashboardTrendChartView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +144,7 @@
 				A20000000000000000000003 /* Baseline.swift */,
 				A20000000000000000000004 /* StressScore.swift */,
 				A20000000000000000000005 /* RecoveryScore.swift */,
+				A20000000000000000000026 /* DashboardMetric.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -199,6 +208,9 @@
 				A20000000000000000000023 /* AnimatedScoreRing.swift */,
 				A20000000000000000000024 /* GlassSectionHeader.swift */,
 				A20000000000000000000025 /* DataSourceBadge.swift */,
+				A20000000000000000000027 /* DashboardSparklineView.swift */,
+				A20000000000000000000028 /* DashboardMetricCardView.swift */,
+				A20000000000000000000029 /* DashboardTrendChartView.swift */,
 			);
 			name = Components;
 			sourceTree = "<group>";
@@ -380,6 +392,10 @@
 				A10000000000000000000020 /* AnimatedScoreRing.swift in Sources */,
 				A10000000000000000000021 /* GlassSectionHeader.swift in Sources */,
 				A10000000000000000000022 /* DataSourceBadge.swift in Sources */,
+				A10000000000000000000023 /* DashboardMetric.swift in Sources */,
+				A10000000000000000000024 /* DashboardSparklineView.swift in Sources */,
+				A10000000000000000000025 /* DashboardMetricCardView.swift in Sources */,
+				A10000000000000000000026 /* DashboardTrendChartView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

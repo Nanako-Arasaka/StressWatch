@@ -14,6 +14,12 @@ enum MetricType: String, Codable, CaseIterable {
     case restingHeartRate
     case steps
     case sleep
+    case activeEnergyBurned
+    case appleExerciseTime
+    case sleepREM
+    case sleepCore
+    case sleepDeep
+    case sleepAwake
 }
 
 extension Array where Element == HealthMetric {
