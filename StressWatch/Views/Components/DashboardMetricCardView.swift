@@ -4,6 +4,8 @@ import SwiftUI
 // 数据已经由 ViewModel 整理好，卡片本身不做 HealthKit 读取。
 struct DashboardMetricCardView: View {
     let metric: DashboardMetric
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var isStressCard: Bool {
         metric.id == "stress"
@@ -16,19 +18,20 @@ struct DashboardMetricCardView: View {
                     VStack(alignment: .leading, spacing: 5) {
                         Text(metric.title)
                             .font(.caption.weight(.semibold))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(AppColors.secondaryText(for: colorScheme))
 
                         HStack(alignment: .firstTextBaseline, spacing: 4) {
                             Text(metric.value)
                                 .font(.system(size: metric.value.count > 5 ? 26 : 34, weight: .bold, design: .rounded))
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(AppColors.primaryText(for: colorScheme))
                                 .monospacedDigit()
                                 .minimumScaleFactor(0.72)
+                                .appNumericChange(value: metric.value, reduceMotion: reduceMotion)
 
                             if !metric.unit.isEmpty {
                                 Text(metric.unit)
                                     .font(.subheadline.weight(.bold))
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                             }
                         }
                     }
@@ -51,7 +54,7 @@ struct DashboardMetricCardView: View {
 
                     Text(metric.subtitle)
                         .font(.caption2)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                         .lineLimit(2)
                 }
 
@@ -62,7 +65,7 @@ struct DashboardMetricCardView: View {
 
                     Text(metric.source.label)
                         .font(.caption2.weight(.semibold))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                 }
                 .padding(.top, 2)
             }
@@ -73,14 +76,14 @@ struct DashboardMetricCardView: View {
                     .fill(
                         LinearGradient(
                             colors: [
-                                Color(red: 1.00, green: 0.83, blue: 0.35).opacity(0.20),
-                                Color(red: 1.00, green: 0.93, blue: 0.68).opacity(0.11)
+                                AppColors.stressCardTint(for: colorScheme)[0],
+                                AppColors.stressCardTint(for: colorScheme)[1]
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
                     )
-                    .shadow(color: Color(red: 0.80, green: 0.54, blue: 0.12).opacity(0.13), radius: 18, x: 0, y: 10)
+                    .shadow(color: AppColors.stressShadow(for: colorScheme), radius: 18, x: 0, y: 10)
             }
         }
     }

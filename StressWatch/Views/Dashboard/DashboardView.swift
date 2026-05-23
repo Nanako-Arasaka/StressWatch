@@ -5,6 +5,10 @@ struct DashboardView: View {
 
     @ObservedObject var viewModel: DashboardViewModel
     @State private var cardsVisible = false
+    @State private var activityBarsVisible = false
+    @State private var refreshIconRotation: Double = 0
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private let columns = [
         GridItem(.adaptive(minimum: 155), spacing: 14)
@@ -24,7 +28,7 @@ struct DashboardView: View {
                 VStack(alignment: .leading, spacing: 18) {
                     header
 
-                    if viewModel.isLoading {
+                    if viewModel.isLoading && viewModel.snapshot.metrics.isEmpty {
                         loadingCard
                     } else if viewModel.needsMoreData {
                         emptyState("需要更多趋势参考数据")
@@ -37,7 +41,7 @@ struct DashboardView: View {
                     GlassCardView(cornerRadius: 22, padding: 14) {
                         disclaimer
                     }
-                    .staggeredCard(isVisible: cardsVisible, delay: 0.42)
+                    .appStaggeredCard(isVisible: cardsVisible, delay: 0.42, reduceMotion: reduceMotion)
                 }
                 .padding(.horizontal, 18)
                 .padding(.top, 18)
@@ -49,6 +53,8 @@ struct DashboardView: View {
             .toolbar {
                 Button(action: refreshData) {
                     Image(systemName: "arrow.clockwise")
+                        .rotationEffect(.degrees(refreshIconRotation))
+                        .animation(AppMotion.chartDrawing(reduceMotion: reduceMotion), value: refreshIconRotation)
                 }
                 .accessibilityLabel("刷新")
             }
@@ -57,6 +63,9 @@ struct DashboardView: View {
             }
             .task {
                 await loadInitialData()
+            }
+            .onChange(of: viewModel.isLoading) { isLoading in
+                animateRefreshIcon(isLoading: isLoading)
             }
         }
     }
@@ -69,11 +78,11 @@ struct DashboardView: View {
                 VStack(alignment: .leading, spacing: 5) {
                     Text("StressWatch")
                         .font(.system(size: 38, weight: .bold, design: .rounded))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(AppColors.primaryText(for: colorScheme))
 
                     Text("Apple Watch wellness trends")
                         .font(.headline.weight(.semibold))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                 }
 
                 Spacer()
@@ -84,7 +93,7 @@ struct DashboardView: View {
 
                 Text("Local-first")
                     .font(.caption.weight(.semibold))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
                     .background(.thinMaterial, in: Capsule())
@@ -92,11 +101,11 @@ struct DashboardView: View {
 
             HStack(spacing: 10) {
                 Image(systemName: "magnifyingglass")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(AppColors.secondaryText(for: colorScheme))
 
                 Text("Search wellness trends")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(AppColors.secondaryText(for: colorScheme))
 
                 Spacer()
             }
@@ -105,10 +114,10 @@ struct DashboardView: View {
             .background(.ultraThinMaterial, in: Capsule())
             .overlay {
                 Capsule()
-                    .strokeBorder(.white.opacity(0.28), lineWidth: 1)
+                    .strokeBorder(AppColors.glassStroke(for: colorScheme), lineWidth: 1)
             }
         }
-        .staggeredCard(isVisible: cardsVisible, delay: 0)
+        .appStaggeredCard(isVisible: cardsVisible, delay: 0, reduceMotion: reduceMotion)
     }
 
     private var dashboardContent: some View {
@@ -118,18 +127,18 @@ struct DashboardView: View {
                     metricCard(metric)
                 }
             }
-            .staggeredCard(isVisible: cardsVisible, delay: 0.08)
+            .appStaggeredCard(isVisible: cardsVisible, delay: 0.08, reduceMotion: reduceMotion)
 
             GlassCardView(cornerRadius: 30, padding: 18) {
                 DashboardTrendChartView(
                     title: "7-day Stress Trend",
                     subtitle: "压力分数仅用于个人健康趋势参考",
                     values: viewModel.snapshot.stressTrend,
-                    color: Color(red: 0.78, green: 0.52, blue: 0.14),
+                    color: AppColors.stressAmber,
                     yRange: 0...100
                 )
             }
-            .staggeredCard(isVisible: cardsVisible, delay: 0.18)
+            .appStaggeredCard(isVisible: cardsVisible, delay: 0.18, reduceMotion: reduceMotion)
 
             detailGrid
 
@@ -144,7 +153,7 @@ struct DashboardView: View {
                     )
                 }
             }
-            .staggeredCard(isVisible: cardsVisible, delay: 0.34)
+            .appStaggeredCard(isVisible: cardsVisible, delay: 0.34, reduceMotion: reduceMotion)
         }
     }
 
@@ -159,7 +168,7 @@ struct DashboardView: View {
                 } label: {
                     metricCardContent(metric)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(PressScaleButtonStyle())
             } else {
                 metricCardContent(metric)
             }
@@ -185,7 +194,7 @@ struct DashboardView: View {
                     title: "HRV / Baseline",
                     subtitle: "近期 HRV 波动趋势参考",
                     values: viewModel.snapshot.hrvTrend,
-                    color: Color(red: 0.05, green: 0.58, blue: 0.68),
+                    color: AppColors.cyan,
                     yRange: 0...(max((viewModel.snapshot.hrvTrend.max() ?? 80), 80))
                 )
             }
@@ -195,12 +204,12 @@ struct DashboardView: View {
                     title: "Heart Rate Detail",
                     subtitle: "最近心率读取和日间趋势参考",
                     values: viewModel.snapshot.heartRateTrend,
-                    color: Color(red: 0.12, green: 0.56, blue: 0.50),
+                    color: AppColors.teal,
                     yRange: 40...(max((viewModel.snapshot.heartRateTrend.max() ?? 120), 120))
                 )
             }
         }
-        .staggeredCard(isVisible: cardsVisible, delay: 0.26)
+        .appStaggeredCard(isVisible: cardsVisible, delay: 0.26, reduceMotion: reduceMotion)
     }
 
     private var activityContext: some View {
@@ -221,24 +230,37 @@ struct DashboardView: View {
                 activityBars(values: viewModel.snapshot.activityEnergyTrend)
 
                 HStack(spacing: 12) {
-                    activityStat(title: "Active Energy", value: viewModel.snapshot.activityEnergyToday)
-                    activityStat(title: "Exercise", value: viewModel.snapshot.activityExerciseToday)
+                    activityStat(
+                        title: "Move",
+                        value: viewModel.snapshot.activityEnergyToday,
+                        goal: viewModel.snapshot.activityEnergyGoal
+                    )
+                    activityStat(
+                        title: "Exercise",
+                        value: viewModel.snapshot.activityExerciseToday,
+                        goal: viewModel.snapshot.activityExerciseGoal
+                    )
+                    activityStat(
+                        title: "Stand",
+                        value: viewModel.snapshot.activityStandToday,
+                        goal: viewModel.snapshot.activityStandGoal
+                    )
                 }
             }
         }
-        .staggeredCard(isVisible: cardsVisible, delay: 0.30)
+        .appStaggeredCard(isVisible: cardsVisible, delay: 0.30, reduceMotion: reduceMotion)
     }
 
     private var sleepStages: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Sleep stages")
                 .font(.subheadline.weight(.bold))
-                .foregroundStyle(.primary)
+                .foregroundStyle(AppColors.primaryText(for: colorScheme))
 
             if viewModel.snapshot.sleepStages.isEmpty {
                 Text("暂无分阶段数据")
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(AppColors.secondaryText(for: colorScheme))
             } else {
                 ForEach(viewModel.snapshot.sleepStages) { stage in
                     HStack(spacing: 10) {
@@ -248,12 +270,13 @@ struct DashboardView: View {
 
                         Text(stage.title)
                             .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(AppColors.primaryText(for: colorScheme))
 
                         Spacer()
 
                         Text(formatHours(stage.hours))
                             .font(.subheadline.weight(.bold))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                             .monospacedDigit()
                     }
                     .padding(.vertical, 8)
@@ -273,27 +296,33 @@ struct DashboardView: View {
 
             Text(source.label)
                 .font(.caption2.weight(.semibold))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(AppColors.secondaryText(for: colorScheme))
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 6)
         .background(.thinMaterial, in: Capsule())
     }
 
-    private func activityStat(title: String, value: String) -> some View {
+    private func activityStat(title: String, value: String, goal: String) -> some View {
         VStack(alignment: .leading, spacing: 5) {
             Text(title)
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(AppColors.secondaryText(for: colorScheme))
 
             Text(value)
-                .font(.system(size: 22, weight: .bold, design: .rounded))
-                .foregroundStyle(.primary)
+                .font(.system(size: value.count > 7 ? 17 : 22, weight: .bold, design: .rounded))
+                .foregroundStyle(AppColors.primaryText(for: colorScheme))
                 .monospacedDigit()
+                .minimumScaleFactor(0.72)
+                .appNumericChange(value: value, reduceMotion: reduceMotion)
+
+            Text("/ \(goal)")
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(AppColors.secondaryText(for: colorScheme))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
-        .background(Color(red: 0.14, green: 0.63, blue: 0.54).opacity(0.08), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .background(AppColors.subtleTealFill(for: colorScheme), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 
     private func activityBars(values: [Double]) -> some View {
@@ -303,31 +332,40 @@ struct DashboardView: View {
             if values.isEmpty {
                 Text("暂无活动趋势数据")
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                     .frame(maxWidth: .infinity, minHeight: 72)
             } else {
                 ForEach(values.indices, id: \.self) { index in
+                    let progress: CGFloat = activityBarsVisible || reduceMotion ? 1 : AppMotion.chartInitialProgress
+
                     RoundedRectangle(cornerRadius: 8, style: .continuous)
                         .fill(
                             LinearGradient(
                                 colors: [
-                                    Color(red: 0.14, green: 0.63, blue: 0.54),
-                                    Color(red: 0.62, green: 0.91, blue: 0.80)
+                                    AppColors.teal,
+                                    AppColors.mint
                                 ],
                                 startPoint: .bottom,
                                 endPoint: .top
                             )
                         )
-                        .frame(height: max(12, CGFloat(values[index] / maxValue) * 72))
+                        .frame(height: max(12, CGFloat(values[index] / maxValue) * 72) * progress)
                         .frame(maxWidth: .infinity)
                         .opacity(index == values.count - 1 ? 1 : 0.72)
+                        .animation(AppMotion.barGrowth(reduceMotion: reduceMotion, delay: Double(index) * AppMotion.barStaggerDelay), value: activityBarsVisible)
                 }
             }
         }
         .frame(height: 82)
         .padding(.vertical, 6)
         .padding(.horizontal, 8)
-        .background(Color(red: 0.14, green: 0.63, blue: 0.54).opacity(0.06), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .background(AppColors.subtleActivityFill(for: colorScheme), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .onAppear {
+            startActivityBarAnimation()
+        }
+        .onChange(of: values) { _ in
+            startActivityBarAnimation()
+        }
     }
 
     private var loadingCard: some View {
@@ -335,13 +373,13 @@ struct DashboardView: View {
             ProgressView("正在加载趋势参考数据")
                 .frame(maxWidth: .infinity, minHeight: 140)
         }
-        .staggeredCard(isVisible: cardsVisible, delay: 0.05)
+        .appStaggeredCard(isVisible: cardsVisible, delay: 0.05, reduceMotion: reduceMotion)
     }
 
     private var disclaimer: some View {
         Text("本应用仅用于个人健康趋势参考，不提供医疗诊断、治疗建议或紧急用途。如有健康问题，请咨询专业人士。")
             .font(.footnote)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(AppColors.secondaryText(for: colorScheme))
             .fixedSize(horizontal: false, vertical: true)
     }
 
@@ -349,32 +387,24 @@ struct DashboardView: View {
         GlassCardView {
             Text(message)
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                 .frame(maxWidth: .infinity, minHeight: 140)
         }
-        .staggeredCard(isVisible: cardsVisible, delay: 0.05)
+        .appStaggeredCard(isVisible: cardsVisible, delay: 0.05, reduceMotion: reduceMotion)
     }
 
     private var pageBackground: some View {
         ZStack {
-            LinearGradient(
-                colors: [
-                    Color(red: 0.91, green: 1.00, blue: 0.96),
-                    Color(red: 0.78, green: 0.96, blue: 0.90),
-                    Color(red: 0.91, green: 0.99, blue: 0.98)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
+            AppColors.backgroundGradient(for: colorScheme)
 
             Circle()
-                .fill(Color(red: 0.62, green: 0.91, blue: 0.80).opacity(0.42))
+                .fill(AppColors.backgroundGlowPrimary(for: colorScheme))
                 .frame(width: 260, height: 260)
                 .blur(radius: 58)
                 .offset(x: -120, y: -260)
 
             Circle()
-                .fill(Color(red: 0.55, green: 0.90, blue: 0.94).opacity(0.30))
+                .fill(AppColors.backgroundGlowSecondary(for: colorScheme))
                 .frame(width: 300, height: 300)
                 .blur(radius: 72)
                 .offset(x: 140, y: -80)
@@ -390,11 +420,47 @@ struct DashboardView: View {
         }
     }
 
+    @MainActor
     private func loadInitialData() async {
-        withAnimation(.easeOut(duration: 0.35)) {
+        withAnimation(AppMotion.cardEntrance(reduceMotion: reduceMotion, delay: 0)) {
             cardsVisible = true
         }
         await viewModel.refresh()
+        await restartEntranceAnimation()
+    }
+
+    private func animateRefreshIcon(isLoading: Bool) {
+        guard isLoading, !reduceMotion else {
+            return
+        }
+
+        refreshIconRotation += 360
+    }
+
+    private func startActivityBarAnimation() {
+        if reduceMotion {
+            activityBarsVisible = true
+            return
+        }
+
+        activityBarsVisible = false
+        withAnimation(AppMotion.barGrowth(reduceMotion: reduceMotion, delay: 0)) {
+            activityBarsVisible = true
+        }
+    }
+
+    @MainActor
+    private func restartEntranceAnimation() async {
+        if reduceMotion {
+            cardsVisible = true
+            return
+        }
+
+        cardsVisible = false
+        try? await Task.sleep(nanoseconds: 30_000_000)
+        withAnimation(AppMotion.cardEntrance(reduceMotion: reduceMotion, delay: 0)) {
+            cardsVisible = true
+        }
     }
 
     private func destinationMetricType(for id: String) -> MetricType? {
@@ -418,15 +484,5 @@ struct DashboardView: View {
         let wholeHours = Int(hours)
         let minutes = Int(round((hours - Double(wholeHours)) * 60))
         return "\(wholeHours)h \(minutes)m"
-    }
-}
-
-// MARK: - Animation Helpers
-
-private extension View {
-    func staggeredCard(isVisible: Bool, delay: Double) -> some View {
-        opacity(isVisible ? 1 : 0)
-            .offset(y: isVisible ? 0 : 18)
-            .animation(.easeOut(duration: 0.35).delay(delay), value: isVisible)
     }
 }

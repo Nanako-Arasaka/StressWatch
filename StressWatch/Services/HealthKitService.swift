@@ -5,6 +5,7 @@ class HealthKitService: HealthKitDataProvider {
     private let healthStore: HKHealthStore
     private let authorizationRequestedKey = "StressWatch.HealthKitAuthorizationRequested"
     private let calendar: Calendar
+    private let standTimeIdentifier = HKQuantityTypeIdentifier(rawValue: "HKQuantityTypeIdentifierAppleStandTime")
 
     init(healthStore: HKHealthStore = HKHealthStore(), calendar: Calendar = .current) {
         self.healthStore = healthStore
@@ -78,6 +79,8 @@ class HealthKitService: HealthKitDataProvider {
                     metrics += try await fetchDailyActiveEnergyTotals(from: from, to: to)
                 case .appleExerciseTime:
                     metrics += try await fetchDailyExerciseTimeTotals(from: from, to: to)
+                case .appleStandTime:
+                    metrics += try await fetchDailyStandTimeTotals(from: from, to: to)
                 case .sleepREM, .sleepCore, .sleepDeep, .sleepAwake:
                     continue
                 }
@@ -101,7 +104,7 @@ class HealthKitService: HealthKitDataProvider {
             throw HealthKitServiceError.unavailable
         }
 
-        return [
+        var readTypes: Set<HKObjectType> = [
             heartRate,
             hrv,
             restingHeartRate,
@@ -110,6 +113,13 @@ class HealthKitService: HealthKitDataProvider {
             activeEnergy,
             exerciseTime
         ]
+
+        if #available(iOS 18.0, *),
+           let standTime = HKObjectType.quantityType(forIdentifier: standTimeIdentifier) {
+            readTypes.insert(standTime)
+        }
+
+        return readTypes
     }
 
     private func fetchQuantitySamples(
@@ -206,6 +216,33 @@ class HealthKitService: HealthKitDataProvider {
                 type: .appleExerciseTime,
                 value: value,
                 unit: "min",
+                date: calendar.endOfDay(for: day)
+            )
+        }
+    }
+
+    private func fetchDailyStandTimeTotals(from: Date, to: Date) async throws -> [HealthMetric] {
+        guard #available(iOS 18.0, *) else {
+            return []
+        }
+
+        guard let quantityType = HKObjectType.quantityType(forIdentifier: standTimeIdentifier) else {
+            throw HealthKitServiceError.unavailable
+        }
+
+        let dailyTotals = try await executeStatisticsCollectionQuery(
+            quantityType: quantityType,
+            unit: .hour(),
+            from: from,
+            to: to
+        )
+
+        return dailyTotals.map { day, value in
+            HealthMetric(
+                id: UUID(),
+                type: .appleStandTime,
+                value: value,
+                unit: "h",
                 date: calendar.endOfDay(for: day)
             )
         }

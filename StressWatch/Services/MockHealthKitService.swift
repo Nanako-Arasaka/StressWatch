@@ -23,14 +23,14 @@ class MockHealthKitService: HealthKitDataProvider {
 
     private var fixedMetrics: [HealthMetric] {
         let today = calendar.startOfDay(for: Date())
-        let pattern: [(hr: Double, hrv: Double, restingHR: Double, steps: Double, sleep: Double, energy: Double, exercise: Double)] = [
-            (72, 42, 59, 7600, 7.1, 420, 28),
-            (78, 36, 63, 9400, 6.4, 520, 34),
-            (69, 48, 58, 6900, 7.6, 380, 22),
-            (81, 33, 65, 11200, 5.9, 640, 46),
-            (74, 40, 61, 8200, 6.8, 470, 31),
-            (68, 51, 57, 7200, 7.8, 410, 26),
-            (76, 38, 62, 9800, 6.2, 560, 39)
+        let pattern: [(hr: Double, hrv: Double, restingHR: Double, steps: Double, sleep: Double, energy: Double, exercise: Double, stand: Double)] = [
+            (72, 42, 59, 7600, 7.1, 420, 28, 10),
+            (78, 36, 63, 9400, 6.4, 520, 34, 11),
+            (69, 48, 58, 6900, 7.6, 380, 22, 12),
+            (81, 33, 65, 11200, 5.9, 640, 46, 13),
+            (74, 40, 61, 8200, 6.8, 470, 31, 9),
+            (68, 51, 57, 7200, 7.8, 410, 26, 12),
+            (76, 38, 62, 9800, 6.2, 560, 39, 13)
         ]
 
         let selectedValues = (0..<daysOfData).map { index in
@@ -43,7 +43,8 @@ class MockHealthKitService: HealthKitDataProvider {
                 steps: base.steps + (weekOffset * 180),
                 sleep: max(4.5, base.sleep - (weekOffset * 0.05)),
                 energy: base.energy + (weekOffset * 20),
-                exercise: base.exercise + (weekOffset * 2)
+                exercise: base.exercise + (weekOffset * 2),
+                stand: min(16, base.stand + weekOffset)
             )
         }
 
@@ -57,7 +58,7 @@ class MockHealthKitService: HealthKitDataProvider {
     }
 
     private func dailyMetrics(
-        for values: (hr: Double, hrv: Double, restingHR: Double, steps: Double, sleep: Double, energy: Double, exercise: Double),
+        for values: (hr: Double, hrv: Double, restingHR: Double, steps: Double, sleep: Double, energy: Double, exercise: Double, stand: Double),
         on date: Date,
         dayIndex: Int
     ) -> [HealthMetric] {
@@ -74,7 +75,8 @@ class MockHealthKitService: HealthKitDataProvider {
             metric(.sleepDeep, deep, "hours", date, hour: 6),
             metric(.sleepAwake, awake, "hours", date, hour: 6),
             metric(.activeEnergyBurned, values.energy, "kcal", date, hour: 21),
-            metric(.appleExerciseTime, values.exercise, "min", date, hour: 21)
+            metric(.appleExerciseTime, values.exercise, "min", date, hour: 21),
+            metric(.appleStandTime, values.stand, "h", date, hour: 21)
         ]
 
         let hrOffsets = [-4.0, -2.0, 1.0, 6.0, 11.0, 8.0, 4.0, 9.0, 3.0, -1.0]

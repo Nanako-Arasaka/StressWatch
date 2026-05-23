@@ -24,6 +24,8 @@ struct MetricDetailView: View {
             return "活动能量"
         case .appleExerciseTime:
             return "锻炼时间"
+        case .appleStandTime:
+            return "站立时间"
         case .sleepREM:
             return "REM"
         case .sleepCore:
@@ -51,6 +53,8 @@ struct MetricDetailView: View {
             return "flame"
         case .appleExerciseTime:
             return "figure.run"
+        case .appleStandTime:
+            return "figure.stand"
         case .sleepREM, .sleepCore, .sleepDeep:
             return "bed.double"
         case .sleepAwake:
@@ -74,6 +78,8 @@ struct MetricDetailView: View {
             return "活动能量用于描述每日活动负荷变化。"
         case .appleExerciseTime:
             return "锻炼时间用于辅助观察每日活动强度。"
+        case .appleStandTime:
+            return "站立时间用于辅助观察每日活动节律。"
         case .sleepREM:
             return "REM 睡眠用于展示睡眠分阶段参考。"
         case .sleepCore:
@@ -101,6 +107,8 @@ struct MetricDetailView: View {
             return "活动能量偏离个人基线时，可辅助理解活动负荷变化。"
         case .appleExerciseTime:
             return "锻炼时间变化可作为活动负荷趋势参考。"
+        case .appleStandTime:
+            return "站立时间变化可作为活动节律趋势参考。"
         case .sleepREM, .sleepCore, .sleepDeep:
             return "睡眠阶段变化可辅助观察恢复趋势参考。"
         case .sleepAwake:

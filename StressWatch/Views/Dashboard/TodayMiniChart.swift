@@ -41,6 +41,8 @@ struct TodayMiniChart: View {
             return "活动能量"
         case .appleExerciseTime:
             return "锻炼时间"
+        case .appleStandTime:
+            return "站立时间"
         case .sleepREM:
             return "REM"
         case .sleepCore:

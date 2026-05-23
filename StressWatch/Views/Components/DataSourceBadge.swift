@@ -4,6 +4,8 @@ struct DataSourceBadge: View {
     let source: String
 
     @State private var isVisible = false
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var isAppleHealth: Bool {
         source == "Apple Health"
@@ -17,26 +19,26 @@ struct DataSourceBadge: View {
 
             Text(source)
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(.primary)
+                .foregroundStyle(AppColors.primaryText(for: colorScheme))
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .background(.thinMaterial, in: Capsule())
         .overlay {
             Capsule()
-                .strokeBorder(.white.opacity(0.2), lineWidth: 1)
+                .strokeBorder(AppColors.glassStroke(for: colorScheme), lineWidth: 1)
         }
         .opacity(isVisible ? 1 : 0.65)
-        .scaleEffect(isVisible ? 1 : 0.96)
-        .animation(.easeOut(duration: 0.25), value: source)
+        .scaleEffect(isVisible || reduceMotion ? 1 : AppMotion.badgeInitialScale)
+        .animation(AppMotion.numericChange(reduceMotion: reduceMotion), value: source)
         .onAppear {
-            withAnimation(.easeOut(duration: 0.25)) {
+            withAnimation(AppMotion.numericChange(reduceMotion: reduceMotion)) {
                 isVisible = true
             }
         }
         .onChange(of: source) { _ in
             isVisible = false
-            withAnimation(.easeOut(duration: 0.25)) {
+            withAnimation(AppMotion.numericChange(reduceMotion: reduceMotion)) {
                 isVisible = true
             }
         }

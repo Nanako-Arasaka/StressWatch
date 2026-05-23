@@ -192,7 +192,8 @@ class DashboardViewModel: ObservableObject {
         let hrvTrend = dailyLatestValues(for: .hrv, in: metrics)
         let heartTrend = dailyLatestValues(for: .heartRate, in: metrics)
         let activityTrend = dailyLatestValues(for: .activeEnergyBurned, in: metrics)
-        let activitySource = source(for: [.activeEnergyBurned, .appleExerciseTime], appleMetricTypes: appleMetricTypes, metrics: metrics)
+        let standTrend = dailyLatestValues(for: .appleStandTime, in: metrics)
+        let activitySource = source(for: [.activeEnergyBurned, .appleExerciseTime, .appleStandTime], appleMetricTypes: appleMetricTypes, metrics: metrics)
         let sleepStages = makeSleepStages(from: todayMetrics)
 
         let cards = [
@@ -202,7 +203,7 @@ class DashboardViewModel: ObservableObject {
             heartRateMetric(todayMetrics: todayMetrics, trend: heartTrend, source: source(for: [.heartRate, .restingHeartRate], appleMetricTypes: appleMetricTypes, metrics: metrics)),
             sleepMetric(todayMetrics: todayMetrics, baseline: baseline, source: source(for: [.sleep], appleMetricTypes: appleMetricTypes, metrics: metrics)),
             stepsMetric(todayMetrics: todayMetrics, source: source(for: [.steps], appleMetricTypes: appleMetricTypes, metrics: metrics)),
-            activityMetric(todayMetrics: todayMetrics, source: source(for: [.activeEnergyBurned, .appleExerciseTime], appleMetricTypes: appleMetricTypes, metrics: metrics))
+            activityMetric(todayMetrics: todayMetrics, source: source(for: [.activeEnergyBurned, .appleExerciseTime, .appleStandTime], appleMetricTypes: appleMetricTypes, metrics: metrics))
         ]
 
         return HealthDashboardSnapshot(
@@ -211,8 +212,13 @@ class DashboardViewModel: ObservableObject {
             hrvTrend: hrvTrend,
             heartRateTrend: heartTrend,
             activityEnergyTrend: activityTrend,
+            activityStandTrend: standTrend,
             activityEnergyToday: todayMetrics.latestValue(for: .activeEnergyBurned).map { "\(Int(round($0))) kcal" } ?? "暂无",
             activityExerciseToday: todayMetrics.latestValue(for: .appleExerciseTime).map { "\(Int(round($0))) min" } ?? "暂无",
+            activityStandToday: todayMetrics.latestValue(for: .appleStandTime).map { "\(Int(round($0))) h" } ?? "暂无",
+            activityEnergyGoal: "500 kcal",
+            activityExerciseGoal: "30 min",
+            activityStandGoal: "12 h",
             activitySource: activitySource,
             sleepStages: sleepStages,
             insight: "分数仅用于个人健康趋势参考，请结合近期睡眠、活动和主观感受一起观察。"
@@ -228,7 +234,7 @@ class DashboardViewModel: ObservableObject {
             subtitle: "压力趋势参考",
             status: stressStatus(for: score.value),
             systemImage: "waveform.path.ecg",
-            color: Color(red: 0.78, green: 0.52, blue: 0.14),
+            color: AppColors.stressAmber,
             trendValues: trend,
             source: source
         )
@@ -243,7 +249,7 @@ class DashboardViewModel: ObservableObject {
             subtitle: "恢复趋势参考",
             status: recoveryStatus(for: score.value),
             systemImage: "heart.circle",
-            color: Color(red: 0.22, green: 0.68, blue: 0.56),
+            color: AppColors.recoveryGreen,
             trendValues: trend,
             source: source
         )
@@ -261,7 +267,7 @@ class DashboardViewModel: ObservableObject {
             subtitle: delta.map { "\($0 >= 0 ? "+" : "")\(Int(round($0)))% vs baseline" } ?? "暂无今日数据",
             status: delta.map { $0 >= 0 ? "高于基线" : "低于基线" } ?? "暂无数据",
             systemImage: "waveform",
-            color: Color(red: 0.05, green: 0.58, blue: 0.68),
+            color: AppColors.cyan,
             trendValues: trend,
             source: source
         )
@@ -279,7 +285,7 @@ class DashboardViewModel: ObservableObject {
             subtitle: restingHR.map { "Resting \(Int(round($0))) bpm" } ?? "暂无静息心率",
             status: latestTimeText(for: .heartRate, in: todayMetrics),
             systemImage: "heart.fill",
-            color: Color(red: 0.12, green: 0.56, blue: 0.50),
+            color: AppColors.teal,
             trendValues: trend,
             source: source
         )
@@ -297,7 +303,7 @@ class DashboardViewModel: ObservableObject {
             subtitle: sleepScore.map { "Sleep Score \($0)" } ?? "暂无睡眠数据",
             status: sleep.map { $0 >= baseline.avgSleepHours ? "恢复良好" : "偏少" } ?? "暂无数据",
             systemImage: "moon.zzz.fill",
-            color: Color(red: 0.16, green: 0.62, blue: 0.72),
+            color: AppColors.sleepBlue,
             trendValues: dailyLatestValues(for: .sleep, in: recentMetrics),
             source: source
         )
@@ -315,7 +321,7 @@ class DashboardViewModel: ObservableObject {
             subtitle: "今日步数",
             status: value.map(stepsStatus) ?? "暂无数据",
             systemImage: "figure.walk",
-            color: Color(red: 0.42, green: 0.70, blue: 0.32),
+            color: AppColors.stepsGreen,
             trendValues: dailyLatestValues(for: .steps, in: recentMetrics),
             source: source
         )
@@ -324,16 +330,17 @@ class DashboardViewModel: ObservableObject {
     private func activityMetric(todayMetrics: [HealthMetric], source: DashboardMetricSource) -> DashboardMetric {
         let energy = todayMetrics.latestValue(for: .activeEnergyBurned)
         let exercise = todayMetrics.latestValue(for: .appleExerciseTime)
+        let stand = todayMetrics.latestValue(for: .appleStandTime)
 
         return DashboardMetric(
             id: "activity",
             title: "Activity",
             value: energy.map { "\(Int(round($0)))" } ?? "暂无",
             unit: energy == nil ? "" : "kcal",
-            subtitle: exercise.map { "Exercise \(Int(round($0))) min" } ?? "暂无运动分钟",
-            status: activityStatus(energy: energy, exercise: exercise),
+            subtitle: exercise.map { "Exercise \(Int(round($0))) min · Stand \(Int(round(stand ?? 0))) h" } ?? "暂无运动分钟",
+            status: activityStatus(energy: energy, exercise: exercise, stand: stand),
             systemImage: "flame.fill",
-            color: Color(red: 0.14, green: 0.63, blue: 0.54),
+            color: AppColors.teal,
             trendValues: dailyLatestValues(for: .activeEnergyBurned, in: recentMetrics),
             source: source
         )
@@ -341,9 +348,9 @@ class DashboardViewModel: ObservableObject {
 
     private func makeSleepStages(from todayMetrics: [HealthMetric]) -> [SleepStageSummary] {
         [
-            SleepStageSummary(id: "rem", title: "REM", hours: todayMetrics.latestValue(for: .sleepREM) ?? 0, color: Color(red: 0.18, green: 0.72, blue: 0.78)),
-            SleepStageSummary(id: "core", title: "Core", hours: todayMetrics.latestValue(for: .sleepCore) ?? 0, color: Color(red: 0.15, green: 0.52, blue: 0.46)),
-            SleepStageSummary(id: "deep", title: "Deep", hours: todayMetrics.latestValue(for: .sleepDeep) ?? 0, color: Color(red: 0.10, green: 0.28, blue: 0.25)),
+            SleepStageSummary(id: "rem", title: "REM", hours: todayMetrics.latestValue(for: .sleepREM) ?? 0, color: AppColors.cyan),
+            SleepStageSummary(id: "core", title: "Core", hours: todayMetrics.latestValue(for: .sleepCore) ?? 0, color: AppColors.teal),
+            SleepStageSummary(id: "deep", title: "Deep", hours: todayMetrics.latestValue(for: .sleepDeep) ?? 0, color: AppColors.deepSleep),
             SleepStageSummary(id: "awake", title: "Awake", hours: todayMetrics.latestValue(for: .sleepAwake) ?? 0, color: .yellow)
         ].filter { $0.hours > 0 }
     }
@@ -458,12 +465,12 @@ class DashboardViewModel: ObservableObject {
         }
     }
 
-    private func activityStatus(energy: Double?, exercise: Double?) -> String {
+    private func activityStatus(energy: Double?, exercise: Double?, stand: Double?) -> String {
         guard let energy else {
             return "暂无数据"
         }
 
-        if energy >= 500 || (exercise ?? 0) >= 30 {
+        if energy >= 500 || (exercise ?? 0) >= 30 || (stand ?? 0) >= 12 {
             return "active"
         } else if energy >= 250 {
             return "light"

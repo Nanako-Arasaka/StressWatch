@@ -16,6 +16,7 @@ enum MetricType: String, Codable, CaseIterable {
     case sleep
     case activeEnergyBurned
     case appleExerciseTime
+    case appleStandTime
     case sleepREM
     case sleepCore
     case sleepDeep

@@ -9,6 +9,10 @@ struct DashboardTrendChartView: View {
     let color: Color
     let yRange: ClosedRange<Double>
 
+    @State private var drawProgress: CGFloat = AppMotion.chartInitialProgress
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             GlassSectionHeader(
@@ -28,6 +32,7 @@ struct DashboardTrendChartView: View {
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
                         trendPath(in: proxy.size)
+                            .trim(from: 0, to: reduceMotion ? 1 : drawProgress)
                             .stroke(
                                 color.gradient,
                                 style: StrokeStyle(lineWidth: 3.2, lineCap: .round, lineJoin: .round)
@@ -36,19 +41,27 @@ struct DashboardTrendChartView: View {
                         ForEach(points(in: proxy.size).indices, id: \.self) { index in
                             let point = points(in: proxy.size)[index]
                             Circle()
-                                .fill(Color(.systemBackground).opacity(0.85))
+                                .fill(AppColors.chartPointHalo(for: colorScheme))
                                 .frame(width: 11, height: 11)
                                 .position(point)
+                                .opacity(reduceMotion ? 1 : drawProgress)
 
                             Circle()
                                 .fill(color)
                                 .frame(width: 6, height: 6)
                                 .position(point)
+                                .opacity(reduceMotion ? 1 : drawProgress)
                         }
                     }
                 }
             }
             .frame(height: 210)
+        }
+        .onAppear {
+            startDrawingAnimation()
+        }
+        .onChange(of: values) { _ in
+            startDrawingAnimation()
         }
     }
 
@@ -56,7 +69,7 @@ struct DashboardTrendChartView: View {
         VStack {
             ForEach(0..<4, id: \.self) { _ in
                 Rectangle()
-                    .fill(.secondary.opacity(0.10))
+                    .fill(AppColors.chartGrid(for: colorScheme))
                     .frame(height: 1)
                 Spacer()
             }
@@ -97,6 +110,18 @@ struct DashboardTrendChartView: View {
             let normalized = (min(max(value, lower), upper) - lower) / range
             let y = size.height - CGFloat(normalized) * (size.height - 18) - 9
             return CGPoint(x: x, y: y)
+        }
+    }
+
+    private func startDrawingAnimation() {
+        if reduceMotion {
+            drawProgress = 1
+            return
+        }
+
+        drawProgress = AppMotion.chartInitialProgress
+        withAnimation(AppMotion.chartDrawing(reduceMotion: reduceMotion)) {
+            drawProgress = 1
         }
     }
 }

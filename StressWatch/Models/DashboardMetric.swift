@@ -53,8 +53,13 @@ struct HealthDashboardSnapshot {
     let hrvTrend: [Double]
     let heartRateTrend: [Double]
     let activityEnergyTrend: [Double]
+    let activityStandTrend: [Double]
     let activityEnergyToday: String
     let activityExerciseToday: String
+    let activityStandToday: String
+    let activityEnergyGoal: String
+    let activityExerciseGoal: String
+    let activityStandGoal: String
     let activitySource: DashboardMetricSource
     let sleepStages: [SleepStageSummary]
     let insight: String
@@ -65,8 +70,13 @@ struct HealthDashboardSnapshot {
         hrvTrend: [],
         heartRateTrend: [],
         activityEnergyTrend: [],
+        activityStandTrend: [],
         activityEnergyToday: "暂无",
         activityExerciseToday: "暂无",
+        activityStandToday: "暂无",
+        activityEnergyGoal: "500 kcal",
+        activityExerciseGoal: "30 min",
+        activityStandGoal: "12 h",
         activitySource: .unavailable,
         sleepStages: [],
         insight: "正在准备趋势参考数据。"

@@ -7,6 +7,8 @@ struct AnimatedScoreRing: View {
     let title: String
 
     @State private var progress: Double = 0
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var normalizedValue: Double {
         min(max(Double(value), 0), 100)
@@ -15,7 +17,7 @@ struct AnimatedScoreRing: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(.secondary.opacity(0.14), lineWidth: 16)
+                .stroke(AppColors.chartGrid(for: colorScheme), lineWidth: 16)
 
             Circle()
                 .trim(from: 0, to: progress / 100)
@@ -28,8 +30,9 @@ struct AnimatedScoreRing: View {
             VStack(spacing: 4) {
                 Text("\(value)")
                     .font(.system(size: 48, weight: .bold, design: .rounded))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(AppColors.primaryText(for: colorScheme))
                     .monospacedDigit()
+                    .appNumericChange(value: value, reduceMotion: reduceMotion)
 
                 Text(levelName)
                     .font(.subheadline.weight(.semibold))
@@ -37,7 +40,7 @@ struct AnimatedScoreRing: View {
 
                 Text(title)
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(AppColors.secondaryText(for: colorScheme))
             }
         }
         .frame(width: 180, height: 180)
@@ -50,8 +53,13 @@ struct AnimatedScoreRing: View {
     }
 
     private func animateProgress() {
+        if reduceMotion {
+            progress = normalizedValue
+            return
+        }
+
         progress = 0
-        withAnimation(.easeOut(duration: 0.35)) {
+        withAnimation(AppMotion.chartDrawing(reduceMotion: reduceMotion)) {
             progress = normalizedValue
         }
     }

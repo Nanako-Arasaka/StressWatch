@@ -45,6 +45,8 @@
 		A10000000000000000000024 /* DashboardSparklineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000027 /* DashboardSparklineView.swift */; };
 		A10000000000000000000025 /* DashboardMetricCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000028 /* DashboardMetricCardView.swift */; };
 		A10000000000000000000026 /* DashboardTrendChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000029 /* DashboardTrendChartView.swift */; };
+		A10000000000000000000027 /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002A /* AppColors.swift */; };
+		A10000000000000000000028 /* AppMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002B /* AppMotion.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -89,6 +91,8 @@
 		A20000000000000000000027 /* DashboardSparklineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/DashboardSparklineView.swift; sourceTree = "<group>"; };
 		A20000000000000000000028 /* DashboardMetricCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/DashboardMetricCardView.swift; sourceTree = "<group>"; };
 		A20000000000000000000029 /* DashboardTrendChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/DashboardTrendChartView.swift; sourceTree = "<group>"; };
+		A2000000000000000000002A /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/AppColors.swift; sourceTree = "<group>"; };
+		A2000000000000000000002B /* AppMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/AppMotion.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -204,6 +208,8 @@
 			isa = PBXGroup;
 			children = (
 				A20000000000000000000021 /* GlassCardView.swift */,
+				A2000000000000000000002A /* AppColors.swift */,
+				A2000000000000000000002B /* AppMotion.swift */,
 				A20000000000000000000022 /* LiquidMetricCard.swift */,
 				A20000000000000000000023 /* AnimatedScoreRing.swift */,
 				A20000000000000000000024 /* GlassSectionHeader.swift */,
@@ -396,6 +402,8 @@
 				A10000000000000000000024 /* DashboardSparklineView.swift in Sources */,
 				A10000000000000000000025 /* DashboardMetricCardView.swift in Sources */,
 				A10000000000000000000026 /* DashboardTrendChartView.swift in Sources */,
+				A10000000000000000000027 /* AppColors.swift in Sources */,
+				A10000000000000000000028 /* AppMotion.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

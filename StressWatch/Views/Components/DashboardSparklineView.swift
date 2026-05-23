@@ -6,6 +6,9 @@ struct DashboardSparklineView: View {
     let values: [Double]
     let color: Color
 
+    @State private var drawProgress: CGFloat = AppMotion.chartInitialProgress
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
         GeometryReader { proxy in
             ZStack {
@@ -16,6 +19,7 @@ struct DashboardSparklineView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                 } else {
                     sparklinePath(in: proxy.size)
+                        .trim(from: 0, to: reduceMotion ? 1 : drawProgress)
                         .stroke(
                             color.gradient,
                             style: StrokeStyle(lineWidth: 2.6, lineCap: .round, lineJoin: .round)
@@ -27,11 +31,18 @@ struct DashboardSparklineView: View {
                             .fill(index == values.count - 1 ? color : color.opacity(0.45))
                             .frame(width: index == values.count - 1 ? 6 : 4, height: index == values.count - 1 ? 6 : 4)
                             .position(point)
+                            .opacity(reduceMotion ? 1 : drawProgress)
                     }
                 }
             }
         }
         .frame(height: 42)
+        .onAppear {
+            startDrawingAnimation()
+        }
+        .onChange(of: values) { _ in
+            startDrawingAnimation()
+        }
     }
 
     private func sparklinePath(in size: CGSize) -> Path {
@@ -68,6 +79,18 @@ struct DashboardSparklineView: View {
             let normalized = (value - minValue) / range
             let y = size.height - CGFloat(normalized) * (size.height - 6) - 3
             return CGPoint(x: x, y: y)
+        }
+    }
+
+    private func startDrawingAnimation() {
+        if reduceMotion {
+            drawProgress = 1
+            return
+        }
+
+        drawProgress = AppMotion.chartInitialProgress
+        withAnimation(AppMotion.chartDrawing(reduceMotion: reduceMotion)) {
+            drawProgress = 1
         }
     }
 }
