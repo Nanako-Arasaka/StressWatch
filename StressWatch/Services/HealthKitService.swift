@@ -14,11 +14,15 @@ class HealthKitService: HealthKitDataProvider {
 
     func requestAuthorization() async throws {
         guard HKHealthStore.isHealthDataAvailable() else {
+            print("[HealthKitService] requestAuthorization unavailable: health data is not available")
             throw HealthKitServiceError.unavailable
         }
 
-        try await requestAuthorization(readTypes: try makeReadTypes())
+        let readTypes = try makeReadTypes()
+        print("[HealthKitService] requestAuthorization readTypes=\(readTypes.map { $0.identifier }.sorted())")
+        try await requestAuthorization(readTypes: readTypes)
         UserDefaults.standard.set(true, forKey: authorizationRequestedKey)
+        print("[HealthKitService] requestAuthorization completed")
     }
 
     func authorizationStatus() -> HealthKitAuthStatus {
@@ -85,6 +89,7 @@ class HealthKitService: HealthKitDataProvider {
                     continue
                 }
             } catch {
+                print("[HealthKitService] fetchMetrics skipped \(type.rawValue): \(error)")
                 continue
             }
         }
@@ -391,13 +396,16 @@ class HealthKitService: HealthKitDataProvider {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             healthStore.requestAuthorization(toShare: Set<HKSampleType>(), read: readTypes) { success, error in
                 if let error {
+                    print("[HealthKitService] HKHealthStore authorization error: \(error)")
                     continuation.resume(throwing: error)
                     return
                 }
 
                 if success {
+                    print("[HealthKitService] HKHealthStore authorization success callback")
                     continuation.resume(returning: ())
                 } else {
+                    print("[HealthKitService] HKHealthStore authorization failed callback")
                     continuation.resume(throwing: HealthKitServiceError.authorizationFailed)
                 }
             }
@@ -408,4 +416,15 @@ class HealthKitService: HealthKitDataProvider {
 enum HealthKitServiceError: Error {
     case unavailable
     case authorizationFailed
+}
+
+extension HealthKitServiceError: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .unavailable:
+            return "HealthKit 不可用"
+        case .authorizationFailed:
+            return "HealthKit 授权失败或被拒绝"
+        }
+    }
 }

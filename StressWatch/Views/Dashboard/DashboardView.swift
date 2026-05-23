@@ -7,6 +7,7 @@ struct DashboardView: View {
     @State private var cardsVisible = false
     @State private var activityBarsVisible = false
     @State private var refreshIconRotation: Double = 0
+    @State private var showStartupLogo = true
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -62,10 +63,16 @@ struct DashboardView: View {
                 await viewModel.refresh()
             }
             .task {
+                Task {
+                    await dismissStartupLogo()
+                }
                 await loadInitialData()
             }
             .onChange(of: viewModel.isLoading) { isLoading in
                 animateRefreshIcon(isLoading: isLoading)
+            }
+            .overlay {
+                startupLogoOverlay
             }
         }
     }
@@ -111,6 +118,9 @@ struct DashboardView: View {
                 }
             }
             .appStaggeredCard(isVisible: cardsVisible, delay: 0.08, reduceMotion: reduceMotion)
+
+            sleepStagesCard
+                .appStaggeredCard(isVisible: cardsVisible, delay: 0.12, reduceMotion: reduceMotion)
 
             GlassCardView(cornerRadius: 30, padding: 18) {
                 DashboardTrendChartView(
@@ -159,15 +169,7 @@ struct DashboardView: View {
     }
 
     private func metricCardContent(_ metric: DashboardMetric) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            DashboardMetricCardView(metric: metric)
-
-            if metric.id == "sleep" {
-                GlassCardView(cornerRadius: 22, padding: 14) {
-                    sleepStages
-                }
-            }
-        }
+        DashboardMetricCardView(metric: metric)
     }
 
     private var detailGrid: some View {
@@ -234,41 +236,54 @@ struct DashboardView: View {
         .appStaggeredCard(isVisible: cardsVisible, delay: 0.30, reduceMotion: reduceMotion)
     }
 
+    private var sleepStagesCard: some View {
+        GlassCardView(cornerRadius: 28, padding: 18) {
+            sleepStages
+        }
+    }
+
     private var sleepStages: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Sleep stages")
-                .font(.subheadline.weight(.bold))
-                .foregroundStyle(AppColors.primaryText(for: colorScheme))
+            GlassSectionHeader(
+                title: "Sleep stages",
+                subtitle: "REM / Core / Deep / Awake 阶段仅作睡眠趋势参考",
+                systemImage: "bed.double"
+            )
 
             if viewModel.snapshot.sleepStages.isEmpty {
                 Text("暂无分阶段数据")
                     .font(.subheadline)
                     .foregroundStyle(AppColors.secondaryText(for: colorScheme))
             } else {
-                ForEach(viewModel.snapshot.sleepStages) { stage in
-                    HStack(spacing: 10) {
-                        Circle()
-                            .fill(stage.color)
-                            .frame(width: 10, height: 10)
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 138), spacing: 10)], spacing: 10) {
+                    ForEach(viewModel.snapshot.sleepStages) { stage in
+                        HStack(spacing: 8) {
+                            Circle()
+                                .fill(stage.color)
+                                .frame(width: 9, height: 9)
 
-                        Text(stage.title)
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(AppColors.primaryText(for: colorScheme))
+                            Text(stage.title)
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(AppColors.primaryText(for: colorScheme))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.86)
 
-                        Spacer()
+                            Spacer(minLength: 6)
 
-                        Text(formatHours(stage.hours))
-                            .font(.subheadline.weight(.bold))
-                            .foregroundStyle(AppColors.secondaryText(for: colorScheme))
-                            .monospacedDigit()
+                            Text(formatHours(stage.hours))
+                                .font(.subheadline.weight(.bold))
+                                .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                                .monospacedDigit()
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.78)
+                        }
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 12)
+                        .background(stage.color.opacity(0.08), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
                     }
-                    .padding(.vertical, 8)
-                    .padding(.horizontal, 12)
-                    .background(stage.color.opacity(0.08), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
             }
         }
-        .padding(.top, 6)
     }
 
     private func sourceBadge(_ source: DashboardMetricSource) -> some View {
@@ -395,6 +410,31 @@ struct DashboardView: View {
         .ignoresSafeArea()
     }
 
+    private var startupLogoOverlay: some View {
+        Group {
+            if showStartupLogo {
+                ZStack {
+                    AppColors.backgroundGradient(for: colorScheme)
+
+                    VStack(spacing: 14) {
+                        Image("StressWatchLogo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 96, height: 96)
+
+                        Text("StressWatch")
+                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                            .foregroundStyle(AppColors.primaryText(for: colorScheme))
+                    }
+                    .scaleEffect(reduceMotion ? 1 : 1.03)
+                }
+                .ignoresSafeArea()
+                .transition(.opacity.combined(with: reduceMotion ? AnyTransition.identity : AnyTransition.scale(scale: 0.98)))
+            }
+        }
+        .allowsHitTesting(false)
+    }
+
     // MARK: - Actions
 
     private func refreshData() {
@@ -443,6 +483,14 @@ struct DashboardView: View {
         try? await Task.sleep(nanoseconds: 30_000_000)
         withAnimation(AppMotion.cardEntrance(reduceMotion: reduceMotion, delay: 0)) {
             cardsVisible = true
+        }
+    }
+
+    @MainActor
+    private func dismissStartupLogo() async {
+        try? await Task.sleep(nanoseconds: 520_000_000)
+        withAnimation(AppMotion.numericChange(reduceMotion: reduceMotion)) {
+            showStartupLogo = false
         }
     }
 

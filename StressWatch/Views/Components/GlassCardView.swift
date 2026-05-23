@@ -26,10 +26,12 @@ struct GlassCardView<Content: View>: View {
             .overlay {
                 shape
                     .fill(AppColors.cardBackground(for: colorScheme))
+                    .allowsHitTesting(false)
             }
             .overlay {
                 shape
                     .strokeBorder(AppColors.glassStroke(for: colorScheme), lineWidth: 1)
+                    .allowsHitTesting(false)
             }
             .shadow(color: AppColors.shadow(for: colorScheme), radius: 18, x: 0, y: 10)
     }

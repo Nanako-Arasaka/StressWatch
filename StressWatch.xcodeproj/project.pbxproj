@@ -46,6 +46,8 @@
 		A10000000000000000000027 /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002A /* AppColors.swift */; };
 		A10000000000000000000028 /* AppMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002B /* AppMotion.swift */; };
 		A10000000000000000000029 /* TimeFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002C /* TimeFormatting.swift */; };
+		A1000000000000000000002A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002D /* Assets.xcassets */; };
+		A1000000000000000000002B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002E /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -91,6 +93,8 @@
 		A2000000000000000000002A /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/AppColors.swift; sourceTree = "<group>"; };
 		A2000000000000000000002B /* AppMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/AppMotion.swift; sourceTree = "<group>"; };
 		A2000000000000000000002C /* TimeFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils/TimeFormatting.swift; sourceTree = "<group>"; };
+		A2000000000000000000002D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Resources/Assets.xcassets; sourceTree = "<group>"; };
+		A2000000000000000000002E /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -259,6 +263,8 @@
 		A4000000000000000000001C /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				A2000000000000000000002D /* Assets.xcassets */,
+				A2000000000000000000002E /* LaunchScreen.storyboard */,
 				A2000000000000000000001C /* Info.plist */,
 				A2000000000000000000001D /* StressWatch.entitlements */,
 			);
@@ -353,6 +359,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1000000000000000000002A /* Assets.xcassets in Resources */,
+				A1000000000000000000002B /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -520,6 +528,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = StressWatch/StressWatch.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -549,6 +558,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = StressWatch/StressWatch.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;

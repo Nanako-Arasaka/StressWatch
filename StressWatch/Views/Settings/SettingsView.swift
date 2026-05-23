@@ -5,6 +5,8 @@ struct SettingsView: View {
 
     @ObservedObject var viewModel: SettingsViewModel
     @State private var contentVisible = false
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     // MARK: - Init
 
@@ -23,9 +25,9 @@ struct SettingsView: View {
                         subtitle: "Apple Health, Demo Data, privacy",
                         systemImage: "gearshape"
                     )
-                    .staggeredSettings(isVisible: contentVisible, delay: 0)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0, reduceMotion: reduceMotion)
 
-                    GlassCardView {
+                    GlassCardView(cornerRadius: 28, padding: 18) {
                         VStack(alignment: .leading, spacing: 16) {
                             GlassSectionHeader(
                                 title: "Apple Health",
@@ -34,16 +36,33 @@ struct SettingsView: View {
                             )
 
                             Button(action: requestHealthKitAuthorization) {
-                                Label("请求 HealthKit 授权", systemImage: "checkmark.shield")
+                                if viewModel.authorizationState == .requesting {
+                                    HStack {
+                                        ProgressView()
+                                        Text("正在请求授权...")
+                                    }
                                     .frame(maxWidth: .infinity)
+                                } else {
+                                    Label("请求 HealthKit 授权", systemImage: "checkmark.shield")
+                                        .frame(maxWidth: .infinity)
+                                }
                             }
                             .buttonStyle(.borderedProminent)
                             .controlSize(.large)
+                            .tint(AppColors.teal)
+                            .disabled(viewModel.authorizationState == .requesting)
+
+                            if let errorMessage = viewModel.errorMessage {
+                                Text(errorMessage)
+                                    .font(.footnote)
+                                    .foregroundStyle(statusMessageColor)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
                         }
                     }
-                    .staggeredSettings(isVisible: contentVisible, delay: 0.06)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.06, reduceMotion: reduceMotion)
 
-                    GlassCardView {
+                    GlassCardView(cornerRadius: 28, padding: 18) {
                         VStack(alignment: .leading, spacing: 16) {
                             GlassSectionHeader(
                                 title: "数据源",
@@ -51,29 +70,34 @@ struct SettingsView: View {
                                 systemImage: "switch.2"
                             )
 
-                            Toggle("使用演示数据", isOn: $viewModel.useMockData)
-                                .disabled(true)
+                            Toggle("使用演示数据", isOn: demoDataBinding)
 
                             VStack(spacing: 10) {
                                 Button("使用 Apple Health") {
+                                    print("[SettingsView] tapped useAppleHealth")
                                     Task {
                                         await viewModel.useAppleHealth()
                                     }
                                 }
                                 .buttonStyle(.borderedProminent)
+                                .tint(AppColors.teal)
                                 .frame(maxWidth: .infinity)
+                                .disabled(viewModel.authorizationState == .requesting)
 
                                 Button("使用 Demo Data") {
+                                    print("[SettingsView] tapped useDemoData")
                                     viewModel.useDemoData()
                                 }
                                 .buttonStyle(.bordered)
+                                .tint(AppColors.teal)
                                 .frame(maxWidth: .infinity)
+                                .disabled(viewModel.authorizationState == .requesting)
                             }
                         }
                     }
-                    .staggeredSettings(isVisible: contentVisible, delay: 0.12)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.12, reduceMotion: reduceMotion)
 
-                    GlassCardView {
+                    GlassCardView(cornerRadius: 28, padding: 18) {
                         VStack(alignment: .leading, spacing: 14) {
                             GlassSectionHeader(
                                 title: "Baseline",
@@ -87,14 +111,16 @@ struct SettingsView: View {
                                 Text("30 天").tag(30)
                             }
                             .pickerStyle(.segmented)
+                            .tint(AppColors.teal)
                             .onChange(of: viewModel.baselineWindowDays) { days in
+                                print("[SettingsView] tapped baseline \(days)")
                                 viewModel.updateBaselineWindow(days)
                             }
                         }
                     }
-                    .staggeredSettings(isVisible: contentVisible, delay: 0.18)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.18, reduceMotion: reduceMotion)
 
-                    GlassCardView {
+                    GlassCardView(cornerRadius: 28, padding: 18) {
                         VStack(alignment: .leading, spacing: 14) {
                             GlassSectionHeader(
                                 title: "缓存",
@@ -103,16 +129,18 @@ struct SettingsView: View {
                             )
 
                             Button(role: .destructive) {
+                                print("[SettingsView] tapped clearCache")
                                 viewModel.clearAllData()
                             } label: {
                                 Label("清除缓存", systemImage: "trash")
                             }
                             .buttonStyle(.bordered)
+                            .tint(AppColors.stressAmber)
                         }
                     }
-                    .staggeredSettings(isVisible: contentVisible, delay: 0.24)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.24, reduceMotion: reduceMotion)
 
-                    GlassCardView {
+                    GlassCardView(cornerRadius: 28, padding: 18) {
                         VStack(alignment: .leading, spacing: 10) {
                             GlassSectionHeader(
                                 title: "隐私说明",
@@ -123,20 +151,22 @@ struct SettingsView: View {
                             if let errorMessage = viewModel.errorMessage {
                                 Text(errorMessage)
                                     .font(.footnote)
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                             }
                         }
                     }
-                    .staggeredSettings(isVisible: contentVisible, delay: 0.30)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.30, reduceMotion: reduceMotion)
 
-                    GlassCardView(cornerRadius: 20, padding: 14) {
+                    GlassCardView(cornerRadius: 22, padding: 14) {
                         Text("本应用仅用于个人健康趋势参考，不提供医疗诊断、治疗建议或紧急用途。如有健康问题，请咨询专业人士。")
                             .font(.footnote)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                     }
-                    .staggeredSettings(isVisible: contentVisible, delay: 0.36)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.36, reduceMotion: reduceMotion)
                 }
-                .padding()
+                .padding(.horizontal, 18)
+                .padding(.top, 18)
+                .padding(.bottom, 28)
             }
             .background(pageBackground)
             .navigationTitle("设置")
@@ -150,39 +180,67 @@ struct SettingsView: View {
     // MARK: - Styling
 
     private var pageBackground: some View {
-        LinearGradient(
-            colors: [
-                Color(.systemGroupedBackground),
-                Color(.secondarySystemGroupedBackground),
-                Color.green.opacity(0.06)
-            ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
+        ZStack {
+            AppColors.backgroundGradient(for: colorScheme)
+
+            Circle()
+                .fill(AppColors.backgroundGlowPrimary(for: colorScheme))
+                .frame(width: 260, height: 260)
+                .blur(radius: 58)
+                .offset(x: -120, y: -260)
+
+            Circle()
+                .fill(AppColors.backgroundGlowSecondary(for: colorScheme))
+                .frame(width: 300, height: 300)
+                .blur(radius: 72)
+                .offset(x: 140, y: -80)
+        }
         .ignoresSafeArea()
+        .allowsHitTesting(false)
+    }
+
+    private var statusMessageColor: Color {
+        switch viewModel.authorizationState {
+        case .authorized:
+            return AppColors.recoveryGreen
+        case .failed, .unavailable:
+            return AppColors.stressAmber
+        case .idle, .requesting:
+            return AppColors.secondaryText(for: colorScheme)
+        }
+    }
+
+    private var demoDataBinding: Binding<Bool> {
+        Binding(
+            get: {
+                viewModel.useMockData
+            },
+            set: { useDemo in
+                if useDemo {
+                    print("[SettingsView] tapped useDemoData")
+                    viewModel.useDemoData()
+                } else {
+                    print("[SettingsView] tapped useAppleHealth")
+                    Task {
+                        await viewModel.useAppleHealth()
+                    }
+                }
+            }
+        )
     }
 
     // MARK: - Actions
 
     private func requestHealthKitAuthorization() {
+        print("[SettingsView] tapped requestHealthKitAuthorization")
         Task {
             await viewModel.requestHealthKitAuthorization()
         }
     }
 
     private func showContent() {
-        withAnimation(.easeOut(duration: 0.35)) {
+        withAnimation(AppMotion.cardEntrance(reduceMotion: reduceMotion, delay: 0)) {
             contentVisible = true
         }
-    }
-}
-
-// MARK: - Animation Helpers
-
-private extension View {
-    func staggeredSettings(isVisible: Bool, delay: Double) -> some View {
-        opacity(isVisible ? 1 : 0)
-            .offset(y: isVisible ? 0 : 16)
-            .animation(.easeOut(duration: 0.35).delay(delay), value: isVisible)
     }
 }

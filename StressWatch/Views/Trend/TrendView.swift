@@ -5,6 +5,8 @@ struct TrendView: View {
 
     @ObservedObject var viewModel: TrendViewModel
     @State private var contentVisible = false
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     // MARK: - Init
 
@@ -23,9 +25,9 @@ struct TrendView: View {
                         subtitle: "Recent wellness trend references",
                         systemImage: "chart.xyaxis.line"
                     )
-                    .staggeredTrend(isVisible: contentVisible, delay: 0)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0, reduceMotion: reduceMotion)
 
-                    GlassCardView {
+                    GlassCardView(cornerRadius: 30, padding: 18) {
                         VStack(alignment: .leading, spacing: 12) {
                             GlassSectionHeader(
                                 title: "7 天压力趋势",
@@ -40,18 +42,18 @@ struct TrendView: View {
                                 TrendChart(scores: viewModel.stressHistory)
                                     .frame(height: 220)
                                     .opacity(contentVisible ? 1 : 0)
-                                    .animation(.easeOut(duration: 0.35).delay(0.18), value: contentVisible)
+                                    .animation(AppMotion.chartDrawing(reduceMotion: reduceMotion).delay(0.18), value: contentVisible)
                             }
                         }
                     }
-                    .staggeredTrend(isVisible: contentVisible, delay: 0.08)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.08, reduceMotion: reduceMotion)
 
-                    VStack(spacing: 12) {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 220), spacing: 14)], spacing: 14) {
                         LiquidMetricCard(
                             title: "恢复趋势",
                             value: "暂无历史",
                             subtitle: "当前未保存恢复历史",
-                            color: .green,
+                            color: AppColors.recoveryGreen,
                             systemImage: "heart.circle"
                         )
 
@@ -59,16 +61,18 @@ struct TrendView: View {
                             title: "HRV 趋势",
                             value: "详情页查看",
                             subtitle: "从 Dashboard 进入 HRV",
-                            color: .blue,
+                            color: AppColors.cyan,
                             systemImage: "waveform"
                         )
                     }
-                    .staggeredTrend(isVisible: contentVisible, delay: 0.16)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.16, reduceMotion: reduceMotion)
 
                     scoreList
-                        .staggeredTrend(isVisible: contentVisible, delay: 0.24)
+                        .appStaggeredCard(isVisible: contentVisible, delay: 0.24, reduceMotion: reduceMotion)
                 }
-                .padding()
+                .padding(.horizontal, 18)
+                .padding(.top, 18)
+                .padding(.bottom, 28)
             }
             .background(pageBackground)
             .navigationTitle("趋势")
@@ -85,7 +89,7 @@ struct TrendView: View {
     // MARK: - Sections
 
     private var scoreList: some View {
-        GlassCardView {
+        GlassCardView(cornerRadius: 28, padding: 18) {
             VStack(alignment: .leading, spacing: 12) {
                 GlassSectionHeader(
                     title: "每日摘要",
@@ -96,7 +100,7 @@ struct TrendView: View {
                 if viewModel.stressHistory.isEmpty {
                     Text("暂无趋势数据")
                         .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                         .frame(maxWidth: .infinity, alignment: .leading)
                 } else {
                     ForEach(viewModel.stressHistory) { score in
@@ -110,6 +114,7 @@ struct TrendView: View {
                                 .foregroundStyle(score.level.displayColor)
                         }
                         .font(.subheadline)
+                        .foregroundStyle(AppColors.primaryText(for: colorScheme))
                         .padding(.vertical, 8)
                         .padding(.horizontal, 10)
                         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
@@ -120,34 +125,31 @@ struct TrendView: View {
     }
 
     private var pageBackground: some View {
-        LinearGradient(
-            colors: [
-                Color(.systemGroupedBackground),
-                Color(.secondarySystemGroupedBackground),
-                Color.orange.opacity(0.06)
-            ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
+        ZStack {
+            AppColors.backgroundGradient(for: colorScheme)
+
+            Circle()
+                .fill(AppColors.backgroundGlowPrimary(for: colorScheme))
+                .frame(width: 260, height: 260)
+                .blur(radius: 58)
+                .offset(x: -120, y: -260)
+
+            Circle()
+                .fill(AppColors.backgroundGlowSecondary(for: colorScheme))
+                .frame(width: 300, height: 300)
+                .blur(radius: 72)
+                .offset(x: 140, y: -80)
+        }
         .ignoresSafeArea()
+        .allowsHitTesting(false)
     }
 
     // MARK: - Actions
 
     private func loadHistory() async {
-        withAnimation(.easeOut(duration: 0.35)) {
+        withAnimation(AppMotion.cardEntrance(reduceMotion: reduceMotion, delay: 0)) {
             contentVisible = true
         }
         await viewModel.loadHistory(days: 7)
-    }
-}
-
-// MARK: - Animation Helpers
-
-private extension View {
-    func staggeredTrend(isVisible: Bool, delay: Double) -> some View {
-        opacity(isVisible ? 1 : 0)
-            .offset(y: isVisible ? 0 : 16)
-            .animation(.easeOut(duration: 0.35).delay(delay), value: isVisible)
     }
 }
