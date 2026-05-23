@@ -27,6 +27,9 @@ struct TrendView: View {
                     )
                     .appStaggeredCard(isVisible: contentVisible, delay: 0, reduceMotion: reduceMotion)
 
+                    trendHero
+                        .appStaggeredCard(isVisible: contentVisible, delay: 0.05, reduceMotion: reduceMotion)
+
                     GlassCardView(cornerRadius: 30, padding: 18) {
                         VStack(alignment: .leading, spacing: 12) {
                             GlassSectionHeader(
@@ -46,7 +49,7 @@ struct TrendView: View {
                             }
                         }
                     }
-                    .appStaggeredCard(isVisible: contentVisible, delay: 0.08, reduceMotion: reduceMotion)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.10, reduceMotion: reduceMotion)
 
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 220), spacing: 14)], spacing: 14) {
                         LiquidMetricCard(
@@ -65,10 +68,10 @@ struct TrendView: View {
                             systemImage: "waveform"
                         )
                     }
-                    .appStaggeredCard(isVisible: contentVisible, delay: 0.16, reduceMotion: reduceMotion)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.18, reduceMotion: reduceMotion)
 
                     scoreList
-                        .appStaggeredCard(isVisible: contentVisible, delay: 0.24, reduceMotion: reduceMotion)
+                        .appStaggeredCard(isVisible: contentVisible, delay: 0.26, reduceMotion: reduceMotion)
                 }
                 .padding(.horizontal, 18)
                 .padding(.top, 18)
@@ -87,6 +90,65 @@ struct TrendView: View {
     }
 
     // MARK: - Sections
+
+    private var trendHero: some View {
+        GlassCardView(cornerRadius: 34, padding: 20) {
+            HStack(alignment: .center, spacing: 18) {
+                ZStack {
+                    Circle()
+                        .fill(AppColors.mint.opacity(colorScheme == .dark ? 0.14 : 0.28))
+                        .frame(width: 100, height: 100)
+                        .blur(radius: 22)
+
+                    Image("StressWatchLogo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 76, height: 76)
+                }
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Trend overview")
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .foregroundStyle(AppColors.primaryText(for: colorScheme))
+
+                    Text("最近 7 天压力趋势参考")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 84), spacing: 8)], spacing: 8) {
+                        trendPill(title: "Latest", value: latestStressText, color: AppColors.stressAmber)
+                        trendPill(title: "Days", value: "\(viewModel.stressHistory.count)", color: AppColors.teal)
+                    }
+                }
+
+                Spacer(minLength: 0)
+            }
+        }
+    }
+
+    private var latestStressText: String {
+        guard let latest = viewModel.stressHistory.last else {
+            return "暂无"
+        }
+
+        return "\(latest.value)"
+    }
+
+    private func trendPill(title: String, value: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title)
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+
+            Text(value)
+                .font(.subheadline.weight(.bold))
+                .foregroundStyle(AppColors.primaryText(for: colorScheme))
+                .monospacedDigit()
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(color.opacity(colorScheme == .dark ? 0.14 : 0.10), in: Capsule())
+    }
 
     private var scoreList: some View {
         GlassCardView(cornerRadius: 28, padding: 18) {

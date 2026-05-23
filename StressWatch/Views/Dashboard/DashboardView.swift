@@ -11,8 +11,8 @@ struct DashboardView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    private let columns = [
-        GridItem(.adaptive(minimum: 155), spacing: 14)
+    private let secondaryColumns = [
+        GridItem(.adaptive(minimum: 156), spacing: 14)
     ]
 
     // MARK: - Init
@@ -94,33 +94,17 @@ struct DashboardView: View {
 
                 Spacer()
             }
-
-            HStack(spacing: 10) {
-                DataSourceBadge(source: viewModel.dataSourceLabel)
-
-                Text("Local-first")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(AppColors.secondaryText(for: colorScheme))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(.thinMaterial, in: Capsule())
-            }
-
         }
         .appStaggeredCard(isVisible: cardsVisible, delay: 0, reduceMotion: reduceMotion)
     }
 
     private var dashboardContent: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            LazyVGrid(columns: columns, spacing: 14) {
-                ForEach(viewModel.snapshot.metrics) { metric in
-                    metricCard(metric)
-                }
-            }
-            .appStaggeredCard(isVisible: cardsVisible, delay: 0.08, reduceMotion: reduceMotion)
+        VStack(alignment: .leading, spacing: 22) {
+            heroDashboard
+                .appStaggeredCard(isVisible: cardsVisible, delay: 0.08, reduceMotion: reduceMotion)
 
-            sleepStagesCard
-                .appStaggeredCard(isVisible: cardsVisible, delay: 0.12, reduceMotion: reduceMotion)
+            auxiliaryModules
+                .appStaggeredCard(isVisible: cardsVisible, delay: 0.14, reduceMotion: reduceMotion)
 
             GlassCardView(cornerRadius: 30, padding: 18) {
                 DashboardTrendChartView(
@@ -131,9 +115,12 @@ struct DashboardView: View {
                     yRange: 0...100
                 )
             }
-            .appStaggeredCard(isVisible: cardsVisible, delay: 0.18, reduceMotion: reduceMotion)
+            .appStaggeredCard(isVisible: cardsVisible, delay: 0.20, reduceMotion: reduceMotion)
 
             detailGrid
+
+            sleepStagesCard
+                .appStaggeredCard(isVisible: cardsVisible, delay: 0.30, reduceMotion: reduceMotion)
 
             activityContext
 
@@ -146,7 +133,141 @@ struct DashboardView: View {
                     )
                 }
             }
-            .appStaggeredCard(isVisible: cardsVisible, delay: 0.34, reduceMotion: reduceMotion)
+            .appStaggeredCard(isVisible: cardsVisible, delay: 0.38, reduceMotion: reduceMotion)
+        }
+    }
+
+    private var heroDashboard: some View {
+        GlassCardView(cornerRadius: 34, padding: 20) {
+            VStack(alignment: .leading, spacing: 18) {
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Today's balance")
+                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                            .foregroundStyle(AppColors.primaryText(for: colorScheme))
+
+                        Text("个人健康趋势参考")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                    }
+
+                    Spacer()
+
+                    DataSourceBadge(source: viewModel.dataSourceLabel)
+                }
+
+                ZStack {
+                    Circle()
+                        .fill(AppColors.mint.opacity(colorScheme == .dark ? 0.12 : 0.28))
+                        .frame(width: 180, height: 180)
+                        .blur(radius: 34)
+
+                    Image("StressWatchLogo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 96, height: 96)
+                        .shadow(color: AppColors.shadow(for: colorScheme), radius: 18, x: 0, y: 12)
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 118)
+
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 14)], spacing: 14) {
+                    ForEach(primaryMetrics) { metric in
+                        heroMetricCard(metric)
+                    }
+                }
+            }
+        }
+    }
+
+    private var auxiliaryModules: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Key signals")
+                .font(.headline.weight(.bold))
+                .foregroundStyle(AppColors.primaryText(for: colorScheme))
+
+            LazyVGrid(columns: secondaryColumns, spacing: 14) {
+                ForEach(auxiliaryMetrics) { metric in
+                    metricCard(metric)
+                }
+            }
+        }
+    }
+
+    private var primaryMetrics: [DashboardMetric] {
+        metrics(withIDs: ["stress", "recovery"])
+    }
+
+    private var auxiliaryMetrics: [DashboardMetric] {
+        metrics(withIDs: ["hrv", "sleep", "steps", "activity"])
+    }
+
+    private var detailMetrics: [DashboardMetric] {
+        metrics(withIDs: ["heartRate"])
+    }
+
+    private func metrics(withIDs ids: [String]) -> [DashboardMetric] {
+        ids.compactMap { id in
+            viewModel.snapshot.metrics.first { $0.id == id }
+        }
+    }
+
+    private func heroMetricCard(_ metric: DashboardMetric) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Image(systemName: metric.systemImage)
+                    .font(.headline.weight(.bold))
+                    .foregroundStyle(metric.color)
+                    .frame(width: 36, height: 36)
+                    .background(metric.color.opacity(0.14), in: Circle())
+
+                Spacer()
+
+                Text(metric.status)
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(metric.color)
+                    .lineLimit(1)
+            }
+
+            HStack(alignment: .firstTextBaseline, spacing: 4) {
+                Text(metric.value)
+                    .font(.system(size: 46, weight: .bold, design: .rounded))
+                    .foregroundStyle(AppColors.primaryText(for: colorScheme))
+                    .monospacedDigit()
+                    .minimumScaleFactor(0.74)
+                    .appNumericChange(value: metric.value, reduceMotion: reduceMotion)
+
+                if !metric.unit.isEmpty {
+                    Text(metric.unit)
+                        .font(.headline.weight(.bold))
+                        .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                }
+            }
+
+            Text(metric.title)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+
+            DashboardSparklineView(values: metric.trendValues, color: metric.color)
+                .frame(height: 40)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, minHeight: 192, alignment: .leading)
+        .background(
+            LinearGradient(
+                colors: metric.id == "stress" ? AppColors.stressCardTint(for: colorScheme) : [
+                    AppColors.recoveryGreen.opacity(colorScheme == .dark ? 0.18 : 0.13),
+                    AppColors.mint.opacity(colorScheme == .dark ? 0.10 : 0.16)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            ),
+            in: RoundedRectangle(cornerRadius: 26, style: .continuous)
+        )
+        .overlay {
+            RoundedRectangle(cornerRadius: 26, style: .continuous)
+                .strokeBorder(AppColors.glassStroke(for: colorScheme), lineWidth: 1)
+                .allowsHitTesting(false)
         }
     }
 
@@ -174,6 +295,10 @@ struct DashboardView: View {
 
     private var detailGrid: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: 14)], spacing: 14) {
+            ForEach(detailMetrics) { metric in
+                metricCard(metric)
+            }
+
             GlassCardView(cornerRadius: 28, padding: 18) {
                 DashboardTrendChartView(
                     title: "HRV / Baseline",

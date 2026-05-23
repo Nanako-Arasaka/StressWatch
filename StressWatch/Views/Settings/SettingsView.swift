@@ -27,6 +27,9 @@ struct SettingsView: View {
                     )
                     .appStaggeredCard(isVisible: contentVisible, delay: 0, reduceMotion: reduceMotion)
 
+                    settingsHero
+                        .appStaggeredCard(isVisible: contentVisible, delay: 0.05, reduceMotion: reduceMotion)
+
                     GlassCardView(cornerRadius: 28, padding: 18) {
                         VStack(alignment: .leading, spacing: 16) {
                             GlassSectionHeader(
@@ -60,7 +63,7 @@ struct SettingsView: View {
                             }
                         }
                     }
-                    .appStaggeredCard(isVisible: contentVisible, delay: 0.06, reduceMotion: reduceMotion)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.10, reduceMotion: reduceMotion)
 
                     GlassCardView(cornerRadius: 28, padding: 18) {
                         VStack(alignment: .leading, spacing: 16) {
@@ -95,7 +98,7 @@ struct SettingsView: View {
                             }
                         }
                     }
-                    .appStaggeredCard(isVisible: contentVisible, delay: 0.12, reduceMotion: reduceMotion)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.16, reduceMotion: reduceMotion)
 
                     GlassCardView(cornerRadius: 28, padding: 18) {
                         VStack(alignment: .leading, spacing: 14) {
@@ -118,7 +121,7 @@ struct SettingsView: View {
                             }
                         }
                     }
-                    .appStaggeredCard(isVisible: contentVisible, delay: 0.18, reduceMotion: reduceMotion)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.22, reduceMotion: reduceMotion)
 
                     GlassCardView(cornerRadius: 28, padding: 18) {
                         VStack(alignment: .leading, spacing: 14) {
@@ -138,7 +141,7 @@ struct SettingsView: View {
                             .tint(AppColors.stressAmber)
                         }
                     }
-                    .appStaggeredCard(isVisible: contentVisible, delay: 0.24, reduceMotion: reduceMotion)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.28, reduceMotion: reduceMotion)
 
                     GlassCardView(cornerRadius: 28, padding: 18) {
                         VStack(alignment: .leading, spacing: 10) {
@@ -155,14 +158,14 @@ struct SettingsView: View {
                             }
                         }
                     }
-                    .appStaggeredCard(isVisible: contentVisible, delay: 0.30, reduceMotion: reduceMotion)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.34, reduceMotion: reduceMotion)
 
                     GlassCardView(cornerRadius: 22, padding: 14) {
                         Text("本应用仅用于个人健康趋势参考，不提供医疗诊断、治疗建议或紧急用途。如有健康问题，请咨询专业人士。")
                             .font(.footnote)
                             .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                     }
-                    .appStaggeredCard(isVisible: contentVisible, delay: 0.36, reduceMotion: reduceMotion)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.40, reduceMotion: reduceMotion)
                 }
                 .padding(.horizontal, 18)
                 .padding(.top, 18)
@@ -178,6 +181,67 @@ struct SettingsView: View {
     }
 
     // MARK: - Styling
+
+    private var settingsHero: some View {
+        GlassCardView(cornerRadius: 34, padding: 20) {
+            HStack(alignment: .center, spacing: 18) {
+                ZStack {
+                    Circle()
+                        .fill(AppColors.mint.opacity(colorScheme == .dark ? 0.14 : 0.28))
+                        .frame(width: 104, height: 104)
+                        .blur(radius: 24)
+
+                    Image("StressWatchLogo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 78, height: 78)
+                }
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Local wellness controls")
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .foregroundStyle(AppColors.primaryText(for: colorScheme))
+
+                    Text("健康数据只在本机读取和保存")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 104), spacing: 8)], spacing: 8) {
+                        settingsPill(title: "Data", value: viewModel.useMockData ? "Demo" : "Apple Health", color: AppColors.teal)
+                        settingsPill(title: "HealthKit", value: viewModel.healthKitStatusText, color: statusPillColor)
+                    }
+                }
+            }
+        }
+    }
+
+    private var statusPillColor: Color {
+        switch viewModel.authorizationState {
+        case .authorized:
+            return AppColors.recoveryGreen
+        case .failed, .unavailable:
+            return AppColors.stressAmber
+        case .idle, .requesting:
+            return AppColors.teal
+        }
+    }
+
+    private func settingsPill(title: String, value: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title)
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+
+            Text(value)
+                .font(.caption.weight(.bold))
+                .foregroundStyle(AppColors.primaryText(for: colorScheme))
+                .lineLimit(1)
+                .minimumScaleFactor(0.72)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(color.opacity(colorScheme == .dark ? 0.14 : 0.10), in: Capsule())
+    }
 
     private var pageBackground: some View {
         ZStack {
