@@ -427,11 +427,11 @@ class DashboardViewModel: ObservableObject {
 
     private func stressStatus(for value: Int) -> String {
         if value < 36 {
-            return "steady"
+            return "状态稳定"
         } else if value < 70 {
-            return "balanced"
+            return "轻微压力"
         } else {
-            return "elevated"
+            return "注意压力"
         }
     }
 
@@ -447,21 +447,21 @@ class DashboardViewModel: ObservableObject {
 
     private func recoveryStatus(for value: Int) -> String {
         if value >= 70 {
-            return "good"
+            return "恢复良好"
         } else if value >= 45 {
-            return "normal"
+            return "恢复正常"
         } else {
-            return "low"
+            return "恢复偏低"
         }
     }
 
     private func stepsStatus(for value: Int) -> String {
         if value >= 8_000 {
-            return "active"
+            return "活动活跃"
         } else if value >= 4_000 {
-            return "light"
+            return "轻量活动"
         } else {
-            return "low activity"
+            return "活动偏少"
         }
     }
 
@@ -471,18 +471,12 @@ class DashboardViewModel: ObservableObject {
         }
 
         if energy >= 500 || (exercise ?? 0) >= 30 || (stand ?? 0) >= 12 {
-            return "active"
+            return "活动活跃"
         } else if energy >= 250 {
-            return "light"
+            return "轻量活动"
         } else {
-            return "low activity"
+            return "活动偏少"
         }
-    }
-
-    private func formatHours(_ hours: Double) -> String {
-        let wholeHours = Int(hours)
-        let minutes = Int(round((hours - Double(wholeHours)) * 60))
-        return "\(wholeHours)h \(minutes)m"
     }
 
     private static let integerFormatter: NumberFormatter = {

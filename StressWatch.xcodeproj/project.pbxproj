@@ -24,8 +24,6 @@
 		A1000000000000000000000F /* TrendViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000F /* TrendViewModel.swift */; };
 		A10000000000000000000010 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* SettingsViewModel.swift */; };
 		A10000000000000000000011 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000011 /* DashboardView.swift */; };
-		A10000000000000000000012 /* StressGaugeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000012 /* StressGaugeCard.swift */; };
-		A10000000000000000000013 /* RecoveryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000013 /* RecoveryCard.swift */; };
 		A10000000000000000000014 /* TodayMiniChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000014 /* TodayMiniChart.swift */; };
 		A10000000000000000000015 /* TrendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000015 /* TrendView.swift */; };
 		A10000000000000000000016 /* TrendChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000016 /* TrendChart.swift */; };
@@ -47,6 +45,7 @@
 		A10000000000000000000026 /* DashboardTrendChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000029 /* DashboardTrendChartView.swift */; };
 		A10000000000000000000027 /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002A /* AppColors.swift */; };
 		A10000000000000000000028 /* AppMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002B /* AppMotion.swift */; };
+		A10000000000000000000029 /* TimeFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002C /* TimeFormatting.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,8 +66,6 @@
 		A2000000000000000000000F /* TrendViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModels/TrendViewModel.swift; sourceTree = "<group>"; };
 		A20000000000000000000010 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModels/SettingsViewModel.swift; sourceTree = "<group>"; };
 		A20000000000000000000011 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Dashboard/DashboardView.swift; sourceTree = "<group>"; };
-		A20000000000000000000012 /* StressGaugeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Dashboard/StressGaugeCard.swift; sourceTree = "<group>"; };
-		A20000000000000000000013 /* RecoveryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Dashboard/RecoveryCard.swift; sourceTree = "<group>"; };
 		A20000000000000000000014 /* TodayMiniChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Dashboard/TodayMiniChart.swift; sourceTree = "<group>"; };
 		A20000000000000000000015 /* TrendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Trend/TrendView.swift; sourceTree = "<group>"; };
 		A20000000000000000000016 /* TrendChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Trend/TrendChart.swift; sourceTree = "<group>"; };
@@ -93,6 +90,7 @@
 		A20000000000000000000029 /* DashboardTrendChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/DashboardTrendChartView.swift; sourceTree = "<group>"; };
 		A2000000000000000000002A /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/AppColors.swift; sourceTree = "<group>"; };
 		A2000000000000000000002B /* AppMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/AppMotion.swift; sourceTree = "<group>"; };
+		A2000000000000000000002C /* TimeFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils/TimeFormatting.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -225,8 +223,6 @@
 			isa = PBXGroup;
 			children = (
 				A20000000000000000000011 /* DashboardView.swift */,
-				A20000000000000000000012 /* StressGaugeCard.swift */,
-				A20000000000000000000013 /* RecoveryCard.swift */,
 				A20000000000000000000014 /* TodayMiniChart.swift */,
 			);
 			name = Dashboard;
@@ -255,6 +251,7 @@
 			children = (
 				A2000000000000000000001F /* MathHelpers.swift */,
 				A20000000000000000000020 /* DateExtensions.swift */,
+				A2000000000000000000002C /* TimeFormatting.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -383,8 +380,6 @@
 				A1000000000000000000000F /* TrendViewModel.swift in Sources */,
 				A10000000000000000000010 /* SettingsViewModel.swift in Sources */,
 				A10000000000000000000011 /* DashboardView.swift in Sources */,
-				A10000000000000000000012 /* StressGaugeCard.swift in Sources */,
-				A10000000000000000000013 /* RecoveryCard.swift in Sources */,
 				A10000000000000000000014 /* TodayMiniChart.swift in Sources */,
 				A10000000000000000000015 /* TrendView.swift in Sources */,
 				A10000000000000000000016 /* TrendChart.swift in Sources */,
@@ -404,6 +399,7 @@
 				A10000000000000000000026 /* DashboardTrendChartView.swift in Sources */,
 				A10000000000000000000027 /* AppColors.swift in Sources */,
 				A10000000000000000000028 /* AppMotion.swift in Sources */,
+				A10000000000000000000029 /* TimeFormatting.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

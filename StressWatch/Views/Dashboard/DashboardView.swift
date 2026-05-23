@@ -99,23 +99,6 @@ struct DashboardView: View {
                     .background(.thinMaterial, in: Capsule())
             }
 
-            HStack(spacing: 10) {
-                Image(systemName: "magnifyingglass")
-                    .foregroundStyle(AppColors.secondaryText(for: colorScheme))
-
-                Text("Search wellness trends")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(AppColors.secondaryText(for: colorScheme))
-
-                Spacer()
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 13)
-            .background(.ultraThinMaterial, in: Capsule())
-            .overlay {
-                Capsule()
-                    .strokeBorder(AppColors.glassStroke(for: colorScheme), lineWidth: 1)
-            }
         }
         .appStaggeredCard(isVisible: cardsVisible, delay: 0, reduceMotion: reduceMotion)
     }
@@ -480,9 +463,4 @@ struct DashboardView: View {
         }
     }
 
-    private func formatHours(_ hours: Double) -> String {
-        let wholeHours = Int(hours)
-        let minutes = Int(round((hours - Double(wholeHours)) * 60))
-        return "\(wholeHours)h \(minutes)m"
-    }
 }
