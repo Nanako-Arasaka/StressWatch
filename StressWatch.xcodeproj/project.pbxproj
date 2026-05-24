@@ -48,6 +48,7 @@
 		A10000000000000000000029 /* TimeFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002C /* TimeFormatting.swift */; };
 		A1000000000000000000002A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002D /* Assets.xcassets */; };
 		A1000000000000000000002B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002E /* LaunchScreen.storyboard */; };
+		A1000000000000000000002C /* FloatingTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002F /* FloatingTabBar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -95,6 +96,7 @@
 		A2000000000000000000002C /* TimeFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils/TimeFormatting.swift; sourceTree = "<group>"; };
 		A2000000000000000000002D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Resources/Assets.xcassets; sourceTree = "<group>"; };
 		A2000000000000000000002E /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		A2000000000000000000002F /* FloatingTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/FloatingTabBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -216,6 +218,7 @@
 				A20000000000000000000023 /* AnimatedScoreRing.swift */,
 				A20000000000000000000024 /* GlassSectionHeader.swift */,
 				A20000000000000000000025 /* DataSourceBadge.swift */,
+				A2000000000000000000002F /* FloatingTabBar.swift */,
 				A20000000000000000000027 /* DashboardSparklineView.swift */,
 				A20000000000000000000028 /* DashboardMetricCardView.swift */,
 				A20000000000000000000029 /* DashboardTrendChartView.swift */,
@@ -408,6 +411,7 @@
 				A10000000000000000000027 /* AppColors.swift in Sources */,
 				A10000000000000000000028 /* AppMotion.swift in Sources */,
 				A10000000000000000000029 /* TimeFormatting.swift in Sources */,
+				A1000000000000000000002C /* FloatingTabBar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

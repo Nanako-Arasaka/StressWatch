@@ -75,7 +75,7 @@ struct TrendView: View {
                 }
                 .padding(.horizontal, 18)
                 .padding(.top, 18)
-                .padding(.bottom, 28)
+                .padding(.bottom, 118)
             }
             .background(pageBackground)
             .navigationTitle("趋势")
@@ -98,7 +98,7 @@ struct TrendView: View {
                     Circle()
                         .fill(AppColors.mint.opacity(colorScheme == .dark ? 0.14 : 0.28))
                         .frame(width: 100, height: 100)
-                        .blur(radius: 22)
+                        .blur(radius: 28)
 
                     Image("StressWatchLogo")
                         .resizable()
@@ -108,7 +108,7 @@ struct TrendView: View {
 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Trend overview")
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .font(.system(size: 26, weight: .bold, design: .rounded))
                         .foregroundStyle(AppColors.primaryText(for: colorScheme))
 
                     Text("最近 7 天压力趋势参考")
@@ -137,7 +137,7 @@ struct TrendView: View {
     private func trendPill(title: String, value: String, color: Color) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
-                .font(.caption2.weight(.semibold))
+                .font(.caption2.weight(.medium))
                 .foregroundStyle(AppColors.secondaryText(for: colorScheme))
 
             Text(value)

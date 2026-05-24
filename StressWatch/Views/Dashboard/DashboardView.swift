@@ -8,6 +8,7 @@ struct DashboardView: View {
     @State private var activityBarsVisible = false
     @State private var refreshIconRotation: Double = 0
     @State private var showStartupLogo = true
+    @State private var heroGlowBreathing = false
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -46,7 +47,7 @@ struct DashboardView: View {
                 }
                 .padding(.horizontal, 18)
                 .padding(.top, 18)
-                .padding(.bottom, 28)
+                .padding(.bottom, 118)
             }
             .background(pageBackground)
             .navigationTitle("")
@@ -83,8 +84,8 @@ struct DashboardView: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .center, spacing: 12) {
                 VStack(alignment: .leading, spacing: 5) {
-                    Text("StressWatch")
-                        .font(.system(size: 38, weight: .bold, design: .rounded))
+                        Text("StressWatch")
+                        .font(.system(size: 40, weight: .bold, design: .rounded))
                         .foregroundStyle(AppColors.primaryText(for: colorScheme))
 
                     Text("Apple Watch wellness trends")
@@ -160,16 +161,26 @@ struct DashboardView: View {
                     Circle()
                         .fill(AppColors.mint.opacity(colorScheme == .dark ? 0.12 : 0.28))
                         .frame(width: 180, height: 180)
-                        .blur(radius: 34)
+                        .blur(radius: 42)
+                        .scaleEffect(heroGlowBreathing ? 1.06 : 0.98)
+                        .opacity(heroGlowBreathing ? 0.92 : 0.72)
+
+                    Circle()
+                        .stroke(AppColors.glassStroke(for: colorScheme), lineWidth: 0.7)
+                        .frame(width: 132, height: 132)
+                        .opacity(0.28)
 
                     Image("StressWatchLogo")
                         .resizable()
                         .scaledToFit()
                         .frame(width: 96, height: 96)
-                        .shadow(color: AppColors.shadow(for: colorScheme), radius: 18, x: 0, y: 12)
+                        .shadow(color: AppColors.mint.opacity(colorScheme == .dark ? 0.14 : 0.20), radius: 20, x: 0, y: 12)
                 }
                 .frame(maxWidth: .infinity)
                 .frame(height: 118)
+                .onAppear {
+                    startHeroGlow()
+                }
 
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 14)], spacing: 14) {
                     ForEach(primaryMetrics) { metric in
@@ -224,14 +235,14 @@ struct DashboardView: View {
                 Spacer()
 
                 Text(metric.status)
-                    .font(.caption.weight(.bold))
+                    .font(.caption.weight(.semibold))
                     .foregroundStyle(metric.color)
                     .lineLimit(1)
             }
 
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Text(metric.value)
-                    .font(.system(size: 46, weight: .bold, design: .rounded))
+                    .font(.system(size: 54, weight: .bold, design: .rounded))
                     .foregroundStyle(AppColors.primaryText(for: colorScheme))
                     .monospacedDigit()
                     .minimumScaleFactor(0.74)
@@ -245,7 +256,7 @@ struct DashboardView: View {
             }
 
             Text(metric.title)
-                .font(.subheadline.weight(.semibold))
+                .font(.subheadline.weight(.medium))
                 .foregroundStyle(AppColors.secondaryText(for: colorScheme))
 
             DashboardSparklineView(values: metric.trendValues, color: metric.color)
@@ -266,7 +277,7 @@ struct DashboardView: View {
         )
         .overlay {
             RoundedRectangle(cornerRadius: 26, style: .continuous)
-                .strokeBorder(AppColors.glassStroke(for: colorScheme), lineWidth: 1)
+                .strokeBorder(AppColors.glassStroke(for: colorScheme).opacity(0.70), lineWidth: 0.8)
                 .allowsHitTesting(false)
         }
     }
@@ -594,6 +605,17 @@ struct DashboardView: View {
         activityBarsVisible = false
         withAnimation(AppMotion.barGrowth(reduceMotion: reduceMotion, delay: 0)) {
             activityBarsVisible = true
+        }
+    }
+
+    private func startHeroGlow() {
+        guard !reduceMotion else {
+            heroGlowBreathing = true
+            return
+        }
+
+        withAnimation(AppMotion.ambientBreathing(reduceMotion: reduceMotion)) {
+            heroGlowBreathing = true
         }
     }
 

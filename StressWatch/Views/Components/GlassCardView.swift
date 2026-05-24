@@ -30,9 +30,21 @@ struct GlassCardView<Content: View>: View {
             }
             .overlay {
                 shape
-                    .strokeBorder(AppColors.glassStroke(for: colorScheme), lineWidth: 1)
+                    .strokeBorder(AppColors.glassStroke(for: colorScheme), lineWidth: 0.8)
                     .allowsHitTesting(false)
             }
-            .shadow(color: AppColors.shadow(for: colorScheme), radius: 18, x: 0, y: 10)
+            .overlay(alignment: .topLeading) {
+                LinearGradient(
+                    colors: [
+                        Color.white.opacity(colorScheme == .dark ? 0.06 : 0.16),
+                        Color.white.opacity(0.0)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .clipShape(shape)
+                .allowsHitTesting(false)
+            }
+            .shadow(color: AppColors.shadow(for: colorScheme), radius: 22, x: 0, y: 14)
     }
 }

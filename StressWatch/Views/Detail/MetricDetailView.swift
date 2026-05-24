@@ -7,6 +7,8 @@ struct MetricDetailView: View {
     let metrics: [HealthMetric]
 
     @State private var contentVisible = false
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var title: String {
         switch metricType {
@@ -126,7 +128,7 @@ struct MetricDetailView: View {
                     subtitle: "Recent 7-day trend reference",
                     systemImage: iconName
                 )
-                .staggeredDetail(isVisible: contentVisible, delay: 0)
+                .staggeredDetail(isVisible: contentVisible, delay: 0, reduceMotion: reduceMotion)
 
                 GlassCardView {
                     VStack(alignment: .leading, spacing: 14) {
@@ -139,10 +141,10 @@ struct MetricDetailView: View {
                         MetricChart(metrics: metrics)
                             .frame(height: 240)
                             .opacity(contentVisible ? 1 : 0)
-                            .animation(.easeOut(duration: 0.35).delay(0.16), value: contentVisible)
+                            .animation(AppMotion.cardEntrance(reduceMotion: reduceMotion, delay: 0.16), value: contentVisible)
                     }
                 }
-                .staggeredDetail(isVisible: contentVisible, delay: 0.08)
+                .staggeredDetail(isVisible: contentVisible, delay: 0.08, reduceMotion: reduceMotion)
 
                 GlassCardView {
                     VStack(alignment: .leading, spacing: 12) {
@@ -154,13 +156,14 @@ struct MetricDetailView: View {
 
                         Text(influenceText)
                             .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
-                .staggeredDetail(isVisible: contentVisible, delay: 0.16)
+                .staggeredDetail(isVisible: contentVisible, delay: 0.16, reduceMotion: reduceMotion)
             }
             .padding()
+            .padding(.bottom, 118)
         }
         .background(pageBackground)
         .navigationTitle(title)
@@ -173,22 +176,29 @@ struct MetricDetailView: View {
     // MARK: - Styling
 
     private var pageBackground: some View {
-        LinearGradient(
-            colors: [
-                Color(.systemGroupedBackground),
-                Color(.secondarySystemGroupedBackground),
-                Color.purple.opacity(0.06)
-            ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
+        ZStack {
+            AppColors.backgroundGradient(for: colorScheme)
+
+            Circle()
+                .fill(AppColors.backgroundGlowPrimary(for: colorScheme))
+                .frame(width: 260, height: 260)
+                .blur(radius: 58)
+                .offset(x: -120, y: -260)
+
+            Circle()
+                .fill(AppColors.backgroundGlowSecondary(for: colorScheme))
+                .frame(width: 300, height: 300)
+                .blur(radius: 72)
+                .offset(x: 140, y: -80)
+        }
         .ignoresSafeArea()
+        .allowsHitTesting(false)
     }
 
     // MARK: - Actions
 
     private func showContent() {
-        withAnimation(.easeOut(duration: 0.35)) {
+        withAnimation(AppMotion.cardEntrance(reduceMotion: reduceMotion, delay: 0)) {
             contentVisible = true
         }
     }
@@ -197,9 +207,9 @@ struct MetricDetailView: View {
 // MARK: - Animation Helpers
 
 private extension View {
-    func staggeredDetail(isVisible: Bool, delay: Double) -> some View {
+    func staggeredDetail(isVisible: Bool, delay: Double, reduceMotion: Bool) -> some View {
         opacity(isVisible ? 1 : 0)
-            .offset(y: isVisible ? 0 : 16)
-            .animation(.easeOut(duration: 0.35).delay(delay), value: isVisible)
+            .offset(y: reduceMotion || isVisible ? 0 : AppMotion.cardEntranceOffset)
+            .animation(AppMotion.cardEntrance(reduceMotion: reduceMotion, delay: delay), value: isVisible)
     }
 }

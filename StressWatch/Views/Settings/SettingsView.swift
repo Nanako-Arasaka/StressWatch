@@ -169,7 +169,7 @@ struct SettingsView: View {
                 }
                 .padding(.horizontal, 18)
                 .padding(.top, 18)
-                .padding(.bottom, 28)
+                .padding(.bottom, 118)
             }
             .background(pageBackground)
             .navigationTitle("设置")
@@ -189,7 +189,7 @@ struct SettingsView: View {
                     Circle()
                         .fill(AppColors.mint.opacity(colorScheme == .dark ? 0.14 : 0.28))
                         .frame(width: 104, height: 104)
-                        .blur(radius: 24)
+                        .blur(radius: 30)
 
                     Image("StressWatchLogo")
                         .resizable()
@@ -199,7 +199,7 @@ struct SettingsView: View {
 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Local wellness controls")
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .font(.system(size: 26, weight: .bold, design: .rounded))
                         .foregroundStyle(AppColors.primaryText(for: colorScheme))
 
                     Text("健康数据只在本机读取和保存")
@@ -229,7 +229,7 @@ struct SettingsView: View {
     private func settingsPill(title: String, value: String, color: Color) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
-                .font(.caption2.weight(.semibold))
+                .font(.caption2.weight(.medium))
                 .foregroundStyle(AppColors.secondaryText(for: colorScheme))
 
             Text(value)

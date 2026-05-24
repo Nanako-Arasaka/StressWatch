@@ -17,7 +17,7 @@ enum AppColors {
     }
 
     static func secondaryText(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.66) : Color.secondary
+        scheme == .dark ? Color.white.opacity(0.58) : Color.primary.opacity(0.58)
     }
 
     static func cardBackground(for scheme: ColorScheme) -> Color {
@@ -25,11 +25,11 @@ enum AppColors {
     }
 
     static func glassStroke(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.16) : Color.white.opacity(0.26)
+        scheme == .dark ? Color.white.opacity(0.12) : Color.white.opacity(0.20)
     }
 
     static func chartGrid(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.08) : Color.secondary.opacity(0.10)
+        scheme == .dark ? Color.white.opacity(0.045) : Color.primary.opacity(0.055)
     }
 
     static func chartPointHalo(for scheme: ColorScheme) -> Color {
@@ -37,7 +37,15 @@ enum AppColors {
     }
 
     static func shadow(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.black.opacity(0.30) : Color.black.opacity(0.08)
+        scheme == .dark ? Color.black.opacity(0.24) : Color.black.opacity(0.055)
+    }
+
+    static func floatingBarFill(for scheme: ColorScheme) -> Color {
+        scheme == .dark ? Color.white.opacity(0.070) : Color.white.opacity(0.20)
+    }
+
+    static func floatingBarHighlight(for scheme: ColorScheme) -> Color {
+        scheme == .dark ? mint.opacity(0.18) : mint.opacity(0.30)
     }
 
     static func badgeFill(for scheme: ColorScheme) -> Color {
@@ -90,10 +98,10 @@ enum AppColors {
     }
 
     static func backgroundGlowPrimary(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? mint.opacity(0.16) : mint.opacity(0.42)
+        scheme == .dark ? mint.opacity(0.12) : mint.opacity(0.34)
     }
 
     static func backgroundGlowSecondary(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? cyan.opacity(0.12) : Color(red: 0.55, green: 0.90, blue: 0.94).opacity(0.30)
+        scheme == .dark ? cyan.opacity(0.09) : Color(red: 0.55, green: 0.90, blue: 0.94).opacity(0.24)
     }
 }

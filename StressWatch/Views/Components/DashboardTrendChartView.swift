@@ -28,27 +28,40 @@ struct DashboardTrendChartView: View {
                     if values.count < 2 {
                         Text("暂无足够趋势数据")
                             .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
+                        areaPath(in: proxy.size)
+                            .trim(from: 0, to: reduceMotion ? 1 : drawProgress)
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        color.opacity(colorScheme == .dark ? 0.18 : 0.16),
+                                        color.opacity(0.01)
+                                    ],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            )
+
                         trendPath(in: proxy.size)
                             .trim(from: 0, to: reduceMotion ? 1 : drawProgress)
                             .stroke(
                                 color.gradient,
-                                style: StrokeStyle(lineWidth: 3.2, lineCap: .round, lineJoin: .round)
+                                style: StrokeStyle(lineWidth: 2.8, lineCap: .round, lineJoin: .round)
                             )
 
                         ForEach(points(in: proxy.size).indices, id: \.self) { index in
                             let point = points(in: proxy.size)[index]
                             Circle()
                                 .fill(AppColors.chartPointHalo(for: colorScheme))
-                                .frame(width: 11, height: 11)
+                                .frame(width: 9, height: 9)
                                 .position(point)
                                 .opacity(reduceMotion ? 1 : drawProgress)
 
                             Circle()
                                 .fill(color)
-                                .frame(width: 6, height: 6)
+                                .frame(width: 4.5, height: 4.5)
                                 .position(point)
                                 .opacity(reduceMotion ? 1 : drawProgress)
                         }
@@ -67,10 +80,10 @@ struct DashboardTrendChartView: View {
 
     private var gridLines: some View {
         VStack {
-            ForEach(0..<4, id: \.self) { _ in
+            ForEach(0..<3, id: \.self) { _ in
                 Rectangle()
                     .fill(AppColors.chartGrid(for: colorScheme))
-                    .frame(height: 1)
+                    .frame(height: 0.7)
                 Spacer()
             }
         }
@@ -95,6 +108,32 @@ struct DashboardTrendChartView: View {
                 control2: CGPoint(x: midX, y: current.y)
             )
         }
+
+        return path
+    }
+
+    private func areaPath(in size: CGSize) -> Path {
+        let points = points(in: size)
+        var path = Path()
+
+        guard let first = points.first, let last = points.last else {
+            return path
+        }
+
+        path.move(to: CGPoint(x: first.x, y: size.height))
+        path.addLine(to: first)
+        for index in 1..<points.count {
+            let previous = points[index - 1]
+            let current = points[index]
+            let midX = (previous.x + current.x) / 2
+            path.addCurve(
+                to: current,
+                control1: CGPoint(x: midX, y: previous.y),
+                control2: CGPoint(x: midX, y: current.y)
+            )
+        }
+        path.addLine(to: CGPoint(x: last.x, y: size.height))
+        path.closeSubpath()
 
         return path
     }

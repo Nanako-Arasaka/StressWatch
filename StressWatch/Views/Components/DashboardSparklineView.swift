@@ -22,14 +22,14 @@ struct DashboardSparklineView: View {
                         .trim(from: 0, to: reduceMotion ? 1 : drawProgress)
                         .stroke(
                             color.gradient,
-                            style: StrokeStyle(lineWidth: 2.6, lineCap: .round, lineJoin: .round)
+                            style: StrokeStyle(lineWidth: 2.15, lineCap: .round, lineJoin: .round)
                         )
 
                     ForEach(points(in: proxy.size).indices, id: \.self) { index in
                         let point = points(in: proxy.size)[index]
                         Circle()
                             .fill(index == values.count - 1 ? color : color.opacity(0.45))
-                            .frame(width: index == values.count - 1 ? 6 : 4, height: index == values.count - 1 ? 6 : 4)
+                            .frame(width: index == values.count - 1 ? 5 : 3.5, height: index == values.count - 1 ? 5 : 3.5)
                             .position(point)
                             .opacity(reduceMotion ? 1 : drawProgress)
                     }

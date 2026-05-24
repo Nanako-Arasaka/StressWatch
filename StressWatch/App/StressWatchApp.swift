@@ -5,6 +5,7 @@ struct StressWatchApp: App {
     @StateObject private var dashboardViewModel: DashboardViewModel
     @StateObject private var trendViewModel: TrendViewModel
     @StateObject private var settingsViewModel: SettingsViewModel
+    @State private var selectedTab: AppTab = .dashboard
 
     init() {
         let storage = LocalStorage()
@@ -35,22 +36,31 @@ struct StressWatchApp: App {
 
     var body: some Scene {
         WindowGroup {
-            TabView {
-                DashboardView(viewModel: dashboardViewModel)
-                    .tabItem {
-                        Label("今日", systemImage: "gauge.with.dots.needle.33percent")
-                    }
+            ZStack(alignment: .bottom) {
+                TabView(selection: $selectedTab) {
+                    DashboardView(viewModel: dashboardViewModel)
+                        .tag(AppTab.dashboard)
+                        .tabItem {
+                            Label("今日", systemImage: AppTab.dashboard.systemImage)
+                        }
 
-                TrendView(viewModel: trendViewModel)
-                    .tabItem {
-                        Label("趋势", systemImage: "chart.xyaxis.line")
-                    }
+                    TrendView(viewModel: trendViewModel)
+                        .tag(AppTab.trend)
+                        .tabItem {
+                            Label("趋势", systemImage: AppTab.trend.systemImage)
+                        }
 
-                SettingsView(viewModel: settingsViewModel)
-                    .tabItem {
-                        Label("设置", systemImage: "gearshape")
-                    }
+                    SettingsView(viewModel: settingsViewModel)
+                        .tag(AppTab.settings)
+                        .tabItem {
+                            Label("设置", systemImage: AppTab.settings.systemImage)
+                        }
+                }
+                .toolbar(.hidden, for: .tabBar)
+
+                FloatingTabBar(selection: $selectedTab)
             }
+            .ignoresSafeArea(.keyboard, edges: .bottom)
         }
     }
 }

@@ -17,12 +17,12 @@ struct DashboardMetricCardView: View {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 5) {
                         Text(metric.title)
-                            .font(.caption.weight(.semibold))
+                            .font(.caption.weight(.medium))
                             .foregroundStyle(AppColors.secondaryText(for: colorScheme))
 
                         HStack(alignment: .firstTextBaseline, spacing: 4) {
                             Text(metric.value)
-                                .font(.system(size: metric.value.count > 5 ? 26 : 34, weight: .bold, design: .rounded))
+                                .font(.system(size: metric.value.count > 5 ? 28 : 38, weight: .bold, design: .rounded))
                                 .foregroundStyle(AppColors.primaryText(for: colorScheme))
                                 .monospacedDigit()
                                 .minimumScaleFactor(0.72)
@@ -49,7 +49,7 @@ struct DashboardMetricCardView: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(metric.status)
-                        .font(.caption.weight(.bold))
+                        .font(.caption.weight(.semibold))
                         .foregroundStyle(metric.color)
 
                     Text(metric.subtitle)

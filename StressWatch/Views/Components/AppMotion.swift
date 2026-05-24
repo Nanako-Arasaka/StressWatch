@@ -6,6 +6,7 @@ enum AppMotion {
     static let fastDuration: Double = 0.22
     static let normalDuration: Double = 0.35
     static let slowDuration: Double = 0.48
+    static let ambientDuration: Double = 2.8
     static let cardEntranceOffset: CGFloat = 18
     static let buttonPressScale: CGFloat = 0.98
     static let badgeInitialScale: CGFloat = 0.96
@@ -23,7 +24,7 @@ enum AppMotion {
         if reduceMotion {
             return .linear(duration: 0.01)
         }
-        return .easeOut(duration: slowDuration)
+        return .easeOut(duration: 0.62)
     }
 
     static func barGrowth(reduceMotion: Bool, delay: Double) -> Animation {
@@ -45,6 +46,13 @@ enum AppMotion {
             return .linear(duration: 0.01)
         }
         return .spring(response: normalDuration, dampingFraction: 0.86)
+    }
+
+    static func ambientBreathing(reduceMotion: Bool) -> Animation {
+        if reduceMotion {
+            return .linear(duration: 0.01)
+        }
+        return .easeInOut(duration: ambientDuration).repeatForever(autoreverses: true)
     }
 }
 
