@@ -1,93 +1,409 @@
-# StressWatch
+# StressWatch / 心境
 
-原生 SwiftUI 健康趋势参考 App。当前活跃实现位于 `StressWatch/`，Expo React Native 文件仅作为历史阶段保留，不是当前路线。
+> A local-first Apple Watch wellness trend app built with SwiftUI, HealthKit, and a Liquid Glass inspired interface.  
+> 基于 Apple Watch / Apple Health 数据的本地优先健康趋势参考 App。
 
-本项目用于展示 Apple Watch / Apple Health 相关健康数据趋势，当前支持 Demo Data fallback。应用只做个人健康趋势参考，不提供医疗诊断、治疗建议或紧急用途。
+StressWatch（心境）用于帮助用户观察压力、恢复、HRV、心率、睡眠、活动量等健康趋势。项目不提供医疗诊断、治疗建议或紧急用途，只作为个人健康趋势参考。
 
-## 架构
+---
+
+## Project Status
+
+Current main implementation:
+
+- Native SwiftUI iOS app
+- HealthKit integration
+- Local-first data processing
+- Demo Data fallback
+- MVVM architecture
+- Core / Features / Shared modular structure
+- iOS Liquid Glass inspired UI
+- Wellness Analysis module for machine-learning course extension
+- Website / landing page included under `stresswatch-web/`
+
+Legacy Expo / React Native prototype files may still exist in the repository, but they are not the current main route.
+
+---
+
+## Product Website
+
+A separate front-end landing page is included in:
 
 ```text
-SwiftUI Views
-  -> DashboardViewModel / TrendViewModel / SettingsViewModel
-  -> HealthKitDataProvider
-  -> HealthKitService / MockHealthKitService
-  -> BaselineEngine
-  -> StressModel / RecoveryModel
-  -> LocalStorage
+stresswatch-web/
 ```
 
-## 目录结构
+The website is designed as a product introduction page for StressWatch, with:
+
+- Apple Health / wellness dashboard style
+- Mint / teal Liquid Glass visual language
+- Feature introduction
+- Privacy and local-first messaging
+- App Store / GitHub Pages friendly structure
+
+Recommended deployment:
+
+```text
+GitHub Pages / Vercel / Netlify
+```
+
+Suggested GitHub Pages URL format:
+
+```text
+https://<your-github-username>.github.io/StressWatch/
+```
+
+---
+
+## Core Features
+
+### iOS App
+
+- Dashboard for daily wellness overview
+- Stress Score and Recovery Score
+- HRV, heart rate, resting heart rate
+- Sleep duration and sleep stages
+- Steps, active energy, exercise time, stand time
+- 7-day trend visualization
+- Apple Health / Demo Data source switching
+- Per-card fallback when individual HealthKit metrics are missing
+- Local JSON storage using `FileManager + Codable`
+- Privacy-first design with no server upload
+
+### HealthKit Data
+
+StressWatch currently works with:
+
+- Heart Rate
+- Resting Heart Rate
+- Heart Rate Variability SDNN
+- Step Count
+- Sleep Analysis
+- Active Energy Burned
+- Apple Exercise Time
+- Apple Stand Time, with iOS availability protection
+
+If HealthKit is unavailable, permission is denied, or some metrics are missing, the app falls back safely to Demo Data without crashing.
+
+### Wellness Analysis
+
+The project includes a lightweight analysis module for machine-learning coursework and future Core ML extension.
+
+Current pipeline:
+
+```text
+Health Metrics
+  -> FeatureExtractor
+  -> WellnessAnalyzer
+  -> AdviceGenerator
+  -> AnalysisViewModel
+  -> AnalysisView
+```
+
+Example extracted features:
+
+- Average HRV
+- HRV trend
+- Average resting heart rate
+- Sleep average
+- Sleep consistency
+- Step average
+- Activity level
+- Recovery average
+- Stress average
+- Data confidence
+
+Current output states:
+
+- Balanced
+- Need Recovery
+- High Strain
+- Low Activity
+- Sleep Debt
+- Data Insufficient
+
+The current implementation uses an explainable rule-based model. It is designed so a future `CoreMLWellnessAnalyzer` can replace the rule model without rewriting the UI.
+
+---
+
+## Architecture
+
+StressWatch uses a modular MVVM architecture.
+
+```text
+SwiftUI View
+  -> ViewModel
+  -> Protocol
+  -> Service / Engine
+  -> LocalStorage / HealthKit / Analysis
+```
+
+High-level structure:
 
 ```text
 StressWatch/
-├── App/                         # @main 入口和依赖注入
+├── App/
 │   └── StressWatchApp.swift
-├── Models/                      # Codable 数据模型和展示枚举
-│   ├── HealthMetric.swift
-│   ├── Baseline.swift
-│   ├── StressScore.swift
-│   └── RecoveryScore.swift
-├── Protocols/                   # Service / Storage 抽象协议
-│   ├── HealthKitDataProvider.swift
-│   └── LocalStorageProtocol.swift
-├── Services/                    # HealthKit、Mock、Baseline、评分模型
-│   ├── HealthKitService.swift
-│   ├── MockHealthKitService.swift
-│   ├── BaselineEngine.swift
-│   ├── StressModel.swift
-│   └── RecoveryModel.swift
-├── Storage/                     # FileManager + Codable 本地 JSON 存储
-│   └── LocalStorage.swift
-├── ViewModels/                  # 页面状态编排
-│   ├── DashboardViewModel.swift
-│   ├── TrendViewModel.swift
-│   └── SettingsViewModel.swift
-├── Views/                       # SwiftUI 页面与组件
-│   ├── Components/              # Liquid Glass 通用组件
+├── Core/
+│   ├── Analysis/
+│   ├── Extensions/
+│   ├── HealthKit/
+│   ├── Models/
+│   ├── Storage/
+│   └── Utils/
+├── Features/
+│   ├── Analysis/
 │   ├── Dashboard/
-│   ├── Trend/
 │   ├── Detail/
-│   └── Settings/
-└── Utils/                       # 数学和日期工具
+│   ├── Settings/
+│   └── Trend/
+├── Shared/
+│   ├── Charts/
+│   ├── Components/
+│   ├── Glass/
+│   ├── Motion/
+│   └── Theme/
+└── Resources/
 ```
 
-## 当前功能
+### Core
 
-- iOS 26 Liquid Glass 风格 SwiftUI UI
-- Dashboard / Trend / Settings / Metric Detail 页面
-- Apple Health / Demo Data 数据源切换
-- HealthKit 授权入口和失败 fallback
-- 7/14/30 天 baseline window 设置
-- HR、HRV、静息心率、步数、睡眠读取
-- 7 天压力趋势参考
-- JSON 本地存储
-- 固定医疗免责声明
+Business logic and framework-facing services:
 
-## Xcode 打开方式
+- HealthKit data provider
+- Mock health data provider
+- Local storage
+- Baseline calculation
+- Stress and recovery models
+- Wellness feature extraction and analysis
+- Shared data models and utilities
+
+### Features
+
+Feature-level SwiftUI screens and ViewModels:
+
+- Dashboard
+- Trend
+- Settings
+- Metric Detail
+- Analysis
+
+### Shared
+
+Reusable UI and design system elements:
+
+- Glass cards
+- Floating tab bar
+- Shared charts
+- App colors
+- Motion system
+- Liquid Glass inspired components
+
+---
+
+## Design System
+
+StressWatch follows an Apple Health / Liquid Glass inspired visual direction:
+
+- Mint / teal semantic color system
+- Frosted glass cards
+- Large rounded corners
+- Soft shadows and subtle glow
+- Floating Liquid Glass tab bar
+- Dashboard-first mobile layout
+- Reduced Motion support
+- Dark and light mode aware styling
+
+The UI system is organized through:
+
+- `AppColors`
+- `AppMotion`
+- `GlassCardView`
+- `FloatingTabBar`
+- Shared dashboard and chart components
+
+---
+
+## Privacy
+
+StressWatch is designed as a local-first app.
+
+Current version:
+
+- No account required
+- No server upload
+- No third-party backend
+- Health data is processed locally on device
+- Demo Data is available when HealthKit data is unavailable
+- Users can revoke Health permissions in the Apple Health app settings
+
+The website should link to a privacy policy page that explains:
+
+- What Apple Health data is read
+- Why the app reads it
+- Whether data is uploaded
+- How data is stored
+- How users can revoke permissions
+
+---
+
+## Medical Disclaimer
+
+StressWatch is for personal wellness trend reference only.
+
+It does not provide:
+
+- Medical diagnosis
+- Treatment advice
+- Emergency services
+- Disease detection
+- Mental health diagnosis
+
+If you have health concerns, please consult a qualified professional.
+
+中文声明：
+
+```text
+本应用仅用于个人健康趋势参考，不提供医疗诊断、治疗建议或紧急用途。如有健康问题，请咨询专业人士。
+```
+
+---
+
+## Requirements
+
+Recommended development environment:
+
+- macOS
+- Xcode
+- iPhone physical device
+- Apple Developer account
+- Apple Watch, recommended for real data testing
+- HealthKit capability enabled
+
+Current target:
+
+```text
+iOS 26.0
+```
+
+Because HealthKit behavior must be tested on a physical device, the simulator is not enough for final validation.
+
+---
+
+## Open in Xcode
 
 ```bash
 open StressWatch.xcodeproj
 ```
 
-真机运行前确认：
+Before running on device, check:
 
-- 选择 `StressWatch` scheme
-- Signing Team 已设置
-- Bundle Identifier 唯一
-- Deployment Target 为 iOS 26.0
-- HealthKit capability 已启用
-- `Info.plist` 包含 `NSHealthShareUsageDescription` 和 `NSHealthUpdateUsageDescription`
+- `StressWatch` scheme is selected
+- Signing Team is configured
+- Bundle Identifier is unique
+- HealthKit capability is enabled
+- `NSHealthShareUsageDescription` exists
+- `NSHealthUpdateUsageDescription` exists, if required
+- App Icon is configured in the asset catalog
+- Launch Screen is configured
 
-## 真机测试顺序
+---
 
-1. 先保持 Demo Data，打开 Dashboard 验证 UI 和图表。
-2. 进入 Settings，点击请求 HealthKit 授权。
-3. 授权后切换到 Apple Health。
-4. 回 Dashboard 下拉刷新。
-5. 有数据时显示 Apple Health；无权限、无数据或读取失败时 fallback 到 Demo Data。
+## Real Device Test Flow
 
-## 免责声明
+1. Clean Build Folder in Xcode.
+2. Run the app on a real iPhone.
+3. Open Dashboard with Demo Data.
+4. Go to Settings.
+5. Tap the HealthKit authorization button.
+6. Grant Apple Health read permission.
+7. Switch data source to Apple Health.
+8. Return to Dashboard and refresh.
+9. Confirm HealthKit data, per-card fallback, and Demo fallback behavior.
+10. Test dark mode, light mode, and Reduce Motion.
+
+---
+
+## TestFlight Preparation
+
+Before uploading to TestFlight, verify:
+
+- App Icon
+- Launch Screen
+- Bundle Identifier
+- Version and Build Number
+- Signing and capabilities
+- HealthKit entitlement
+- Privacy policy URL
+- App Store screenshots
+- Medical disclaimer
+- No private keys or provisioning profiles committed
+- No real Health data committed
+- No `.env`, token, API key, or certificate files committed
+
+Recommended sensitive files to ignore:
 
 ```text
-本应用仅用于个人健康趋势参考，不提供医疗诊断、治疗建议或紧急用途。如有健康问题，请咨询专业人士。
+DerivedData/
+*.xcuserstate
+*.mobileprovision
+*.p12
+*.cer
+.env
+.env.*
+node_modules/
+dist/
+build/
 ```
+
+---
+
+## Website Development
+
+If working on the front-end landing page:
+
+```bash
+cd stresswatch-web
+npm install
+npm run dev
+```
+
+The website is separate from the iOS app and does not require HealthKit.
+
+Recommended use:
+
+- Product introduction
+- Privacy Policy entry
+- GitHub Pages deployment
+- App Store Connect Privacy Policy URL
+- Portfolio / competition display
+
+---
+
+## Roadmap
+
+Planned next steps:
+
+- Xcode clean build and real-device QA
+- HealthKit authorization regression testing
+- TestFlight internal build
+- Privacy Policy page refinement
+- App Store screenshots
+- Apple Watch companion app
+- Widget / Lock Screen widget
+- Core ML wellness analyzer
+- Website deployment to GitHub Pages
+
+---
+
+## Repository Notes
+
+The current active route is the native SwiftUI app under `StressWatch/`.
+
+The repository may also contain historical Expo / React Native prototype files and the front-end website project. Those are not the main iOS implementation route.
+
+---
+
+## License
+
+This project is currently intended as a personal learning, product prototype, and course project repository. Add a formal license before wider distribution.
