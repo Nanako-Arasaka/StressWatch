@@ -1,0 +1,25 @@
+workflows:
+  ios-debug-build:
+    name: iOS Debug Build
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+
+    environment:
+      xcode: latest
+
+    scripts:
+      - name: Show Xcode version
+        script: |
+          xcodebuild -version
+
+      - name: Build StressWatch
+        script: |
+          xcodebuild build \
+            -project StressWatch.xcodeproj \
+            -scheme StressWatch \
+            -destination 'generic/platform=iOS' \
+            CODE_SIGNING_ALLOWED=NO
+
+    artifacts:
+      - build/**/*.app
+      - ~/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
