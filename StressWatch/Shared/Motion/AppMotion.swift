@@ -52,7 +52,8 @@ enum AppMotion {
         if reduceMotion {
             return .linear(duration: 0.01)
         }
-        return .easeInOut(duration: ambientDuration).repeatForever(autoreverses: true)
+        // 性能优先：环境光只做一次轻微过渡，避免静止页面持续占用 GPU。
+        return .easeInOut(duration: slowDuration)
     }
 }
 

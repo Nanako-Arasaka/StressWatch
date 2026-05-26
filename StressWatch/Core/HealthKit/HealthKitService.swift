@@ -38,6 +38,9 @@ class HealthKitService: HealthKitDataProvider {
             throw HealthKitServiceError.unavailable
         }
 
+        let startedAt = Date()
+        print("[HealthKitService] fetchMetrics start types=\(types.count) from=\(from) to=\(to)")
+
         if !UserDefaults.standard.bool(forKey: authorizationRequestedKey) {
             try await requestAuthorization()
         }
@@ -94,7 +97,10 @@ class HealthKitService: HealthKitDataProvider {
             }
         }
 
-        return metrics.sorted { $0.date < $1.date }
+        let sortedMetrics = metrics.sorted { $0.date < $1.date }
+        let elapsed = Date().timeIntervalSince(startedAt)
+        print("[HealthKitService] fetchMetrics end count=\(sortedMetrics.count) elapsed=\(String(format: "%.2f", elapsed))s")
+        return sortedMetrics
     }
 
     private func makeReadTypes() throws -> Set<HKObjectType> {
@@ -139,14 +145,16 @@ class HealthKitService: HealthKitDataProvider {
             throw HealthKitServiceError.unavailable
         }
         let predicate = HKQuery.predicateForSamples(withStart: from, end: to)
-        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)
+        // 高频指标如心率 / HRV 不再无上限读取，避免真机一次拉取大量样本导致发热。
+        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
         let samples = try await executeSampleQuery(
             sampleType: quantityType,
             predicate: predicate,
-            sortDescriptors: [sortDescriptor]
+            sortDescriptors: [sortDescriptor],
+            limit: 600
         ).compactMap { $0 as? HKQuantitySample }
 
-        return samples.map { sample in
+        return samples.sorted { $0.endDate < $1.endDate }.map { sample in
             HealthMetric(
                 id: sample.uuid,
                 type: type,
@@ -371,13 +379,14 @@ class HealthKitService: HealthKitDataProvider {
     private func executeSampleQuery(
         sampleType: HKSampleType,
         predicate: NSPredicate,
-        sortDescriptors: [NSSortDescriptor]
+        sortDescriptors: [NSSortDescriptor],
+        limit: Int = HKObjectQueryNoLimit
     ) async throws -> [HKSample] {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[HKSample], Error>) in
             let query = HKSampleQuery(
                 sampleType: sampleType,
                 predicate: predicate,
-                limit: HKObjectQueryNoLimit,
+                limit: limit,
                 sortDescriptors: sortDescriptors
             ) { _, samples, error in
                 if let error {

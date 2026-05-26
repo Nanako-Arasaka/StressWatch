@@ -6,6 +6,8 @@ struct DashboardView: View {
     @State private var cardsVisible = false
     @State private var refreshIconRotation: Double = 0
     @State private var showStartupLogo = true
+    @State private var hasLoadedInitialData = false
+    @State private var onAppearCount = 0
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -57,6 +59,10 @@ struct DashboardView: View {
                     await dismissStartupLogo()
                 }
                 await loadInitialData()
+            }
+            .onAppear {
+                onAppearCount += 1
+                print("[DashboardView] onAppear count=\(onAppearCount)")
             }
             .onChange(of: viewModel.isLoading) { isLoading in
                 animateRefreshIcon(isLoading: isLoading)
@@ -183,14 +189,14 @@ struct DashboardView: View {
 
             Circle()
                 .fill(AppColors.backgroundGlowPrimary(for: colorScheme))
-                .frame(width: 260, height: 260)
-                .blur(radius: 58)
+                .frame(width: 220, height: 220)
+                .blur(radius: 34)
                 .offset(x: -120, y: -260)
 
             Circle()
                 .fill(AppColors.backgroundGlowSecondary(for: colorScheme))
-                .frame(width: 300, height: 300)
-                .blur(radius: 72)
+                .frame(width: 240, height: 240)
+                .blur(radius: 40)
                 .offset(x: 140, y: -80)
         }
         .ignoresSafeArea()
@@ -238,6 +244,7 @@ struct DashboardView: View {
     }
 
     private func refreshData() {
+        print("[DashboardView] refresh button tapped")
         Task {
             await viewModel.refresh()
         }
@@ -245,11 +252,18 @@ struct DashboardView: View {
 
     @MainActor
     private func loadInitialData() async {
+        guard !hasLoadedInitialData else {
+            print("[DashboardView] initial load skipped")
+            return
+        }
+
+        hasLoadedInitialData = true
+        print("[DashboardView] initial load start")
         withAnimation(AppMotion.cardEntrance(reduceMotion: reduceMotion, delay: 0)) {
             cardsVisible = true
         }
         await viewModel.refresh()
-        await restartEntranceAnimation()
+        print("[DashboardView] initial load end")
     }
 
     private func animateRefreshIcon(isLoading: Bool) {
@@ -258,20 +272,6 @@ struct DashboardView: View {
         }
 
         refreshIconRotation += 360
-    }
-
-    @MainActor
-    private func restartEntranceAnimation() async {
-        if reduceMotion {
-            cardsVisible = true
-            return
-        }
-
-        cardsVisible = false
-        try? await Task.sleep(nanoseconds: 30_000_000)
-        withAnimation(AppMotion.cardEntrance(reduceMotion: reduceMotion, delay: 0)) {
-            cardsVisible = true
-        }
     }
 
     @MainActor

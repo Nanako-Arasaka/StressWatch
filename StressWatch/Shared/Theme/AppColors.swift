@@ -37,7 +37,7 @@ enum AppColors {
     }
 
     static func shadow(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.black.opacity(0.24) : Color.black.opacity(0.055)
+        scheme == .dark ? Color.black.opacity(0.16) : Color.black.opacity(0.035)
     }
 
     static func floatingBarFill(for scheme: ColorScheme) -> Color {
@@ -75,7 +75,7 @@ enum AppColors {
     }
 
     static func stressShadow(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? stressAmber.opacity(0.10) : Color(red: 0.80, green: 0.54, blue: 0.12).opacity(0.13)
+        scheme == .dark ? stressAmber.opacity(0.07) : Color(red: 0.80, green: 0.54, blue: 0.12).opacity(0.08)
     }
 
     static func backgroundGradient(for scheme: ColorScheme) -> LinearGradient {

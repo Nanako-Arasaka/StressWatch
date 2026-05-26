@@ -189,7 +189,7 @@ struct SettingsView: View {
                     Circle()
                         .fill(AppColors.mint.opacity(colorScheme == .dark ? 0.14 : 0.28))
                         .frame(width: 104, height: 104)
-                        .blur(radius: 30)
+                        .blur(radius: 18)
 
                     Image("StressWatchLogo")
                         .resizable()
@@ -250,13 +250,13 @@ struct SettingsView: View {
             Circle()
                 .fill(AppColors.backgroundGlowPrimary(for: colorScheme))
                 .frame(width: 260, height: 260)
-                .blur(radius: 58)
+                .blur(radius: 34)
                 .offset(x: -120, y: -260)
 
             Circle()
                 .fill(AppColors.backgroundGlowSecondary(for: colorScheme))
                 .frame(width: 300, height: 300)
-                .blur(radius: 72)
+                .blur(radius: 40)
                 .offset(x: 140, y: -80)
         }
         .ignoresSafeArea()

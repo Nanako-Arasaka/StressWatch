@@ -83,7 +83,7 @@ struct DashboardMetricCardView: View {
                             endPoint: .bottomTrailing
                         )
                     )
-                    .shadow(color: AppColors.stressShadow(for: colorScheme), radius: 18, x: 0, y: 10)
+                    .shadow(color: AppColors.stressShadow(for: colorScheme), radius: 8, x: 0, y: 5)
             }
         }
     }

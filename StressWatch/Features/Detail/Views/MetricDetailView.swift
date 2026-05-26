@@ -139,7 +139,7 @@ struct MetricDetailView: View {
                         )
 
                         MetricChart(metrics: metrics)
-                            .frame(height: 240)
+                            .frame(height: 300)
                             .opacity(contentVisible ? 1 : 0)
                             .animation(AppMotion.cardEntrance(reduceMotion: reduceMotion, delay: 0.16), value: contentVisible)
                     }
@@ -182,13 +182,13 @@ struct MetricDetailView: View {
             Circle()
                 .fill(AppColors.backgroundGlowPrimary(for: colorScheme))
                 .frame(width: 260, height: 260)
-                .blur(radius: 58)
+                .blur(radius: 34)
                 .offset(x: -120, y: -260)
 
             Circle()
                 .fill(AppColors.backgroundGlowSecondary(for: colorScheme))
                 .frame(width: 300, height: 300)
-                .blur(radius: 72)
+                .blur(radius: 40)
                 .offset(x: 140, y: -80)
         }
         .ignoresSafeArea()

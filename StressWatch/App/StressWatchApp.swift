@@ -37,26 +37,19 @@ struct StressWatchApp: App {
     var body: some Scene {
         WindowGroup {
             ZStack(alignment: .bottom) {
-                TabView(selection: $selectedTab) {
-                    DashboardView(viewModel: dashboardViewModel)
-                        .tag(AppTab.dashboard)
-                        .tabItem {
-                            Label("今日", systemImage: AppTab.dashboard.systemImage)
-                        }
+                Group {
+                    switch selectedTab {
+                    case .dashboard:
+                        DashboardView(viewModel: dashboardViewModel)
 
-                    TrendView(viewModel: trendViewModel)
-                        .tag(AppTab.trend)
-                        .tabItem {
-                            Label("趋势", systemImage: AppTab.trend.systemImage)
-                        }
+                    case .trend:
+                        TrendView(viewModel: trendViewModel)
 
-                    SettingsView(viewModel: settingsViewModel)
-                        .tag(AppTab.settings)
-                        .tabItem {
-                            Label("设置", systemImage: AppTab.settings.systemImage)
-                        }
+                    case .settings:
+                        SettingsView(viewModel: settingsViewModel)
+                    }
                 }
-                .toolbar(.hidden, for: .tabBar)
+                .transition(.opacity)
 
                 FloatingTabBar(selection: $selectedTab)
             }

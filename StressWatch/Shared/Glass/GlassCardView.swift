@@ -36,7 +36,7 @@ struct GlassCardView<Content: View>: View {
             .overlay(alignment: .topLeading) {
                 LinearGradient(
                     colors: [
-                        Color.white.opacity(colorScheme == .dark ? 0.06 : 0.16),
+                        Color.white.opacity(colorScheme == .dark ? 0.035 : 0.10),
                         Color.white.opacity(0.0)
                     ],
                     startPoint: .topLeading,
@@ -45,6 +45,6 @@ struct GlassCardView<Content: View>: View {
                 .clipShape(shape)
                 .allowsHitTesting(false)
             }
-            .shadow(color: AppColors.shadow(for: colorScheme), radius: 22, x: 0, y: 14)
+            .shadow(color: AppColors.shadow(for: colorScheme), radius: 10, x: 0, y: 6)
     }
 }

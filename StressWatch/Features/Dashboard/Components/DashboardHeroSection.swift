@@ -41,11 +41,11 @@ struct DashboardHeroSection: View {
     private var heroLogo: some View {
         ZStack {
             Circle()
-                .fill(AppColors.mint.opacity(colorScheme == .dark ? 0.12 : 0.28))
-                .frame(width: 180, height: 180)
-                .blur(radius: 42)
-                .scaleEffect(heroGlowBreathing ? 1.06 : 0.98)
-                .opacity(heroGlowBreathing ? 0.92 : 0.72)
+                .fill(AppColors.mint.opacity(colorScheme == .dark ? 0.09 : 0.20))
+                .frame(width: 150, height: 150)
+                .blur(radius: 24)
+                .scaleEffect(heroGlowBreathing ? 1.02 : 0.98)
+                .opacity(heroGlowBreathing ? 0.72 : 0.58)
 
             Circle()
                 .stroke(AppColors.glassStroke(for: colorScheme), lineWidth: 0.7)
@@ -56,11 +56,14 @@ struct DashboardHeroSection: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 96, height: 96)
-                .shadow(color: AppColors.mint.opacity(colorScheme == .dark ? 0.14 : 0.20), radius: 20, x: 0, y: 12)
+                .shadow(color: AppColors.mint.opacity(colorScheme == .dark ? 0.10 : 0.14), radius: 8, x: 0, y: 5)
         }
         .frame(maxWidth: .infinity)
         .frame(height: 118)
         .onAppear(perform: startHeroGlow)
+        .onDisappear {
+            heroGlowBreathing = false
+        }
     }
 
     private func heroMetricCard(_ metric: DashboardMetric) -> some View {
@@ -124,7 +127,7 @@ struct DashboardHeroSection: View {
 
     private func startHeroGlow() {
         guard !reduceMotion else {
-            heroGlowBreathing = true
+            heroGlowBreathing = false
             return
         }
 

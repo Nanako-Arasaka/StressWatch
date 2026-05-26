@@ -23,6 +23,7 @@ class DashboardViewModel: ObservableObject {
     private let recoveryModel: any RecoveryComputing
     private let storage: any LocalStorageProtocol
     private let calendar: Calendar
+    private var isRefreshing = false
 
     init(
         healthDataProvider: any HealthKitDataProvider,
@@ -51,9 +52,24 @@ class DashboardViewModel: ObservableObject {
     }
 
     func refresh() async {
+        guard !isRefreshing else {
+            print("[DashboardViewModel] refresh skipped: already refreshing")
+            return
+        }
+
+        isRefreshing = true
         isLoading = true
         errorMessage = nil
         needsMoreData = false
+        let refreshStartedAt = Date()
+        print("[DashboardViewModel] refresh start")
+
+        defer {
+            isRefreshing = false
+            isLoading = false
+            let elapsed = Date().timeIntervalSince(refreshStartedAt)
+            print("[DashboardViewModel] refresh end elapsed=\(String(format: "%.2f", elapsed))s")
+        }
 
         do {
             let baselineWindowDays = try storage.fetchBaselineWindowDays()
@@ -71,12 +87,12 @@ class DashboardViewModel: ObservableObject {
                 to: endDate
             )
             let metrics = fetchResult.metrics
+            print("[DashboardViewModel] refresh fetched metrics=\(metrics.count) source=\(fetchResult.source)")
 
             guard let baseline = baselineEngine.calculate(from: metrics), baseline.isValid else {
                 self.baseline = nil
                 self.snapshot = .empty
                 self.needsMoreData = true
-                self.isLoading = false
                 return
             }
 
@@ -104,10 +120,9 @@ class DashboardViewModel: ObservableObject {
                 trendStartDate: calendar.date(byAdding: .day, value: -6, to: calendar.startOfDay(for: now)) ?? startDate,
                 trendEndDate: endDate
             )
-            self.isLoading = false
         } catch {
             errorMessage = "无法加载趋势参考数据"
-            isLoading = false
+            print("[DashboardViewModel] refresh failed: \(error)")
         }
     }
 
@@ -128,9 +143,11 @@ class DashboardViewModel: ObservableObject {
         from: Date,
         to: Date
     ) async throws -> (metrics: [HealthMetric], source: AppDataSource, appleMetricTypes: Set<MetricType>) {
+        print("[DashboardViewModel] fetchMetrics start preferred=\(preferredDataSource) from=\(from) to=\(to)")
         let demoMetrics = try await fetchDemoMetrics(from: from, to: to)
 
         guard preferredDataSource == .appleHealth else {
+            print("[DashboardViewModel] fetchMetrics demo metrics=\(demoMetrics.count)")
             return (demoMetrics, .demo, [])
         }
 
@@ -145,8 +162,10 @@ class DashboardViewModel: ObservableObject {
             let appleMetricTypes = Set(appleMetrics.map(\.type))
             let fallbackMetrics = demoMetrics.filter { !appleMetricTypes.contains($0.type) }
             let displaySource: AppDataSource = hasUsableAppleHealthData(appleMetrics) ? .appleHealth : .demo
+            print("[DashboardViewModel] fetchMetrics apple=\(appleMetrics.count) fallback=\(fallbackMetrics.count) display=\(displaySource)")
             return (appleMetrics + fallbackMetrics, displaySource, appleMetricTypes)
         } catch {
+            print("[DashboardViewModel] fetchMetrics apple failed, using demo: \(error)")
             return (demoMetrics, .demo, [])
         }
     }

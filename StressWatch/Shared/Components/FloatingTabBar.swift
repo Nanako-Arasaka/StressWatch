@@ -32,6 +32,7 @@ struct FloatingTabBar: View {
     @Binding var selection: AppTab
 
     @Namespace private var tabNamespace
+    @State private var tabSwitchCount = 0
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -39,6 +40,12 @@ struct FloatingTabBar: View {
         HStack(spacing: 8) {
             ForEach(AppTab.allCases, id: \.self) { tab in
                 Button {
+                    guard selection != tab else {
+                        return
+                    }
+
+                    tabSwitchCount += 1
+                    print("[FloatingTabBar] switch count=\(tabSwitchCount) tab=\(tab.title)")
                     withAnimation(AppMotion.spring(reduceMotion: reduceMotion)) {
                         selection = tab
                     }
@@ -58,7 +65,7 @@ struct FloatingTabBar: View {
                 .strokeBorder(AppColors.glassStroke(for: colorScheme), lineWidth: 1)
                 .allowsHitTesting(false)
         }
-        .shadow(color: AppColors.shadow(for: colorScheme), radius: 26, x: 0, y: 16)
+        .shadow(color: AppColors.shadow(for: colorScheme), radius: 12, x: 0, y: 7)
         .padding(.horizontal, 22)
         .padding(.bottom, 10)
     }
@@ -84,7 +91,7 @@ struct FloatingTabBar: View {
                 Capsule()
                     .fill(AppColors.floatingBarHighlight(for: colorScheme))
                     .matchedGeometryEffect(id: "selectedTab", in: tabNamespace)
-                    .shadow(color: AppColors.mint.opacity(colorScheme == .dark ? 0.18 : 0.24), radius: 18, x: 0, y: 8)
+                    .shadow(color: AppColors.mint.opacity(colorScheme == .dark ? 0.10 : 0.14), radius: 8, x: 0, y: 4)
             }
         }
         .overlay(alignment: .bottom) {
