@@ -28,11 +28,11 @@ enum StressLevel: String, Codable {
     var displayColor: Color {
         switch self {
         case .low:
-            return .green
+            return AppColors.softBlue
         case .medium:
-            return .orange
+            return AppColors.chartSecondary.opacity(0.82)
         case .high:
-            return .red
+            return AppColors.stressWarm
         }
     }
 }

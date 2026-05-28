@@ -27,11 +27,11 @@ enum RecoveryLevel: String, Codable {
     var displayColor: Color {
         switch self {
         case .poor:
-            return .red
+            return AppColors.stressWarm
         case .fair:
-            return .orange
+            return AppColors.chartSecondary.opacity(0.82)
         case .good:
-            return .green
+            return AppColors.recoveryBlue
         }
     }
 }

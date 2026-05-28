@@ -36,11 +36,11 @@ enum DashboardMetricSource {
     var tint: Color {
         switch self {
         case .appleHealth:
-            return .green
+            return AppColors.primaryBlue
         case .demo:
-            return .blue
+            return AppColors.softBlue
         case .unavailable:
-            return .secondary
+            return AppColors.softPink.opacity(0.72)
         }
     }
 }

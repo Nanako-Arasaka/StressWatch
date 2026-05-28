@@ -255,7 +255,7 @@ function App() {
 
   return (
     <main
-      className="font-apple-body min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_14%_10%,rgba(158,232,203,0.72),transparent_28%),linear-gradient(135deg,#f6fbf6_0%,#dff7ef_46%,#eefcfa_100%)] text-ink"
+      className="font-apple-body min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_14%_10%,rgba(128,191,212,0.72),transparent_28%),linear-gradient(135deg,#f7fbfd_0%,#e7f5fa_46%,#fff1f3_100%)] text-ink"
       lang={language === "zh" ? "zh-CN" : "en"}
     >
       <section className="relative mx-auto flex min-h-screen w-full max-w-[1440px] flex-col px-5 py-8 sm:px-8 lg:px-12">
@@ -410,7 +410,7 @@ function Sidebar({
             <span
               className={`h-2.5 w-2.5 rounded-full transition duration-300 ${
                 isActive
-                  ? "bg-sun shadow-[0_0_18px_rgba(242,204,77,0.75)]"
+                  ? "bg-sun shadow-[0_0_18px_rgba(252,197,197,0.75)]"
                   : "bg-white/28 group-hover:bg-mint/70"
               }`}
             />
@@ -422,7 +422,7 @@ function Sidebar({
 
       <div className="hidden">
         {t.localFirst}
-        <div className="mt-4 h-20 rounded-2xl bg-[radial-gradient(circle_at_50%_35%,rgba(242,204,77,0.45),transparent_34%),linear-gradient(140deg,rgba(158,232,203,0.32),rgba(139,228,232,0.18))]" />
+        <div className="mt-4 h-20 rounded-2xl bg-[radial-gradient(circle_at_50%_35%,rgba(252,197,197,0.45),transparent_34%),linear-gradient(140deg,rgba(128,191,212,0.32),rgba(128,191,212,0.18))]" />
       </div>
     </aside>
   );
@@ -443,7 +443,7 @@ function DashboardCenter({ language, t }: { language: Language; t: (typeof copy)
   return (
     <div className="min-w-0 px-4 py-5 sm:px-6">
       <div className="flex flex-col gap-4 min-[1320px]:flex-row min-[1320px]:items-center min-[1320px]:justify-between">
-        <div className="liquid-glass liquid-glass-soft rounded-full border border-pine/10 bg-white/70 px-4 py-3 text-sm font-semibold text-ink/55 shadow-[0_10px_30px_rgba(20,53,46,0.07)]">
+        <div className="liquid-glass liquid-glass-soft rounded-full border border-pine/10 bg-white/70 px-4 py-3 text-sm font-semibold text-ink/55 shadow-[0_10px_30px_rgba(17,31,42,0.07)]">
           {t.search}
         </div>
         <div className="flex flex-wrap gap-2">
@@ -491,7 +491,7 @@ function InsightPanel({ t }: { t: (typeof copy)[Language] }) {
       <div className="rounded-[1.7rem] bg-pine p-5 text-white shadow-soft">
         <div className="flex items-center justify-between">
           <p className="text-sm font-black">Apple Health</p>
-          <span className="h-3 w-3 rounded-full bg-mint shadow-[0_0_0_6px_rgba(158,232,203,0.16)]" />
+          <span className="h-3 w-3 rounded-full bg-mint shadow-[0_0_0_6px_rgba(128,191,212,0.16)]" />
         </div>
         <p className="mt-2 text-xs leading-5 text-white/58">{t.appleHealthBody}</p>
       </div>
@@ -556,9 +556,9 @@ function MetricCard({
           {helper}
         </span>
       </div>
-      {variant === "stress" ? <MiniSparkline values={stressSparkData} color="#2f7e70" /> : null}
-      {variant === "recovery" ? <MiniSparkline values={recoverySparkData} color="#40a884" /> : null}
-      {variant === "hrv" ? <MiniSparkline values={hrvTrendData} color="#1d91a6" /> : null}
+      {variant === "stress" ? <MiniSparkline values={stressSparkData} color="#27A6CC" /> : null}
+      {variant === "recovery" ? <MiniSparkline values={recoverySparkData} color="#80BFD4" /> : null}
+      {variant === "hrv" ? <MiniSparkline values={hrvTrendData} color="#27A6CC" /> : null}
       {variant === "sleep" ? <SleepMiniRings /> : null}
     </article>
   );
@@ -608,20 +608,20 @@ function StressLineChart({ language }: { language: Language }) {
       <svg className="h-full w-full" viewBox="0 0 520 180" role="img" aria-label="7-day stress trend line chart">
         <defs>
           <linearGradient id="stressLine" x1="0" x2="1" y1="0" y2="0">
-            <stop offset="0%" stopColor="#8be4e8" />
-            <stop offset="45%" stopColor="#2f7e70" />
-            <stop offset="100%" stopColor="#f2cc4d" />
+            <stop offset="0%" stopColor="#80BFD4" />
+            <stop offset="45%" stopColor="#27A6CC" />
+            <stop offset="100%" stopColor="#FCC5C5" />
           </linearGradient>
           <linearGradient id="stressFill" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="#9ee8cb" stopOpacity="0.5" />
-            <stop offset="100%" stopColor="#9ee8cb" stopOpacity="0" />
+            <stop offset="0%" stopColor="#80BFD4" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="#80BFD4" stopOpacity="0" />
           </linearGradient>
           <filter id="tooltipShadow" x="-20%" y="-20%" width="140%" height="150%">
-            <feDropShadow dx="0" dy="8" floodColor="#14352e" floodOpacity="0.16" stdDeviation="8" />
+            <feDropShadow dx="0" dy="8" floodColor="#111F2A" floodOpacity="0.16" stdDeviation="8" />
           </filter>
         </defs>
         {[34, 68, 102, 136].map((y) => (
-          <line key={y} x1="0" x2="520" y1={y} y2={y} stroke="#14352e" strokeOpacity="0.08" />
+          <line key={y} x1="0" x2="520" y1={y} y2={y} stroke="#111F2A" strokeOpacity="0.08" />
         ))}
         <path d={areaPath} fill="url(#stressFill)" />
         <path
@@ -649,7 +649,7 @@ function StressLineChart({ language }: { language: Language }) {
                 className="transition-all duration-300"
                 cx={point.x}
                 cy={point.y}
-                fill={isHovered ? "#20493f" : "#f2cc4d"}
+                fill={isHovered ? "#1D5D70" : "#FCC5C5"}
                 r={isHovered ? "9" : "6"}
                 stroke="#fff"
                 strokeWidth="4"
@@ -669,13 +669,13 @@ function StressLineChart({ language }: { language: Language }) {
               x={tooltip.x}
               y={tooltip.y}
             />
-            <text fill="#14352e" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="11" fontWeight="800" x={tooltip.x + 14} y={tooltip.y + 18}>
+            <text fill="#111F2A" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="11" fontWeight="800" x={tooltip.x + 14} y={tooltip.y + 18}>
               {tooltip.date}
             </text>
-            <text fill="#20493f" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="20" fontWeight="900" x={tooltip.x + 14} y={tooltip.y + 41}>
+            <text fill="#1D5D70" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="20" fontWeight="900" x={tooltip.x + 14} y={tooltip.y + 41}>
               {hovered.score}
             </text>
-            <text fill="#2f7e70" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="11" fontWeight="800" x={tooltip.x + 52} y={tooltip.y + 39}>
+            <text fill="#27A6CC" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="11" fontWeight="800" x={tooltip.x + 52} y={tooltip.y + 39}>
               {tooltip.status}
             </text>
           </g>
@@ -741,20 +741,20 @@ function HRVTrendChart({ language }: { language: Language }) {
       <svg className="h-36 w-full overflow-visible" viewBox="0 0 280 132" aria-label="HRV seven day trend with baseline">
         <defs>
           <linearGradient id="hrvLine" x1="0" x2="1" y1="0" y2="0">
-            <stop offset="0%" stopColor="#8be4e8" />
-            <stop offset="100%" stopColor="#20493f" />
+            <stop offset="0%" stopColor="#80BFD4" />
+            <stop offset="100%" stopColor="#1D5D70" />
           </linearGradient>
           <linearGradient id="hrvGlow" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="#8be4e8" stopOpacity="0.32" />
-            <stop offset="100%" stopColor="#8be4e8" stopOpacity="0" />
+            <stop offset="0%" stopColor="#80BFD4" stopOpacity="0.32" />
+            <stop offset="100%" stopColor="#80BFD4" stopOpacity="0" />
           </linearGradient>
           <filter id="hrvTooltipShadow" x="-20%" y="-20%" width="140%" height="150%">
-            <feDropShadow dx="0" dy="8" floodColor="#14352e" floodOpacity="0.16" stdDeviation="8" />
+            <feDropShadow dx="0" dy="8" floodColor="#111F2A" floodOpacity="0.16" stdDeviation="8" />
           </filter>
         </defs>
         <line
           className="baseline-dash"
-          stroke="#20493f"
+          stroke="#1D5D70"
           strokeDasharray="6 7"
           strokeLinecap="round"
           strokeOpacity="0.28"
@@ -776,7 +776,7 @@ function HRVTrendChart({ language }: { language: Language }) {
             y={baselineY - 28}
           />
           <text
-            fill="#20493f"
+            fill="#1D5D70"
             fontFamily="Nunito Sans, Noto Sans SC, sans-serif"
             fontSize="10"
             fontWeight="900"
@@ -813,7 +813,7 @@ function HRVTrendChart({ language }: { language: Language }) {
                 className={`${isVisible ? "hrv-point-pop" : "chart-point-hidden"} transition-all duration-300`}
                 cx={point.x}
                 cy={point.y}
-                fill={point.value >= baseline ? "#8be4e8" : "#f2cc4d"}
+                fill={point.value >= baseline ? "#80BFD4" : "#FCC5C5"}
                 r={isHovered ? "7.5" : "4.8"}
                 stroke="#fff"
                 strokeWidth="3"
@@ -834,13 +834,13 @@ function HRVTrendChart({ language }: { language: Language }) {
               x={tooltip.x}
               y={tooltip.y}
             />
-            <text fill="#14352e" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="11" fontWeight="800" x={tooltip.x + 12} y={tooltip.y + 18}>
+            <text fill="#111F2A" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="11" fontWeight="800" x={tooltip.x + 12} y={tooltip.y + 18}>
               {hovered.date} · {hovered.time}
             </text>
-            <text fill="#20493f" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="20" fontWeight="900" x={tooltip.x + 12} y={tooltip.y + 42}>
+            <text fill="#1D5D70" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="20" fontWeight="900" x={tooltip.x + 12} y={tooltip.y + 42}>
               {hovered.value}
             </text>
-            <text fill="#2f7e70" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="11" fontWeight="800" x={tooltip.x + 48} y={tooltip.y + 40}>
+            <text fill="#27A6CC" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="11" fontWeight="800" x={tooltip.x + 48} y={tooltip.y + 40}>
               {tooltip.status}
             </text>
           </g>
@@ -921,9 +921,9 @@ function MultiRing({ compact = false, score }: { compact?: boolean; score: numbe
   const size = compact ? 62 : 118;
   const center = size / 2;
   const rings = [
-    { color: "#8be4e8", radius: compact ? 27 : 52, value: 0.78 },
-    { color: "#2f7e70", radius: compact ? 21 : 42, value: 0.72 },
-    { color: "#20493f", radius: compact ? 15 : 32, value: 0.56 }
+    { color: "#80BFD4", radius: compact ? 27 : 52, value: 0.78 },
+    { color: "#27A6CC", radius: compact ? 21 : 42, value: 0.72 },
+    { color: "#1D5D70", radius: compact ? 15 : 32, value: 0.56 }
   ];
 
   return (
@@ -942,7 +942,7 @@ function MultiRing({ compact = false, score }: { compact?: boolean; score: numbe
                 cy={center}
                 fill="none"
                 r={ring.radius}
-                stroke="rgba(20,53,46,0.08)"
+                stroke="rgba(17,31,42,0.08)"
                 strokeWidth={compact ? 4 : 7}
               />
               <circle
@@ -1222,7 +1222,7 @@ function FeatureStrip({ features }: { features: string[][] }) {
           key={title}
           style={{ animation: `rise 640ms ease-out ${220 + index * 80}ms both` }}
         >
-          <div className="mb-5 h-9 w-9 rounded-2xl bg-gradient-to-br from-mint to-aqua shadow-[0_10px_28px_rgba(47,126,112,0.18)]" />
+          <div className="mb-5 h-9 w-9 rounded-2xl bg-gradient-to-br from-mint to-aqua shadow-[0_10px_28px_rgba(39,166,204,0.18)]" />
           <h3 className="text-sm font-black text-pine">{title}</h3>
           <p className="mt-3 text-xs leading-5 text-ink/55">{body}</p>
         </article>

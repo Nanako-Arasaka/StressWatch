@@ -20,8 +20,8 @@ struct TrendChart: View {
                 .foregroundStyle(
                     LinearGradient(
                         colors: [
-                            AppColors.stressAmber.opacity(colorScheme == .dark ? 0.16 : 0.14),
-                            AppColors.stressAmber.opacity(0.01)
+                            AppColors.stressWarm.opacity(colorScheme == .dark ? 0.16 : 0.14),
+                            AppColors.stressWarm.opacity(0.01)
                         ],
                         startPoint: .top,
                         endPoint: .bottom
@@ -32,7 +32,7 @@ struct TrendChart: View {
                     x: .value("日期", score.date),
                     y: .value("压力趋势参考", score.value)
                 )
-                .foregroundStyle(AppColors.stressAmber)
+                .foregroundStyle(AppColors.stressWarm)
                 .interpolationMethod(.catmullRom)
                 .lineStyle(StrokeStyle(lineWidth: 2.6, lineCap: .round, lineJoin: .round))
 

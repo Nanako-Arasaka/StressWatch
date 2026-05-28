@@ -23,7 +23,7 @@ struct MetricChart: View {
                         x: .value("时间", metric.date),
                         y: .value("数值", metric.value)
                     )
-                    .foregroundStyle(AppColors.teal.gradient)
+                    .foregroundStyle(AppColors.primaryBlue.gradient)
                     .interpolationMethod(.linear)
                     .lineStyle(StrokeStyle(lineWidth: 2.4, lineCap: .round, lineJoin: .round))
 
@@ -31,7 +31,7 @@ struct MetricChart: View {
                         x: .value("时间", metric.date),
                         y: .value("数值", metric.value)
                     )
-                    .foregroundStyle(isSelected(metric) ? AppColors.primaryText(for: colorScheme) : AppColors.cyan)
+                    .foregroundStyle(isSelected(metric) ? AppColors.primaryText(for: colorScheme) : AppColors.chartPrimary)
                     .symbolSize(isSelected(metric) ? 72 : 28)
                     .annotation(position: .top, spacing: 8) {
                         if isSelected(metric) {

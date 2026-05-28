@@ -52,7 +52,7 @@ struct SettingsView: View {
                             }
                             .buttonStyle(.borderedProminent)
                             .controlSize(.large)
-                            .tint(AppColors.teal)
+                            .tint(AppColors.primaryBlue)
                             .disabled(viewModel.authorizationState == .requesting)
 
                             if let errorMessage = viewModel.errorMessage {
@@ -83,7 +83,7 @@ struct SettingsView: View {
                                     }
                                 }
                                 .buttonStyle(.borderedProminent)
-                                .tint(AppColors.teal)
+                                .tint(AppColors.primaryBlue)
                                 .frame(maxWidth: .infinity)
                                 .disabled(viewModel.authorizationState == .requesting)
 
@@ -92,7 +92,7 @@ struct SettingsView: View {
                                     viewModel.useDemoData()
                                 }
                                 .buttonStyle(.bordered)
-                                .tint(AppColors.teal)
+                                .tint(AppColors.primaryBlue)
                                 .frame(maxWidth: .infinity)
                                 .disabled(viewModel.authorizationState == .requesting)
                             }
@@ -114,7 +114,7 @@ struct SettingsView: View {
                                 Text("30 天").tag(30)
                             }
                             .pickerStyle(.segmented)
-                            .tint(AppColors.teal)
+                            .tint(AppColors.primaryBlue)
                             .onChange(of: viewModel.baselineWindowDays) { days in
                                 print("[SettingsView] tapped baseline \(days)")
                                 viewModel.updateBaselineWindow(days)
@@ -138,7 +138,7 @@ struct SettingsView: View {
                                 Label("清除缓存", systemImage: "trash")
                             }
                             .buttonStyle(.bordered)
-                            .tint(AppColors.stressAmber)
+                            .tint(AppColors.stressWarm)
                         }
                     }
                     .appStaggeredCard(isVisible: contentVisible, delay: 0.28, reduceMotion: reduceMotion)
@@ -187,7 +187,7 @@ struct SettingsView: View {
             HStack(alignment: .center, spacing: 18) {
                 ZStack {
                     Circle()
-                        .fill(AppColors.mint.opacity(colorScheme == .dark ? 0.14 : 0.28))
+                        .fill(AppColors.softBlue.opacity(colorScheme == .dark ? 0.14 : 0.28))
                         .frame(width: 104, height: 104)
                         .blur(radius: 18)
 
@@ -207,7 +207,7 @@ struct SettingsView: View {
                         .foregroundStyle(AppColors.secondaryText(for: colorScheme))
 
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 104), spacing: 8)], spacing: 8) {
-                        settingsPill(title: "Data", value: viewModel.useMockData ? "Demo" : "Apple Health", color: AppColors.teal)
+                        settingsPill(title: "Data", value: viewModel.useMockData ? "Demo" : "Apple Health", color: AppColors.primaryBlue)
                         settingsPill(title: "HealthKit", value: viewModel.healthKitStatusText, color: statusPillColor)
                     }
                 }
@@ -218,11 +218,11 @@ struct SettingsView: View {
     private var statusPillColor: Color {
         switch viewModel.authorizationState {
         case .authorized:
-            return AppColors.recoveryGreen
+            return AppColors.recoveryBlue
         case .failed, .unavailable:
-            return AppColors.stressAmber
+            return AppColors.stressWarm
         case .idle, .requesting:
-            return AppColors.teal
+            return AppColors.primaryBlue
         }
     }
 
@@ -266,9 +266,9 @@ struct SettingsView: View {
     private var statusMessageColor: Color {
         switch viewModel.authorizationState {
         case .authorized:
-            return AppColors.recoveryGreen
+            return AppColors.recoveryBlue
         case .failed, .unavailable:
-            return AppColors.stressAmber
+            return AppColors.stressWarm
         case .idle, .requesting:
             return AppColors.secondaryText(for: colorScheme)
         }

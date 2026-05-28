@@ -21,9 +21,9 @@ struct DashboardAnalysisEntryCard: View {
                 HStack(spacing: 14) {
                     Image(systemName: "sparkles")
                         .font(.title3.weight(.bold))
-                        .foregroundStyle(AppColors.cyan)
+                        .foregroundStyle(AppColors.chartPrimary)
                         .frame(width: 42, height: 42)
-                        .background(AppColors.cyan.opacity(colorScheme == .dark ? 0.18 : 0.12), in: Circle())
+                        .background(AppColors.chartPrimary.opacity(colorScheme == .dark ? 0.18 : 0.12), in: Circle())
 
                     VStack(alignment: .leading, spacing: 5) {
                         Text("Insight / Analysis")

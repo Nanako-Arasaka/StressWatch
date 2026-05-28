@@ -119,7 +119,7 @@ struct DashboardView: View {
                     title: "7-day Stress Trend",
                     subtitle: "压力分数仅用于个人健康趋势参考",
                     values: viewModel.snapshot.stressTrend,
-                    color: AppColors.stressAmber,
+                    color: AppColors.stressWarm,
                     yRange: 0...100
                 )
             }

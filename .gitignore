@@ -3,6 +3,9 @@ node_modules/
 /android/
 /ios/
 dist/
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

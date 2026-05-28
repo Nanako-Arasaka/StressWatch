@@ -17,7 +17,7 @@ struct DashboardDetailGridSection: View {
                     title: "HRV / Baseline",
                     subtitle: "近期 HRV 波动趋势参考",
                     values: hrvTrend,
-                    color: AppColors.cyan,
+                    color: AppColors.chartPrimary,
                     yRange: 0...(max((hrvTrend.max() ?? 80), 80))
                 )
             }
@@ -27,7 +27,7 @@ struct DashboardDetailGridSection: View {
                     title: "Heart Rate Detail",
                     subtitle: "最近心率读取和日间趋势参考",
                     values: heartRateTrend,
-                    color: AppColors.teal,
+                    color: AppColors.primaryBlue,
                     yRange: 40...(max((heartRateTrend.max() ?? 120), 120))
                 )
             }

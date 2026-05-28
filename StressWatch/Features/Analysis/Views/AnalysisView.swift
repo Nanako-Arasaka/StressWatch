@@ -203,15 +203,15 @@ struct AnalysisView: View {
     private var stateColor: Color {
         switch viewModel.analysis.state {
         case .balanced:
-            return AppColors.recoveryGreen
+            return AppColors.recoveryBlue
         case .needRecovery:
-            return AppColors.cyan
+            return AppColors.chartPrimary
         case .highStrain:
-            return AppColors.stressAmber
+            return AppColors.stressWarm
         case .lowActivity:
-            return AppColors.teal
+            return AppColors.primaryBlue
         case .sleepDebt:
-            return AppColors.sleepBlue
+            return AppColors.softBlue
         case .dataInsufficient:
             return AppColors.secondaryText(for: colorScheme)
         }

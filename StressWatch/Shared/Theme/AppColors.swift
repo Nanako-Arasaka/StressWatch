@@ -1,96 +1,123 @@
 import SwiftUI
 
-// AppColors 是 StressWatch 的轻量语义色入口。
-// 视图通过 colorScheme 选择浅色 / 深色版本，避免颜色散落在各个组件里。
+// AppColors 是 StressWatch 的统一视觉语言入口。
+// 新品牌方向：湖蓝、柔和浅湖蓝、淡粉，整体偏 Calm / Recovery / Soft Glass。
 enum AppColors {
-    static let teal = Color(red: 0.14, green: 0.63, blue: 0.54)
-    static let mint = Color(red: 0.62, green: 0.91, blue: 0.80)
-    static let cyan = Color(red: 0.18, green: 0.72, blue: 0.78)
-    static let stressAmber = Color(red: 0.78, green: 0.52, blue: 0.14)
-    static let recoveryGreen = Color(red: 0.22, green: 0.68, blue: 0.56)
-    static let sleepBlue = Color(red: 0.16, green: 0.62, blue: 0.72)
-    static let stepsGreen = Color(red: 0.42, green: 0.70, blue: 0.32)
-    static let deepSleep = Color(red: 0.10, green: 0.28, blue: 0.25)
+    static let primaryBlue = Color(red: 0.153, green: 0.651, blue: 0.800) // #27A6CC
+    static let softBlue = Color(red: 0.502, green: 0.749, blue: 0.831) // #80BFD4
+    static let softPink = Color(red: 0.988, green: 0.773, blue: 0.773) // #FCC5C5
+    static let darkBackground = Color(red: 0.055, green: 0.090, blue: 0.125)
+
+    static let recoveryBlue = softBlue
+    static let stressWarm = softPink
+    static let chartPrimary = primaryBlue
+    static let chartSecondary = softPink
+
+    // 兼容旧调用名，全部映射到新的品牌语义色，避免视觉系统继续分裂。
+    static let teal = primaryBlue
+    static let mint = softBlue
+    static let cyan = primaryBlue
+    static let stressAmber = stressWarm
+    static let recoveryGreen = recoveryBlue
+    static let sleepBlue = softBlue
+    static let stepsGreen = primaryBlue.opacity(0.82)
+    static let deepSleep = Color(red: 0.105, green: 0.210, blue: 0.310)
 
     static func primaryText(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.94) : Color.primary
+        scheme == .dark ? Color.white.opacity(0.94) : Color(red: 0.08, green: 0.13, blue: 0.17)
     }
 
     static func secondaryText(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.58) : Color.primary.opacity(0.58)
+        scheme == .dark ? Color.white.opacity(0.58) : Color(red: 0.08, green: 0.13, blue: 0.17).opacity(0.56)
+    }
+
+    static func glassFill(for scheme: ColorScheme) -> Color {
+        scheme == .dark ? Color.white.opacity(0.065) : Color.white.opacity(0.42)
+    }
+
+    static func glassBorder(for scheme: ColorScheme) -> Color {
+        scheme == .dark ? Color.white.opacity(0.105) : Color.white.opacity(0.46)
     }
 
     static func cardBackground(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.055) : Color.white.opacity(0.06)
+        scheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.10)
     }
 
     static func glassStroke(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.12) : Color.white.opacity(0.20)
+        glassBorder(for: scheme)
     }
 
     static func chartGrid(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.045) : Color.primary.opacity(0.055)
+        scheme == .dark ? Color.white.opacity(0.045) : Color(red: 0.08, green: 0.13, blue: 0.17).opacity(0.045)
     }
 
     static func chartPointHalo(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color(red: 0.07, green: 0.15, blue: 0.14).opacity(0.90) : Color(.systemBackground).opacity(0.85)
+        scheme == .dark ? darkBackground.opacity(0.92) : Color.white.opacity(0.88)
     }
 
     static func shadow(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.black.opacity(0.16) : Color.black.opacity(0.035)
+        scheme == .dark ? Color.black.opacity(0.16) : primaryBlue.opacity(0.08)
     }
 
     static func floatingBarFill(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.070) : Color.white.opacity(0.20)
+        scheme == .dark ? Color.white.opacity(0.070) : Color.white.opacity(0.34)
     }
 
     static func floatingBarHighlight(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? mint.opacity(0.18) : mint.opacity(0.30)
+        scheme == .dark ? primaryBlue.opacity(0.18) : softBlue.opacity(0.26)
     }
 
     static func badgeFill(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.08) : Color.white.opacity(0.10)
+        scheme == .dark ? Color.white.opacity(0.08) : Color.white.opacity(0.18)
     }
 
     static func subtleTealFill(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? teal.opacity(0.14) : teal.opacity(0.08)
+        scheme == .dark ? primaryBlue.opacity(0.14) : primaryBlue.opacity(0.075)
     }
 
     static func subtleActivityFill(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? teal.opacity(0.12) : teal.opacity(0.06)
+        scheme == .dark ? softBlue.opacity(0.11) : softBlue.opacity(0.095)
+    }
+
+    static func heroGlow(for scheme: ColorScheme) -> [Color] {
+        if scheme == .dark {
+            return [primaryBlue.opacity(0.20), softPink.opacity(0.10)]
+        }
+
+        return [primaryBlue.opacity(0.20), softPink.opacity(0.30)]
     }
 
     static func stressCardTint(for scheme: ColorScheme) -> [Color] {
         if scheme == .dark {
             return [
-                stressAmber.opacity(0.24),
-                Color(red: 0.38, green: 0.24, blue: 0.08).opacity(0.16)
+                softPink.opacity(0.16),
+                primaryBlue.opacity(0.10)
             ]
         }
 
         return [
-            Color(red: 1.00, green: 0.83, blue: 0.35).opacity(0.20),
-            Color(red: 1.00, green: 0.93, blue: 0.68).opacity(0.11)
+            softPink.opacity(0.34),
+            softBlue.opacity(0.18)
         ]
     }
 
     static func stressShadow(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? stressAmber.opacity(0.07) : Color(red: 0.80, green: 0.54, blue: 0.12).opacity(0.08)
+        scheme == .dark ? softPink.opacity(0.07) : softPink.opacity(0.14)
     }
 
     static func backgroundGradient(for scheme: ColorScheme) -> LinearGradient {
         let colors: [Color]
         if scheme == .dark {
             colors = [
-                Color(red: 0.04, green: 0.12, blue: 0.11),
-                Color(red: 0.03, green: 0.20, blue: 0.18),
-                Color(red: 0.05, green: 0.12, blue: 0.16)
+                darkBackground,
+                Color(red: 0.075, green: 0.125, blue: 0.170),
+                Color(red: 0.120, green: 0.105, blue: 0.145)
             ]
         } else {
             colors = [
-                Color(red: 0.91, green: 1.00, blue: 0.96),
-                Color(red: 0.78, green: 0.96, blue: 0.90),
-                Color(red: 0.91, green: 0.99, blue: 0.98)
+                Color(red: 0.965, green: 0.990, blue: 1.000),
+                Color(red: 0.902, green: 0.965, blue: 0.985),
+                Color(red: 1.000, green: 0.942, blue: 0.948)
             ]
         }
 
@@ -98,10 +125,10 @@ enum AppColors {
     }
 
     static func backgroundGlowPrimary(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? mint.opacity(0.12) : mint.opacity(0.34)
+        scheme == .dark ? primaryBlue.opacity(0.16) : primaryBlue.opacity(0.24)
     }
 
     static func backgroundGlowSecondary(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? cyan.opacity(0.09) : Color(red: 0.55, green: 0.90, blue: 0.94).opacity(0.24)
+        scheme == .dark ? softPink.opacity(0.10) : softPink.opacity(0.30)
     }
 }

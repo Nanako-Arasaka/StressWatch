@@ -5,17 +5,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: "#14352e",
-        pine: "#20493f",
-        teal: "#2f7e70",
-        mint: "#9ee8cb",
-        aqua: "#8be4e8",
-        cream: "#f6fbf6",
-        sun: "#f2cc4d"
+        ink: "#111F2A",
+        pine: "#1D5D70",
+        teal: "#27A6CC",
+        mint: "#80BFD4",
+        aqua: "#B7DCE8",
+        cream: "#F7FBFD",
+        sun: "#FCC5C5"
       },
       boxShadow: {
-        glass: "0 26px 80px rgba(22, 63, 53, 0.18)",
-        soft: "0 18px 48px rgba(25, 80, 68, 0.12)"
+        glass: "0 26px 80px rgba(39, 166, 204, 0.14)",
+        soft: "0 18px 48px rgba(39, 166, 204, 0.10)"
       },
       fontFamily: {
         sans: [

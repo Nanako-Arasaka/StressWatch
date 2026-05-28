@@ -37,12 +37,12 @@ body {
   z-index: -1;
   border-radius: inherit;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.2) 42%, rgba(158, 232, 203, 0.2)),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0.22) 42%, rgba(128, 191, 212, 0.20)),
     radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.92), transparent 32%),
-    radial-gradient(circle at 92% 100%, rgba(139, 228, 232, 0.28), transparent 34%);
+    radial-gradient(circle at 92% 100%, rgba(252, 197, 197, 0.22), transparent 34%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    inset 0 -26px 56px rgba(32, 73, 63, 0.055);
+    inset 0 -26px 56px rgba(39, 166, 204, 0.050);
   pointer-events: none;
 }
 
@@ -148,7 +148,7 @@ a {
 }
 
 .metric-value-pulse {
-  background: linear-gradient(90deg, #14352e, #2f7e70, #14352e);
+  background: linear-gradient(90deg, #111f2a, #27a6cc, #111f2a);
   background-size: 220% 100%;
   -webkit-background-clip: text;
   background-clip: text;

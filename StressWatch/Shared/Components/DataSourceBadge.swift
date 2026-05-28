@@ -14,7 +14,7 @@ struct DataSourceBadge: View {
     var body: some View {
         HStack(spacing: 7) {
             Circle()
-                .fill(isAppleHealth ? .green : .blue)
+                .fill(isAppleHealth ? AppColors.primaryBlue : AppColors.softBlue)
                 .frame(width: 8, height: 8)
 
             Text(source)

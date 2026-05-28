@@ -25,7 +25,7 @@ struct GlassCardView<Content: View>: View {
             .background(.ultraThinMaterial, in: shape)
             .overlay {
                 shape
-                    .fill(AppColors.cardBackground(for: colorScheme))
+                    .fill(AppColors.glassFill(for: colorScheme))
                     .allowsHitTesting(false)
             }
             .overlay {

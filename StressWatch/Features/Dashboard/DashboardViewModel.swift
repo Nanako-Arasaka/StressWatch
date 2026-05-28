@@ -253,7 +253,7 @@ class DashboardViewModel: ObservableObject {
             subtitle: "压力趋势参考",
             status: stressStatus(for: score.value),
             systemImage: "waveform.path.ecg",
-            color: AppColors.stressAmber,
+            color: AppColors.stressWarm,
             trendValues: trend,
             source: source
         )
@@ -268,7 +268,7 @@ class DashboardViewModel: ObservableObject {
             subtitle: "恢复趋势参考",
             status: recoveryStatus(for: score.value),
             systemImage: "heart.circle",
-            color: AppColors.recoveryGreen,
+            color: AppColors.recoveryBlue,
             trendValues: trend,
             source: source
         )
@@ -286,7 +286,7 @@ class DashboardViewModel: ObservableObject {
             subtitle: delta.map { "\($0 >= 0 ? "+" : "")\(Int(round($0)))% vs baseline" } ?? "暂无今日数据",
             status: delta.map { $0 >= 0 ? "高于基线" : "低于基线" } ?? "暂无数据",
             systemImage: "waveform",
-            color: AppColors.cyan,
+            color: AppColors.chartPrimary,
             trendValues: trend,
             source: source
         )
@@ -304,7 +304,7 @@ class DashboardViewModel: ObservableObject {
             subtitle: restingHR.map { "Resting \(Int(round($0))) bpm" } ?? "暂无静息心率",
             status: latestTimeText(for: .heartRate, in: todayMetrics),
             systemImage: "heart.fill",
-            color: AppColors.teal,
+            color: AppColors.primaryBlue,
             trendValues: trend,
             source: source
         )
@@ -322,7 +322,7 @@ class DashboardViewModel: ObservableObject {
             subtitle: sleepScore.map { "Sleep Score \($0)" } ?? "暂无睡眠数据",
             status: sleep.map { $0 >= baseline.avgSleepHours ? "恢复良好" : "偏少" } ?? "暂无数据",
             systemImage: "moon.zzz.fill",
-            color: AppColors.sleepBlue,
+            color: AppColors.softBlue,
             trendValues: dailyLatestValues(for: .sleep, in: recentMetrics),
             source: source
         )
@@ -340,7 +340,7 @@ class DashboardViewModel: ObservableObject {
             subtitle: "今日步数",
             status: value.map(stepsStatus) ?? "暂无数据",
             systemImage: "figure.walk",
-            color: AppColors.stepsGreen,
+            color: AppColors.primaryBlue,
             trendValues: dailyLatestValues(for: .steps, in: recentMetrics),
             source: source
         )
@@ -359,7 +359,7 @@ class DashboardViewModel: ObservableObject {
             subtitle: exercise.map { "Exercise \(Int(round($0))) min · Stand \(Int(round(stand ?? 0))) h" } ?? "暂无运动分钟",
             status: activityStatus(energy: energy, exercise: exercise, stand: stand),
             systemImage: "flame.fill",
-            color: AppColors.teal,
+            color: AppColors.primaryBlue,
             trendValues: dailyLatestValues(for: .activeEnergyBurned, in: recentMetrics),
             source: source
         )
@@ -367,10 +367,10 @@ class DashboardViewModel: ObservableObject {
 
     private func makeSleepStages(from todayMetrics: [HealthMetric]) -> [SleepStageSummary] {
         [
-            SleepStageSummary(id: "rem", title: "REM", hours: todayMetrics.latestValue(for: .sleepREM) ?? 0, color: AppColors.cyan),
-            SleepStageSummary(id: "core", title: "Core", hours: todayMetrics.latestValue(for: .sleepCore) ?? 0, color: AppColors.teal),
+            SleepStageSummary(id: "rem", title: "REM", hours: todayMetrics.latestValue(for: .sleepREM) ?? 0, color: AppColors.chartPrimary),
+            SleepStageSummary(id: "core", title: "Core", hours: todayMetrics.latestValue(for: .sleepCore) ?? 0, color: AppColors.primaryBlue),
             SleepStageSummary(id: "deep", title: "Deep", hours: todayMetrics.latestValue(for: .sleepDeep) ?? 0, color: AppColors.deepSleep),
-            SleepStageSummary(id: "awake", title: "Awake", hours: todayMetrics.latestValue(for: .sleepAwake) ?? 0, color: .yellow)
+            SleepStageSummary(id: "awake", title: "Awake", hours: todayMetrics.latestValue(for: .sleepAwake) ?? 0, color: AppColors.chartSecondary)
         ].filter { $0.hours > 0 }
     }
 

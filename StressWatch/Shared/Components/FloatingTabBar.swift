@@ -91,13 +91,13 @@ struct FloatingTabBar: View {
                 Capsule()
                     .fill(AppColors.floatingBarHighlight(for: colorScheme))
                     .matchedGeometryEffect(id: "selectedTab", in: tabNamespace)
-                    .shadow(color: AppColors.mint.opacity(colorScheme == .dark ? 0.10 : 0.14), radius: 8, x: 0, y: 4)
+                    .shadow(color: AppColors.softBlue.opacity(colorScheme == .dark ? 0.10 : 0.14), radius: 8, x: 0, y: 4)
             }
         }
         .overlay(alignment: .bottom) {
             if isSelected {
                 Circle()
-                    .fill(AppColors.mint)
+                    .fill(AppColors.softBlue)
                     .frame(width: 4, height: 4)
                     .offset(y: -4)
                     .opacity(0.8)

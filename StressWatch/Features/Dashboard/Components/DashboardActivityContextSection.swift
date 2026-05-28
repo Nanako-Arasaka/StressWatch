@@ -86,7 +86,7 @@ struct DashboardActivityContextSection: View {
                     RoundedRectangle(cornerRadius: 8, style: .continuous)
                         .fill(
                             LinearGradient(
-                                colors: [AppColors.teal, AppColors.mint],
+                                colors: [AppColors.primaryBlue, AppColors.softBlue],
                                 startPoint: .bottom,
                                 endPoint: .top
                             )

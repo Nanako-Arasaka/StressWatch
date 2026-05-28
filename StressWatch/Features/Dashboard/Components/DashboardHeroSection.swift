@@ -41,11 +41,18 @@ struct DashboardHeroSection: View {
     private var heroLogo: some View {
         ZStack {
             Circle()
-                .fill(AppColors.mint.opacity(colorScheme == .dark ? 0.09 : 0.20))
-                .frame(width: 150, height: 150)
-                .blur(radius: 24)
+                .fill(AppColors.heroGlow(for: colorScheme)[0])
+                .frame(width: 164, height: 164)
+                .blur(radius: 26)
                 .scaleEffect(heroGlowBreathing ? 1.02 : 0.98)
                 .opacity(heroGlowBreathing ? 0.72 : 0.58)
+
+            Circle()
+                .fill(AppColors.heroGlow(for: colorScheme)[1])
+                .frame(width: 118, height: 118)
+                .blur(radius: 22)
+                .offset(x: 28, y: 18)
+                .opacity(0.74)
 
             Circle()
                 .stroke(AppColors.glassStroke(for: colorScheme), lineWidth: 0.7)
@@ -56,7 +63,7 @@ struct DashboardHeroSection: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 96, height: 96)
-                .shadow(color: AppColors.mint.opacity(colorScheme == .dark ? 0.10 : 0.14), radius: 8, x: 0, y: 5)
+                .shadow(color: AppColors.softBlue.opacity(colorScheme == .dark ? 0.10 : 0.14), radius: 8, x: 0, y: 5)
         }
         .frame(maxWidth: .infinity)
         .frame(height: 118)
@@ -110,8 +117,8 @@ struct DashboardHeroSection: View {
         .background(
             LinearGradient(
                 colors: metric.id == "stress" ? AppColors.stressCardTint(for: colorScheme) : [
-                    AppColors.recoveryGreen.opacity(colorScheme == .dark ? 0.18 : 0.13),
-                    AppColors.mint.opacity(colorScheme == .dark ? 0.10 : 0.16)
+                    AppColors.recoveryBlue.opacity(colorScheme == .dark ? 0.18 : 0.13),
+                    AppColors.softBlue.opacity(colorScheme == .dark ? 0.10 : 0.16)
                 ],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
