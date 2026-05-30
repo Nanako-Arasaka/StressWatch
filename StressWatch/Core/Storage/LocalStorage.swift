@@ -90,6 +90,24 @@ class LocalStorage: LocalStorageProtocol {
         return try decoder.decode(AppDataSource.self, from: data)
     }
 
+    func saveDailyCheckIn(_ checkIn: DailyWellnessCheckIn) throws {
+        var checkIns = try loadDailyCheckIns()
+        let calendar = Calendar.current
+        checkIns.removeAll { calendar.isDate($0.date, inSameDayAs: checkIn.date) }
+        checkIns.append(checkIn)
+        checkIns.sort { $0.date < $1.date }
+        try saveDailyCheckIns(checkIns)
+    }
+
+    func fetchDailyCheckIns() throws -> [DailyWellnessCheckIn] {
+        try loadDailyCheckIns().sorted { $0.date < $1.date }
+    }
+
+    func fetchTodayCheckIn() throws -> DailyWellnessCheckIn? {
+        let calendar = Calendar.current
+        return try loadDailyCheckIns().first { calendar.isDateInToday($0.date) }
+    }
+
     private var stressScoresFileURL: URL {
         storageDirectory.appendingPathComponent("stress_scores.json")
     }
@@ -106,6 +124,10 @@ class LocalStorage: LocalStorageProtocol {
         storageDirectory.appendingPathComponent("preferred_data_source.json")
     }
 
+    private var dailyCheckInsFileURL: URL {
+        storageDirectory.appendingPathComponent("daily_check_ins.json")
+    }
+
     private func loadStressScores() throws -> [StressScore] {
         guard FileManager.default.fileExists(atPath: stressScoresFileURL.path) else {
             return []
@@ -118,5 +140,19 @@ class LocalStorage: LocalStorageProtocol {
     private func saveStressScores(_ scores: [StressScore]) throws {
         let data = try encoder.encode(scores)
         try data.write(to: stressScoresFileURL, options: [.atomic])
+    }
+
+    private func loadDailyCheckIns() throws -> [DailyWellnessCheckIn] {
+        guard FileManager.default.fileExists(atPath: dailyCheckInsFileURL.path) else {
+            return []
+        }
+
+        let data = try Data(contentsOf: dailyCheckInsFileURL)
+        return try decoder.decode([DailyWellnessCheckIn].self, from: data)
+    }
+
+    private func saveDailyCheckIns(_ checkIns: [DailyWellnessCheckIn]) throws {
+        let data = try encoder.encode(checkIns)
+        try data.write(to: dailyCheckInsFileURL, options: [.atomic])
     }
 }

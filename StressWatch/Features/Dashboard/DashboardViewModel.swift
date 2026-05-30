@@ -25,6 +25,10 @@ class DashboardViewModel: ObservableObject {
     private let calendar: Calendar
     private var isRefreshing = false
 
+    var localStorage: any LocalStorageProtocol {
+        storage
+    }
+
     init(
         healthDataProvider: any HealthKitDataProvider,
         demoDataProvider: any HealthKitDataProvider = MockHealthKitService(),

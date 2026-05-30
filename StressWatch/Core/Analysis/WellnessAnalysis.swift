@@ -24,6 +24,23 @@ struct WellnessFeatures {
     let dataConfidence: Double
 }
 
+enum WellnessAnalysisSource: String, Codable {
+    case ruleBased
+    case coreMLPersonalModel
+    case coreMLUnavailableRuleFallback
+
+    var displayName: String {
+        switch self {
+        case .ruleBased:
+            return "Rule-based"
+        case .coreMLPersonalModel:
+            return "Core ML Personal Model"
+        case .coreMLUnavailableRuleFallback:
+            return "Core ML unavailable, using rule-based fallback"
+        }
+    }
+}
+
 // WellnessState 是机器学习课程展示用的状态分类。
 // 文案必须保持为趋势参考，不能作为医疗结论。
 enum WellnessState: String, Codable, CaseIterable {
@@ -75,4 +92,16 @@ struct WellnessAnalysis {
     let primaryFactors: [String]
     let features: WellnessFeatures
     let generatedAt: Date
+    let source: WellnessAnalysisSource
+
+    func withSource(_ source: WellnessAnalysisSource) -> WellnessAnalysis {
+        WellnessAnalysis(
+            state: state,
+            confidence: confidence,
+            primaryFactors: primaryFactors,
+            features: features,
+            generatedAt: generatedAt,
+            source: source
+        )
+    }
 }

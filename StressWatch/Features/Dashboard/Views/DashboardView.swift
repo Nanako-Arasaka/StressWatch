@@ -107,7 +107,8 @@ struct DashboardView: View {
                 recentMetrics: viewModel.recentMetrics,
                 stressScore: viewModel.stressScore,
                 recoveryScore: viewModel.recoveryScore,
-                stressTrend: viewModel.snapshot.stressTrend
+                stressTrend: viewModel.snapshot.stressTrend,
+                storage: viewModel.localStorage
             )
             .appStaggeredCard(isVisible: cardsVisible, delay: 0.12, reduceMotion: reduceMotion)
 

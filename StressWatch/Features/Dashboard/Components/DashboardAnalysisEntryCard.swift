@@ -5,6 +5,7 @@ struct DashboardAnalysisEntryCard: View {
     let stressScore: StressScore?
     let recoveryScore: RecoveryScore?
     let stressTrend: [Double]
+    let storage: any LocalStorageProtocol
 
     @Environment(\.colorScheme) private var colorScheme
 
@@ -14,7 +15,8 @@ struct DashboardAnalysisEntryCard: View {
                 metrics: recentMetrics,
                 stressScore: stressScore,
                 recoveryScore: recoveryScore,
-                stressTrend: stressTrend
+                stressTrend: stressTrend,
+                storage: storage
             )
         } label: {
             GlassCardView(cornerRadius: 28, padding: 18) {

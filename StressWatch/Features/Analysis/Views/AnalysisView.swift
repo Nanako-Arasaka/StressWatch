@@ -10,14 +10,16 @@ struct AnalysisView: View {
         metrics: [HealthMetric],
         stressScore: StressScore?,
         recoveryScore: RecoveryScore?,
-        stressTrend: [Double]
+        stressTrend: [Double],
+        storage: any LocalStorageProtocol
     ) {
         _viewModel = StateObject(
             wrappedValue: AnalysisViewModel(
                 metrics: metrics,
                 stressScore: stressScore,
                 recoveryScore: recoveryScore,
-                stressTrend: stressTrend
+                stressTrend: stressTrend,
+                storage: storage
             )
         )
     }
@@ -35,17 +37,20 @@ struct AnalysisView: View {
                 statusCard
                     .appStaggeredCard(isVisible: contentVisible, delay: 0.06, reduceMotion: reduceMotion)
 
+                dailyCheckInCard
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.09, reduceMotion: reduceMotion)
+
                 factorsCard
-                    .appStaggeredCard(isVisible: contentVisible, delay: 0.12, reduceMotion: reduceMotion)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.15, reduceMotion: reduceMotion)
 
                 adviceCard
-                    .appStaggeredCard(isVisible: contentVisible, delay: 0.18, reduceMotion: reduceMotion)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.21, reduceMotion: reduceMotion)
 
                 featuresCard
-                    .appStaggeredCard(isVisible: contentVisible, delay: 0.24, reduceMotion: reduceMotion)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.27, reduceMotion: reduceMotion)
 
                 disclaimerCard
-                    .appStaggeredCard(isVisible: contentVisible, delay: 0.30, reduceMotion: reduceMotion)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.33, reduceMotion: reduceMotion)
             }
             .padding(.horizontal, 18)
             .padding(.top, 18)
@@ -99,6 +104,19 @@ struct AnalysisView: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                     .fixedSize(horizontal: false, vertical: true)
+
+                HStack(spacing: 8) {
+                    Image(systemName: "cpu")
+                        .font(.caption.weight(.bold))
+
+                    Text(viewModel.analysisSourceText)
+                        .font(.caption.weight(.bold))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(AppColors.subtleActivityFill(for: colorScheme), in: Capsule())
             }
         }
     }
@@ -108,7 +126,7 @@ struct AnalysisView: View {
             VStack(alignment: .leading, spacing: 12) {
                 GlassSectionHeader(
                     title: "主要影响因素",
-                    subtitle: "模型使用可解释规则筛选近期变化较明显的特征。",
+                    subtitle: viewModel.factorSourceSubtitle,
                     systemImage: "slider.horizontal.3"
                 )
 
@@ -126,6 +144,41 @@ struct AnalysisView: View {
                     .padding(.vertical, 8)
                     .padding(.horizontal, 12)
                     .background(AppColors.subtleTealFill(for: colorScheme), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                }
+            }
+        }
+    }
+
+    private var dailyCheckInCard: some View {
+        GlassCardView(cornerRadius: 28, padding: 18) {
+            VStack(alignment: .leading, spacing: 14) {
+                GlassSectionHeader(
+                    title: "Daily Check-in",
+                    subtitle: viewModel.todayCheckInStatusText,
+                    systemImage: "checkmark.circle"
+                )
+
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 104), spacing: 10)], spacing: 10) {
+                    ForEach(DailyWellnessLabel.allCases) { label in
+                        Button {
+                            viewModel.saveTodayCheckIn(label: label)
+                        } label: {
+                            Text(label.displayName)
+                                .font(.caption.weight(.bold))
+                                .foregroundStyle(isSelected(label) ? Color.white : AppColors.primaryText(for: colorScheme))
+                                .frame(maxWidth: .infinity, minHeight: 36)
+                                .padding(.horizontal, 10)
+                                .background(checkInBackground(for: label), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        }
+                        .buttonStyle(PressScaleButtonStyle())
+                        .accessibilityLabel("记录今日状态：\(label.displayName)")
+                    }
+                }
+
+                if let message = viewModel.checkInErrorMessage {
+                    Text(message)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(AppColors.stressWarm)
                 }
             }
         }
@@ -215,6 +268,18 @@ struct AnalysisView: View {
         case .dataInsufficient:
             return AppColors.secondaryText(for: colorScheme)
         }
+    }
+
+    private func isSelected(_ label: DailyWellnessLabel) -> Bool {
+        viewModel.todayCheckIn?.label == label
+    }
+
+    private func checkInBackground(for label: DailyWellnessLabel) -> Color {
+        if isSelected(label) {
+            return AppColors.chartPrimary
+        }
+
+        return AppColors.subtleTealFill(for: colorScheme)
     }
 
     private var pageBackground: some View {

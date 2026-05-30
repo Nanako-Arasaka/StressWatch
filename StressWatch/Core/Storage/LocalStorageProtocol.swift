@@ -15,4 +15,7 @@ protocol LocalStorageProtocol {
     func fetchBaselineWindowDays() throws -> Int
     func savePreferredDataSource(_ source: AppDataSource) throws
     func fetchPreferredDataSource() throws -> AppDataSource
+    func saveDailyCheckIn(_ checkIn: DailyWellnessCheckIn) throws
+    func fetchDailyCheckIns() throws -> [DailyWellnessCheckIn]
+    func fetchTodayCheckIn() throws -> DailyWellnessCheckIn?
 }

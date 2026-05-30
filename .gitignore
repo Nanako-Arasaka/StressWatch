@@ -19,3 +19,9 @@ yarn-error.log*
 *.xcworkspace/xcuserdata/
 *.xcodeproj/xcuserdata/
 DerivedData/
+
+# ML training artifacts and personal data
+ml_training/data/*.csv
+ml_training/output/*.joblib
+ml_training/output/*.mlmodel
+ml_training/output/*.json

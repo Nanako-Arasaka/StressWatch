@@ -87,7 +87,8 @@ struct WellnessAnalyzer: WellnessAnalyzing {
             confidence: features.dataConfidence,
             primaryFactors: Array(factors.prefix(3)),
             features: features,
-            generatedAt: Date()
+            generatedAt: Date(),
+            source: .ruleBased
         )
     }
 

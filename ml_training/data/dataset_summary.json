@@ -1,0 +1,50 @@
+{
+  "source_file": "导出.zip",
+  "export_xml_size_mb": 202.96,
+  "date_range_full_hrv_period": [
+    "2026-02-05",
+    "2026-05-30"
+  ],
+  "rows_full_hrv_period": 115,
+  "date_range_recent_90d": [
+    "2026-03-02",
+    "2026-05-30"
+  ],
+  "rows_recent_90d": 90,
+  "records_parsed": {
+    "HKQuantityTypeIdentifierHeartRate": 235842,
+    "HKQuantityTypeIdentifierStepCount": 49937,
+    "HKQuantityTypeIdentifierActiveEnergyBurned": 68583,
+    "HKQuantityTypeIdentifierAppleExerciseTime": 3757,
+    "HKQuantityTypeIdentifierRestingHeartRate": 115,
+    "HKQuantityTypeIdentifierAppleStandTime": 4395,
+    "HKCategoryTypeIdentifierSleepAnalysis": 8344,
+    "HKQuantityTypeIdentifierHeartRateVariabilitySDNN": 1081
+  },
+  "weak_label_counts_full": {
+    "normal": 44,
+    "recovery_good": 20,
+    "mild_stress": 16,
+    "sleep_debt": 14,
+    "attention_stress": 11,
+    "high_stress": 4,
+    "data_insufficient": 3,
+    "low_activity": 3
+  },
+  "weak_label_counts_recent_90d": {
+    "normal": 36,
+    "recovery_good": 15,
+    "mild_stress": 14,
+    "sleep_debt": 12,
+    "attention_stress": 9,
+    "high_stress": 3,
+    "low_activity": 1
+  },
+  "notes": [
+    "Apple Health HRV field is SDNN, not RMSSD.",
+    "Sleep date is assigned to the wake-up/end date.",
+    "sleep_hours sums REM/Core/Deep/Unspecified asleep stages; Awake and InBed are separate.",
+    "active_energy_kcal converts kJ to kcal when needed.",
+    "rule_stress_score and weak_label are weak labels for personal ML experiments only, not medical diagnosis."
+  ]
+}
