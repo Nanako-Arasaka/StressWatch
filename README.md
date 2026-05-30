@@ -50,7 +50,7 @@ GitHub Pages / Vercel / Netlify
 Suggested GitHub Pages URL format:
 
 ```text
-https://<your-github-username>.github.io/StressWatch/
+https://nanako-arasaka.github.io/StressWatch/
 ```
 
 ---
