@@ -214,6 +214,11 @@ class DashboardViewModel: ObservableObject {
         let standTrend = dailyLatestValues(for: .appleStandTime, in: metrics)
         let activitySource = source(for: [.activeEnergyBurned, .appleExerciseTime, .appleStandTime], appleMetricTypes: appleMetricTypes, metrics: metrics)
         let sleepStages = makeSleepStages(from: todayMetrics)
+        let liveStress = makeLiveStressSnapshot(
+            metrics: metrics,
+            baseline: baseline,
+            source: source(for: [.hrv], appleMetricTypes: appleMetricTypes, metrics: metrics)
+        )
 
         let cards = [
             stressMetric(stressScore, trend: stressTrend, source: source(for: [.heartRate, .hrv, .steps, .sleep], appleMetricTypes: appleMetricTypes, metrics: metrics)),
@@ -240,7 +245,26 @@ class DashboardViewModel: ObservableObject {
             activityStandGoal: "12 h",
             activitySource: activitySource,
             sleepStages: sleepStages,
+            liveStress: liveStress,
             insight: "分数仅用于个人健康趋势参考，请结合近期睡眠、活动和主观感受一起观察。"
+        )
+    }
+
+    private func makeLiveStressSnapshot(
+        metrics: [HealthMetric],
+        baseline: Baseline,
+        source: DashboardMetricSource
+    ) -> LiveStressSnapshot {
+        let dataSource: AppDataSource = source == .appleHealth ? .appleHealth : .demo
+
+        return LiveStressEstimator.estimate(
+            recentHRV: metrics.latestValue(for: .hrv),
+            baselineHRV: baseline.avgHRV,
+            recentRestingHR: metrics.latestValue(for: .restingHeartRate),
+            baselineRestingHR: baseline.avgRestingHR,
+            sleepHours: metrics.latestValue(for: .sleep),
+            baselineSleepHours: baseline.avgSleepHours,
+            source: dataSource
         )
     }
 

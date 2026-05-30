@@ -100,19 +100,22 @@ struct DashboardView: View {
             )
             .appStaggeredCard(isVisible: cardsVisible, delay: 0.08, reduceMotion: reduceMotion)
 
+            LiveStressCard(snapshot: viewModel.snapshot.liveStress)
+                .appStaggeredCard(isVisible: cardsVisible, delay: 0.10, reduceMotion: reduceMotion)
+
             DashboardAnalysisEntryCard(
                 recentMetrics: viewModel.recentMetrics,
                 stressScore: viewModel.stressScore,
                 recoveryScore: viewModel.recoveryScore,
                 stressTrend: viewModel.snapshot.stressTrend
             )
-            .appStaggeredCard(isVisible: cardsVisible, delay: 0.11, reduceMotion: reduceMotion)
+            .appStaggeredCard(isVisible: cardsVisible, delay: 0.12, reduceMotion: reduceMotion)
 
             DashboardKeySignalsSection(
                 metrics: auxiliaryMetrics,
                 recentMetrics: viewModel.recentMetrics
             )
-            .appStaggeredCard(isVisible: cardsVisible, delay: 0.14, reduceMotion: reduceMotion)
+            .appStaggeredCard(isVisible: cardsVisible, delay: 0.16, reduceMotion: reduceMotion)
 
             GlassCardView(cornerRadius: 30, padding: 18) {
                 DashboardTrendChartView(

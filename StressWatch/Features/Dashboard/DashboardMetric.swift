@@ -17,7 +17,7 @@ struct DashboardMetric: Identifiable {
 }
 
 // 每张卡片可以独立说明自己来自 Apple Health、Demo，或暂无可用数据。
-enum DashboardMetricSource {
+enum DashboardMetricSource: Equatable {
     case appleHealth
     case demo
     case unavailable
@@ -62,6 +62,7 @@ struct HealthDashboardSnapshot {
     let activityStandGoal: String
     let activitySource: DashboardMetricSource
     let sleepStages: [SleepStageSummary]
+    let liveStress: LiveStressSnapshot
     let insight: String
 
     static let empty = HealthDashboardSnapshot(
@@ -79,6 +80,7 @@ struct HealthDashboardSnapshot {
         activityStandGoal: "12 h",
         activitySource: .unavailable,
         sleepStages: [],
+        liveStress: .empty,
         insight: "正在准备趋势参考数据。"
     )
 }

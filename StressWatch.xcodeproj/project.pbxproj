@@ -60,6 +60,9 @@
 		A10000000000000000000037 /* DashboardDetailGridSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003A /* DashboardDetailGridSection.swift */; };
 		A10000000000000000000038 /* DashboardSleepStagesSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003B /* DashboardSleepStagesSection.swift */; };
 		A10000000000000000000039 /* DashboardActivityContextSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003C /* DashboardActivityContextSection.swift */; };
+		A1000000000000000000003A /* LiveStressSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003D /* LiveStressSnapshot.swift */; };
+		A1000000000000000000003B /* LiveStressEstimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003E /* LiveStressEstimator.swift */; };
+		A1000000000000000000003C /* LiveStressCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003F /* LiveStressCard.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -119,6 +122,9 @@
 		A2000000000000000000003A /* DashboardDetailGridSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardDetailGridSection.swift; sourceTree = "<group>"; };
 		A2000000000000000000003B /* DashboardSleepStagesSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardSleepStagesSection.swift; sourceTree = "<group>"; };
 		A2000000000000000000003C /* DashboardActivityContextSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardActivityContextSection.swift; sourceTree = "<group>"; };
+		A2000000000000000000003D /* LiveStressSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/LiveStress/LiveStressSnapshot.swift; sourceTree = "<group>"; };
+		A2000000000000000000003E /* LiveStressEstimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/LiveStress/LiveStressEstimator.swift; sourceTree = "<group>"; };
+		A2000000000000000000003F /* LiveStressCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Views/LiveStressCard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,6 +175,7 @@
 				A40000000000000000000024 /* HealthKit */,
 				A40000000000000000000025 /* Storage */,
 				A40000000000000000000026 /* Analysis */,
+				A4000000000000000000002F /* LiveStress */,
 				A40000000000000000000027 /* Models */,
 				A40000000000000000000028 /* Utils */,
 				A40000000000000000000029 /* Extensions */,
@@ -231,6 +238,15 @@
 				A20000000000000000000033 /* AdviceGenerator.swift */,
 			);
 			name = Analysis;
+			sourceTree = "<group>";
+		};
+		A4000000000000000000002F /* LiveStress */ = {
+			isa = PBXGroup;
+			children = (
+				A2000000000000000000003D /* LiveStressSnapshot.swift */,
+				A2000000000000000000003E /* LiveStressEstimator.swift */,
+			);
+			name = LiveStress;
 			sourceTree = "<group>";
 		};
 		A40000000000000000000027 /* Models */ = {
@@ -310,6 +326,7 @@
 				A2000000000000000000000E /* DashboardViewModel.swift */,
 				A20000000000000000000026 /* DashboardMetric.swift */,
 				A20000000000000000000011 /* DashboardView.swift */,
+				A2000000000000000000003F /* LiveStressCard.swift */,
 				A20000000000000000000027 /* DashboardSparklineView.swift */,
 				A20000000000000000000028 /* DashboardMetricCardView.swift */,
 				A20000000000000000000029 /* DashboardTrendChartView.swift */,
@@ -512,6 +529,9 @@
 				A10000000000000000000037 /* DashboardDetailGridSection.swift in Sources */,
 				A10000000000000000000038 /* DashboardSleepStagesSection.swift in Sources */,
 				A10000000000000000000039 /* DashboardActivityContextSection.swift in Sources */,
+				A1000000000000000000003A /* LiveStressSnapshot.swift in Sources */,
+				A1000000000000000000003B /* LiveStressEstimator.swift in Sources */,
+				A1000000000000000000003C /* LiveStressCard.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
