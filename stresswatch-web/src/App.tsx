@@ -2,8 +2,10 @@ import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 
 
 type Language = "en" | "zh";
 type SectionId = "dashboard" | "trends" | "metrics" | "privacy" | "settings";
+type DetailKey = "stress" | "recovery" | "hrv" | "sleep" | "steps" | "trend";
 
 const sectionIds: SectionId[] = ["dashboard", "trends", "metrics", "privacy", "settings"];
+const metricDetailKeys: DetailKey[] = ["stress", "recovery", "hrv", "sleep", "steps"];
 
 const stressTrendData = [
   { day: "Mon", date: "5/15", score: 42 },
@@ -216,6 +218,7 @@ const copy = {
 function App() {
   const [language, setLanguage] = useState<Language>("en");
   const [activeSection, setActiveSection] = useState<SectionId>("dashboard");
+  const [activeDetail, setActiveDetail] = useState<DetailKey | null>(null);
   const t = copy[language];
 
   useEffect(() => {
@@ -267,11 +270,17 @@ function App() {
 
         <div className="hero-stage relative z-10 grid flex-1 items-center gap-10 [@media(min-width:1180px)]:grid-cols-[minmax(250px,330px)_minmax(0,1fr)] min-[1500px]:grid-cols-[minmax(340px,430px)_minmax(0,1fr)]">
           <HeroCopy t={t} />
-          <DashboardMockup activeSection={activeSection} language={language} setActiveSection={setActiveSection} t={t} />
+          <DashboardMockup
+            activeDetail={activeDetail}
+            activeSection={activeSection}
+            language={language}
+            openDetail={setActiveDetail}
+            setActiveSection={setActiveSection}
+            t={t}
+          />
         </div>
 
-        <FeatureStrip features={t.features} />
-        <Disclaimer text={t.disclaimer} />
+        <LowerContent disclaimer={t.disclaimer} features={t.features} language={language} />
       </section>
     </main>
   );
@@ -345,13 +354,17 @@ function HeroCopy({ t }: { t: (typeof copy)[Language] }) {
 }
 
 function DashboardMockup({
+  activeDetail,
   activeSection,
   language,
+  openDetail,
   setActiveSection,
   t
 }: {
+  activeDetail: DetailKey | null;
   activeSection: SectionId;
   language: Language;
+  openDetail: (detail: DetailKey | null) => void;
   setActiveSection: (section: SectionId) => void;
   t: (typeof copy)[Language];
 }) {
@@ -361,10 +374,13 @@ function DashboardMockup({
       className="dashboard-shell liquid-glass liquid-glass-strong relative z-10 w-full max-w-[1080px] justify-self-center animate-float select-none rounded-[2.35rem] border border-white/75 bg-white/58 p-3 shadow-glass sm:p-4 [@media(min-width:1180px)]:justify-self-end"
       aria-label="StressWatch dashboard mockup"
     >
-      <div className="grid min-h-[620px] overflow-visible rounded-[1.8rem] bg-white/72 shadow-[inset_0_1px_0_rgba(255,255,255,0.82)] [@media(min-width:1180px)]:grid-cols-[156px_minmax(0,1fr)_224px] min-[1500px]:grid-cols-[184px_minmax(0,1fr)_250px]">
+      <div className="relative grid min-h-[620px] overflow-hidden rounded-[1.8rem] bg-white/72 shadow-[inset_0_1px_0_rgba(255,255,255,0.82)] [@media(min-width:1180px)]:grid-cols-[220px_minmax(0,1fr)_248px] min-[1500px]:grid-cols-[236px_minmax(0,1fr)_270px]">
         <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} t={t} />
-        <DashboardCenter language={language} t={t} />
+        <DashboardCenter language={language} openDetail={openDetail} t={t} />
         <InsightPanel t={t} />
+        {activeDetail ? (
+          <DetailPanel detail={activeDetail} language={language} onClose={() => openDetail(null)} />
+        ) : null}
       </div>
     </section>
   );
@@ -386,10 +402,10 @@ function Sidebar({
 
   return (
     <aside className="flex flex-col rounded-t-[1.8rem] bg-pine px-5 py-6 text-white [@media(min-width:1180px)]:rounded-l-[1.8rem] [@media(min-width:1180px)]:rounded-tr-none">
-      <div className="flex items-center gap-3">
-        <LogoMark className="h-12 w-12" />
-        <div>
-          <p className="text-sm font-black">StressWatch</p>
+      <div className="flex min-w-0 items-center gap-3">
+        <LogoMark className="h-12 w-12 shrink-0" />
+        <div className="min-w-0">
+          <p className="truncate text-sm font-black">StressWatch</p>
           <p className="text-xs text-white/50">{t.healthKit}</p>
         </div>
       </div>
@@ -431,21 +447,35 @@ function Sidebar({
 
 function LogoMark({ className = "" }: { className?: string }) {
   return (
-    <img
-      alt="StressWatch logo"
-      className={`rounded-[1.15rem] object-cover ${className}`}
-      draggable={false}
-      src="./stresswatch-logo.svg"
-    />
+    <span
+      aria-label="StressWatch logo"
+      className={`grid place-items-center rounded-[1.15rem] bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.86),transparent_34%),linear-gradient(135deg,#80BFD4,#27A6CC_58%,#FCC5C5)] shadow-[inset_0_1px_0_rgba(255,255,255,0.82),0_14px_32px_rgba(39,166,204,0.28)] ${className}`}
+      role="img"
+    >
+      <svg className="h-[62%] w-[62%]" viewBox="0 0 48 48" aria-hidden="true">
+        <path d="M5 25h8l4-12 7 24 6-18 4 8h9" fill="none" stroke="white" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" />
+        <path d="M5 25h8l4-12 7 24 6-18 4 8h9" fill="none" stroke="#EAF8FC" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
+      </svg>
+    </span>
   );
 }
 
-function DashboardCenter({ language, t }: { language: Language; t: (typeof copy)[Language] }) {
+function DashboardCenter({
+  language,
+  openDetail,
+  t
+}: {
+  language: Language;
+  openDetail: (detail: DetailKey | null) => void;
+  t: (typeof copy)[Language];
+}) {
   return (
     <div className="min-w-0 px-4 py-5 sm:px-6">
       <div className="flex flex-col gap-4 min-[1320px]:flex-row min-[1320px]:items-center min-[1320px]:justify-between">
-        <div className="liquid-glass liquid-glass-soft rounded-full border border-pine/10 bg-white/70 px-4 py-3 text-sm font-semibold text-ink/55 shadow-[0_10px_30px_rgba(17,31,42,0.07)]">
+        <div className="liquid-glass liquid-glass-soft min-w-0 rounded-full border border-pine/10 bg-white/70 px-4 py-3 text-sm font-semibold text-ink/55 shadow-[0_10px_30px_rgba(17,31,42,0.07)]">
+          <span className="block truncate">
           {t.search}
+          </span>
         </div>
         <div className="flex flex-wrap gap-2">
           <StatusPill label={t.connected} />
@@ -455,29 +485,35 @@ function DashboardCenter({ language, t }: { language: Language; t: (typeof copy)
 
       <div id="metrics" className="scroll-mt-24 mt-5 grid gap-3 sm:grid-cols-2 [@media(min-width:1180px)]:grid-cols-3 min-[1320px]:grid-cols-5">
         {t.metrics.map((metric, index) => (
-          <MetricCard key={metric.label} language={language} metric={metric} index={index} />
+          <MetricCard
+            key={metric.label}
+            language={language}
+            metric={metric}
+            index={index}
+            onOpen={() => openDetail(metricDetailKeys[index] ?? "stress")}
+          />
         ))}
       </div>
 
       <div id="trends" className="scroll-mt-24 mt-5 grid gap-4 xl:grid-cols-[1.35fr_0.85fr]">
-        <GlassPanel className="min-h-[246px]">
+        <GlassPanel className="min-h-[246px]" onClick={() => openDetail("trend")}>
           <PanelHeader title={t.panels.stressTrend} value={t.panels.balanced} />
           <StressLineChart language={language} />
         </GlassPanel>
 
-        <GlassPanel className="min-h-[246px]">
+        <GlassPanel className="min-h-[246px]" onClick={() => openDetail("hrv")}>
           <PanelHeader title={t.panels.hrv} value="52 ms · +4%" />
           <HRVTrendCard language={language} />
         </GlassPanel>
       </div>
 
       <div className="mt-4 grid gap-4">
-        <GlassPanel className="min-h-[176px]">
+        <GlassPanel className="min-h-[176px]" onClick={() => openDetail("sleep")}>
           <PanelHeader title={t.panels.sleepTimeline} value="7h 32m" />
           <SleepPanel language={language} />
         </GlassPanel>
 
-        <GlassPanel className="min-h-[236px]">
+        <GlassPanel className="min-h-[236px]" onClick={() => openDetail("steps")}>
           <PanelHeader title={t.panels.activityContext} value={t.panels.stepsValue} />
           <ActivityPanel language={language} />
         </GlassPanel>
@@ -518,7 +554,7 @@ function InsightPanel({ t }: { t: (typeof copy)[Language] }) {
 function StatusPill({ label, muted = false }: { label: string; muted?: boolean }) {
   return (
     <span
-      className={`rounded-full px-4 py-2 text-xs font-black ${
+      className={`max-w-full truncate rounded-full px-4 py-2 text-xs font-black ${
         muted ? "bg-pine/8 text-pine/60" : "bg-mint/45 text-pine"
       }`}
     >
@@ -530,11 +566,13 @@ function StatusPill({ label, muted = false }: { label: string; muted?: boolean }
 function MetricCard({
   language,
   metric,
-  index
+  index,
+  onOpen
 }: {
   language: Language;
   metric: { label: string; value: string; tone: string; detail: string };
   index: number;
+  onOpen: () => void;
 }) {
   const variant = ["stress", "recovery", "hrv", "sleep", "steps"][index] ?? "default";
   const helper =
@@ -543,9 +581,11 @@ function MetricCard({
       : ["Trending up", "Good recovery", "Above baseline", "Sleep Score 84", "Steady activity"][index];
 
   return (
-    <article
-      className={`liquid-glass liquid-glass-soft group rounded-[1.35rem] border border-white/75 p-4 shadow-soft transition duration-300 hover:-translate-y-1.5 hover:scale-[1.015] ${metric.tone}`}
+    <button
+      className={`liquid-glass liquid-glass-soft group rounded-[1.35rem] border border-white/75 p-4 text-left shadow-soft transition duration-300 hover:-translate-y-1.5 hover:scale-[1.015] ${metric.tone}`}
+      onClick={onOpen}
       style={{ animation: `rise 620ms ease-out ${index * 80}ms both` }}
+      type="button"
     >
       <p className="type-caption text-[11px] uppercase text-ink/45">{metric.label}</p>
       <p className="type-metric-number metric-value-pulse mt-3 text-2xl leading-none transition duration-300 group-hover:text-teal">
@@ -561,17 +601,29 @@ function MetricCard({
       {variant === "recovery" ? <MiniSparkline values={recoverySparkData} color="#80BFD4" /> : null}
       {variant === "hrv" ? <MiniSparkline values={hrvTrendData} color="#27A6CC" /> : null}
       {variant === "sleep" ? <SleepMiniRings /> : null}
-    </article>
+    </button>
   );
 }
 
-function GlassPanel({ children, className = "" }: { children: ReactNode; className?: string }) {
+function GlassPanel({
+  children,
+  className = "",
+  onClick
+}: {
+  children: ReactNode;
+  className?: string;
+  onClick?: () => void;
+}) {
+  const Component = onClick ? "button" : "article";
+
   return (
-    <article
-      className={`liquid-glass liquid-glass-soft rounded-[1.6rem] border border-white/75 bg-white/70 p-5 shadow-soft transition hover:-translate-y-1 ${className}`}
+    <Component
+      className={`liquid-glass liquid-glass-soft w-full rounded-[1.6rem] border border-white/75 bg-white/70 p-5 text-left shadow-soft transition hover:-translate-y-1 ${onClick ? "cursor-pointer" : ""} ${className}`}
+      onClick={onClick}
+      type={onClick ? "button" : undefined}
     >
       {children}
-    </article>
+    </Component>
   );
 }
 
@@ -1214,32 +1266,198 @@ function InsightRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-function FeatureStrip({ features }: { features: string[][] }) {
+function DetailPanel({
+  detail,
+  language,
+  onClose
+}: {
+  detail: DetailKey;
+  language: Language;
+  onClose: () => void;
+}) {
+  const content = getDetailContent(detail, language);
+
   return (
-    <section className="scroll-reveal relative z-10 mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-6" aria-label="StressWatch features">
-      {features.map(([title, body], index) => (
-        <article
-          className="liquid-glass liquid-glass-soft rounded-[1.5rem] border border-white/72 bg-white/48 p-5 shadow-soft transition hover:-translate-y-1 hover:bg-white/68"
-          key={title}
-          style={{ animation: `rise 640ms ease-out ${220 + index * 80}ms both` }}
-        >
-          <div className="mb-5 h-9 w-9 rounded-2xl bg-gradient-to-br from-mint to-aqua shadow-[0_10px_28px_rgba(39,166,204,0.18)]" />
-          <h3 className="text-sm font-black text-pine">{title}</h3>
-          <p className="mt-3 text-xs leading-5 text-ink/55">{body}</p>
+    <div className="absolute inset-0 z-30 flex items-center justify-center bg-[#111F2A]/24 p-4 backdrop-blur-[2px]" onClick={onClose}>
+      <section
+        className="detail-panel liquid-glass liquid-glass-strong w-full max-w-[420px] rounded-[2rem] border border-white/72 bg-white/76 p-6 shadow-[0_30px_90px_rgba(17,31,42,0.22)]"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="type-caption text-xs uppercase tracking-[0.18em] text-pine/70">
+              {language === "zh" ? "详情" : "Detail"}
+            </p>
+            <h3 className="type-section-title mt-2 text-2xl text-ink">{content.title}</h3>
+          </div>
+          <button
+            className="grid h-10 w-10 place-items-center rounded-full bg-[#111F2A]/8 text-lg font-black text-ink transition hover:bg-[#111F2A]/14"
+            onClick={onClose}
+            type="button"
+          >
+            x
+          </button>
+        </div>
+
+        <div className="mt-6 rounded-[1.4rem] bg-[linear-gradient(135deg,rgba(39,166,204,0.14),rgba(252,197,197,0.18))] p-5">
+          <p className="type-metric-number text-5xl text-pine">{content.value}</p>
+          <p className="mt-2 text-sm font-bold text-ink/58">{content.status}</p>
+          <MiniSparkline className="mt-5 h-16" color="#27A6CC" values={content.values} />
+        </div>
+
+        <div className="mt-5 grid grid-cols-7 gap-2">
+          {content.values.map((value, index) => (
+            <div className="rounded-2xl bg-white/62 px-2 py-3 text-center" key={`${detail}-${index}`}>
+              <p className="text-[10px] font-black text-ink/42">{content.days[index]}</p>
+              <p className="mt-1 text-xs font-black text-pine">{value}</p>
+            </div>
+          ))}
+        </div>
+
+        <p className="mt-5 text-sm leading-6 text-ink/66">{content.explanation}</p>
+        <p className="mt-4 rounded-full bg-white/58 px-4 py-2 text-xs font-black text-ink/48">
+          {language === "zh" ? "仅用于健康趋势参考" : "For wellness trend reference only"}
+        </p>
+      </section>
+    </div>
+  );
+}
+
+function getDetailContent(detail: DetailKey, language: Language) {
+  const days = language === "zh" ? ["一", "二", "三", "四", "五", "六", "日"] : ["M", "T", "W", "T", "F", "S", "S"];
+  const content = {
+    stress: {
+      title: language === "zh" ? "压力分数" : "Stress Score",
+      value: "68",
+      status: language === "zh" ? "较为平衡" : "Balanced trend",
+      values: [42, 58, 51, 64, 72, 60, 68],
+      explanation:
+        language === "zh"
+          ? "近期压力趋势略有上行，但仍处于可观察范围。结合睡眠、HRV 和主观感受一起判断。"
+          : "Recent stress is slightly elevated but still in an observable range. Compare it with sleep, HRV, and how you feel."
+    },
+    recovery: {
+      title: language === "zh" ? "恢复" : "Recovery",
+      value: "74",
+      status: language === "zh" ? "恢复良好" : "Good recovery",
+      values: recoverySparkData,
+      explanation:
+        language === "zh"
+          ? "恢复分数保持良好，睡眠和 HRV 对今天的状态有正向支持。"
+          : "Recovery remains solid, supported by sleep duration and a stable HRV trend."
+    },
+    hrv: {
+      title: "HRV",
+      value: "52 ms",
+      status: language === "zh" ? "高于基线" : "Above baseline",
+      values: hrvTrendData,
+      explanation:
+        language === "zh"
+          ? "HRV 较基线略高，通常可以作为恢复状态的趋势参考。"
+          : "HRV is slightly above baseline, useful as a directional recovery reference."
+    },
+    sleep: {
+      title: language === "zh" ? "睡眠" : "Sleep",
+      value: "7h 32m",
+      status: language === "zh" ? "恢复性睡眠" : "Restorative sleep",
+      values: [6.7, 7.1, 6.5, 7.4, 7.0, 7.8, 7.5],
+      explanation:
+        language === "zh"
+          ? "睡眠时长稳定，深睡和 REM 共同支撑今日恢复趋势。"
+          : "Sleep duration is steady, with deep and REM context supporting today's recovery trend."
+    },
+    steps: {
+      title: language === "zh" ? "步数" : "Steps",
+      value: "8,420",
+      status: language === "zh" ? "活动稳定" : "Steady activity",
+      values: [6100, 7420, 6900, 8120, 7780, 9340, 8420],
+      explanation:
+        language === "zh"
+          ? "活动量接近近期水平，没有明显偏离，可作为压力趋势的背景参考。"
+          : "Activity is close to recent levels and gives useful context for stress trend changes."
+    },
+    trend: {
+      title: language === "zh" ? "7 天压力趋势" : "7-day Stress Trend",
+      value: "68",
+      status: language === "zh" ? "周内波动" : "Weekly movement",
+      values: [42, 58, 51, 64, 72, 60, 68],
+      explanation:
+        language === "zh"
+          ? "本周压力趋势有轻微波动。建议结合恢复和睡眠一起观察，不单看单日分数。"
+          : "This week shows mild movement. Read it together with recovery and sleep rather than a single daily score."
+    }
+  } satisfies Record<DetailKey, { title: string; value: string; status: string; values: number[]; explanation: string }>;
+
+  return { ...content[detail], days };
+}
+
+function LowerContent({
+  disclaimer,
+  features,
+  language
+}: {
+  disclaimer: string;
+  features: string[][];
+  language: Language;
+}) {
+  return (
+    <section className="lower-section scroll-reveal relative z-10 mt-14 scroll-mt-24 rounded-[2.25rem] border border-white/12 p-5 text-white shadow-[0_34px_110px_rgba(17,31,42,0.26)] sm:p-7 lg:p-9" id="privacy">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6" aria-label="StressWatch features">
+        {features.map(([title, body], index) => (
+          <article
+            className="feature-card liquid-glass liquid-glass-soft rounded-[1.5rem] border border-white/16 bg-white/10 p-5 transition hover:-translate-y-1.5"
+            key={title}
+            style={{ animation: `rise 640ms ease-out ${220 + index * 80}ms both` }}
+          >
+            <FeatureIcon index={index} />
+            <h3 className="mt-5 text-sm font-black text-white">{title}</h3>
+            <p className="mt-3 text-xs leading-5 text-white/70">{body}</p>
+          </article>
+        ))}
+      </div>
+
+      <div className="mt-6 grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
+        <article className="liquid-glass liquid-glass-soft rounded-[1.6rem] border border-white/14 bg-white/10 p-6">
+          <p className="text-sm font-black text-white">{language === "zh" ? "隐私与本地优先" : "Privacy and local-first"}</p>
+          <p className="mt-3 text-sm leading-7 text-white/72">
+            {language === "zh"
+              ? "StressWatch 不接后端、不需要账号，也不做服务器端数据收集。健康趋势体验围绕 HealthKit 和本机数据设计。"
+              : "StressWatch does not require a backend, account, or server-side data collection. The experience is designed around HealthKit and local device data."}
+          </p>
         </article>
-      ))}
+
+        <article className="liquid-glass liquid-glass-soft rounded-[1.6rem] border border-white/14 bg-white/10 p-6">
+          <p className="text-sm font-black text-white">{language === "zh" ? "免责声明" : "Medical disclaimer"}</p>
+          <p className="mt-3 text-sm leading-7 text-white/72">{disclaimer}</p>
+        </article>
+      </div>
+
+      <footer className="mt-7 flex flex-col gap-3 border-t border-white/12 pt-5 text-xs font-bold text-white/54 sm:flex-row sm:items-center sm:justify-between">
+        <span>StressWatch</span>
+        <span>{language === "zh" ? "个人健康趋势参考 · 本地优先" : "Personal wellness trend reference · Local-first"}</span>
+      </footer>
     </section>
   );
 }
 
-function Disclaimer({ text }: { text: string }) {
+function FeatureIcon({ index }: { index: number }) {
+  const icons = [
+    <path d="M9 24h7l3-9 6 18 5-13 3 6h6" key="health" />,
+    <path d="M10 30c7-12 15 6 22-6 3-5 5-8 8-9" key="hrv" />,
+    <path d="M24 9l10 6v8c0 7-4 12-10 16-6-4-10-9-10-16v-8l10-6z" key="recovery" />,
+    <path d="M14 30c5 5 15 5 20 0M14 24c4-5 16-5 20 0M18 18c3-3 9-3 12 0" key="sleep" />,
+    <path d="M13 24h22M24 13v22M17 17l14 14M31 17 17 31" key="privacy" />,
+    <path d="M14 18h20v16H14zM18 18v-3h12v3" key="account" />
+  ];
+
   return (
-    <section
-      id="privacy"
-      className="liquid-glass liquid-glass-soft scroll-reveal relative z-10 mt-6 scroll-mt-24 rounded-[1.5rem] border border-pine/8 bg-white/42 p-5 text-sm leading-7 text-ink/64"
-    >
-      {text}
-    </section>
+    <div className="feature-icon grid h-12 w-12 place-items-center rounded-2xl bg-[linear-gradient(135deg,#80BFD4,#27A6CC_55%,#FCC5C5)] shadow-[0_14px_36px_rgba(39,166,204,0.28)]">
+      <svg className="h-7 w-7" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <g stroke="white" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3">
+          {icons[index] ?? icons[0]}
+        </g>
+      </svg>
+    </div>
   );
 }
 
