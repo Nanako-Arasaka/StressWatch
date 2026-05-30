@@ -65,6 +65,8 @@
 		A1000000000000000000003C /* LiveStressCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003F /* LiveStressCard.swift */; };
 		A1000000000000000000003D /* DailyWellnessCheckIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000040 /* DailyWellnessCheckIn.swift */; };
 		A1000000000000000000003E /* CoreMLWellnessAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000041 /* CoreMLWellnessAnalyzer.swift */; };
+		A1000000000000000000003F /* StressWatchWellnessClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000042 /* StressWatchWellnessClassifier.mlmodel */; };
+		A10000000000000000000040 /* coreml_class_labels.json in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000043 /* coreml_class_labels.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -129,6 +131,8 @@
 		A2000000000000000000003F /* LiveStressCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Views/LiveStressCard.swift; sourceTree = "<group>"; };
 		A20000000000000000000040 /* DailyWellnessCheckIn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/DailyWellnessCheckIn.swift; sourceTree = "<group>"; };
 		A20000000000000000000041 /* CoreMLWellnessAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/CoreMLWellnessAnalyzer.swift; sourceTree = "<group>"; };
+		A20000000000000000000042 /* StressWatchWellnessClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = Resources/ML/StressWatchWellnessClassifier.mlmodel; sourceTree = "<group>"; };
+		A20000000000000000000043 /* coreml_class_labels.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Resources/ML/coreml_class_labels.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -369,6 +373,8 @@
 			isa = PBXGroup;
 			children = (
 				A2000000000000000000002D /* Assets.xcassets */,
+				A20000000000000000000042 /* StressWatchWellnessClassifier.mlmodel */,
+				A20000000000000000000043 /* coreml_class_labels.json */,
 				A2000000000000000000002E /* LaunchScreen.storyboard */,
 				A2000000000000000000001C /* Info.plist */,
 				A2000000000000000000001D /* StressWatch.entitlements */,
@@ -475,6 +481,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1000000000000000000002A /* Assets.xcassets in Resources */,
+				A10000000000000000000040 /* coreml_class_labels.json in Resources */,
 				A1000000000000000000002B /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -526,6 +533,7 @@
 				A1000000000000000000002E /* FeatureExtractor.swift in Sources */,
 				A1000000000000000000002F /* WellnessAnalyzer.swift in Sources */,
 				A1000000000000000000003E /* CoreMLWellnessAnalyzer.swift in Sources */,
+				A1000000000000000000003F /* StressWatchWellnessClassifier.mlmodel in Sources */,
 				A10000000000000000000030 /* AdviceGenerator.swift in Sources */,
 				A10000000000000000000031 /* AnalysisViewModel.swift in Sources */,
 				A10000000000000000000032 /* AnalysisView.swift in Sources */,

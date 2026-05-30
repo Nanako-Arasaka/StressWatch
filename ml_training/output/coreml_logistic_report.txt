@@ -1,0 +1,28 @@
+StressWatch Core ML LogisticRegression Training Report
+========================================================
+CSV path: E:\stress watch demo for ios\ml_training\data\stresswatch_ml_daily_features_recent_90d.csv
+Sample count: 90
+Split mode: fallback_non_stratified (The least populated class in y has only 1 member, which is too few. The minimum number of groups for any class cannot be less than 2.)
+Accuracy: 0.6522
+Macro F1: 0.4872
+
+Label source distribution:
+{'weak': 90}
+
+Target label distribution:
+{'normal': 36, 'recovery_good': 15, 'mild_stress': 14, 'sleep_debt': 12, 'attention_stress': 9, 'high_stress': 3, 'low_activity': 1}
+
+Classification Report:
+                  precision    recall  f1-score   support
+
+attention_stress       0.67      0.67      0.67         3
+     high_stress       0.00      0.00      0.00         0
+    low_activity       0.00      0.00      0.00         1
+     mild_stress       0.67      0.50      0.57         4
+          normal       0.67      0.75      0.71         8
+   recovery_good       0.60      0.75      0.67         4
+      sleep_debt       1.00      0.67      0.80         3
+
+        accuracy                           0.65        23
+       macro avg       0.51      0.48      0.49        23
+    weighted avg       0.67      0.65      0.65        23

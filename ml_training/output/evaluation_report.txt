@@ -4,10 +4,24 @@ CSV path: E:\stress watch demo for ios\ml_training\data\stresswatch_ml_daily_fea
 
 Data Cleaning
 --------------------
-Dropped rows with empty weak_label: 0
+Dropped rows with empty target_label: 0
 Dropped rows below data_confidence < 40.0: 0
+removed_empty_features: ['active_energy']
+user_label samples: 0
+weak_label fallback samples: 90
+label_source distribution: {'weak': 90}
+target_label distribution: {'normal': 36, 'recovery_good': 15, 'mild_stress': 14, 'sleep_debt': 12, 'attention_stress': 9, 'high_stress': 3, 'low_activity': 1}
+WARNING: user_label < 20. 当前仍以 weak_label 为主，模型更接近规则模型蒸馏，不是完全监督模型。
 Final sample count: 90
 Split mode: fallback_non_stratified (The least populated class in y has only 1 member, which is too few. The minimum number of groups for any class cannot be less than 2.)
+
+Label Source
+--------------------
+user_label samples: 0
+weak_label fallback samples: 90
+label_source distribution: {'weak': 90}
+target_label distribution: {'normal': 36, 'recovery_good': 15, 'mild_stress': 14, 'sleep_debt': 12, 'attention_stress': 9, 'high_stress': 3, 'low_activity': 1}
+WARNING: user_label < 20. 当前仍以 weak_label 为主，模型更接近规则模型蒸馏，不是完全监督模型。
 
 Class Distribution
 --------------------
@@ -48,11 +62,11 @@ Confusion Matrix:
  [0 0 0 0 0 1 2]]
 Feature Importance (top 10):
   avg_hrv_sdnn: 0.656964
-  hrv_7d_baseline: 0.618308
+  hrv_deviation_percent: 0.618308
   deep_sleep_hours: 0.490165
-  resting_hr_deviation: 0.444200
+  sleep_7d_baseline: 0.444200
   max_hrv_sdnn: 0.443474
-  sleep_7d_baseline: 0.427139
+  sleep_ratio: 0.427139
   min_hrv_sdnn: 0.421345
   rem_sleep_hours: 0.378693
   steps: 0.371004
@@ -85,15 +99,15 @@ Confusion Matrix:
  [0 0 0 0 0 4 0]
  [0 0 0 0 0 0 3]]
 Feature Importance (top 10):
-  hrv_7d_baseline: 0.160857
+  hrv_deviation_percent: 0.160857
   avg_hrv_sdnn: 0.127723
-  sleep_7d_baseline: 0.119681
+  sleep_ratio: 0.119681
   max_hrv_sdnn: 0.094619
   sleep_hours: 0.062029
   deep_sleep_hours: 0.049172
-  hrv_deviation_percent: 0.048347
-  resting_hr_7d_baseline: 0.043137
-  resting_hr_deviation: 0.042701
+  resting_hr_7d_baseline: 0.048347
+  resting_hr_deviation: 0.043137
+  sleep_7d_baseline: 0.042701
   rem_sleep_hours: 0.038128
 ----------------------------------------
 Model: GradientBoosting
@@ -123,14 +137,14 @@ Confusion Matrix:
  [0 0 0 0 0 4 0]
  [0 0 0 0 1 0 2]]
 Feature Importance (top 10):
-  hrv_7d_baseline: 0.470396
-  sleep_7d_baseline: 0.254047
+  hrv_deviation_percent: 0.470396
+  sleep_ratio: 0.254047
   avg_hrv_sdnn: 0.062464
-  hrv_deviation_percent: 0.041391
+  resting_hr_7d_baseline: 0.041391
   rem_sleep_hours: 0.039953
   max_hrv_sdnn: 0.025212
-  resting_hr_deviation: 0.021897
-  resting_hr_7d_baseline: 0.018293
+  sleep_7d_baseline: 0.021897
+  resting_hr_deviation: 0.018293
   core_sleep_hours: 0.016775
   awake_hours: 0.016042
 ----------------------------------------
@@ -143,16 +157,23 @@ Confidence (top class probability): 0.8767
 Class probabilities:
   attention_stress: 0.0000
   high_stress: 0.0000
-  low_activity: 0.0333
-  mild_stress: 0.0867
-  normal: 0.0033
-  recovery_good: 0.8767
+  mild_stress: 0.0333
+  normal: 0.0867
+  recovery_good: 0.0033
+  sleep_debt: 0.8767
 Message template: 最近指标相对个人基线出现波动，当前结果仅供个人健康趋势参考，建议关注恢复节奏、睡眠规律与活动平衡。
+
+Prediction Consistency Check
+--------------------
+Predicted class: sleep_debt
+Top probability class: sleep_debt
+Whether matched: True
 
 Core ML Export
 --------------------
 Core ML export failed with RandomForest: convert() got an unexpected keyword argument 'class_labels'
-Skipping LogisticRegression for Core ML export because pipeline instance is unavailable.
-Skipping GradientBoosting for Core ML export because pipeline instance is unavailable.
+Core ML export failed with LogisticRegression: convert() got an unexpected keyword argument 'class_labels'
+Core ML export failed with GradientBoosting: convert() got an unexpected keyword argument 'class_labels'
 Core ML export was not successful for available models. Keep joblib model; consider Create ML or alternative pipeline.
 joblib model artifacts are saved and can still be used locally.
+Recommended Core ML export env: Python 3.10/3.11 + scikit-learn==1.5.1 + coremltools.

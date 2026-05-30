@@ -4,6 +4,7 @@ import Foundation
 struct CoreMLWellnessAnalyzer: WellnessAnalyzing {
     private let fallbackAnalyzer: any WellnessAnalyzing
     private let model: MLModel?
+    private let classLabels: [String]
 
     // Keep this order aligned with ml_training/output/feature_columns.json.
     private let featureColumns = [
@@ -32,14 +33,17 @@ struct CoreMLWellnessAnalyzer: WellnessAnalyzing {
 
     init(
         fallbackAnalyzer: any WellnessAnalyzing = WellnessAnalyzer(),
-        modelURL: URL? = Bundle.main.url(forResource: "StressWatchWellnessClassifier", withExtension: "mlmodelc")
+        modelURL: URL? = Bundle.main.url(forResource: "StressWatchWellnessClassifier", withExtension: "mlmodelc"),
+        labelsURL: URL? = Bundle.main.url(forResource: "coreml_class_labels", withExtension: "json")
     ) {
         self.fallbackAnalyzer = fallbackAnalyzer
         self.model = modelURL.flatMap { try? MLModel(contentsOf: $0) }
+        self.classLabels = Self.loadClassLabels(from: labelsURL)
     }
 
     func analyze(features: WellnessFeatures) -> WellnessAnalysis {
         guard let model,
+              !classLabels.isEmpty,
               let provider = makeFeatureProvider(for: model, features: features),
               let prediction = try? model.prediction(from: provider),
               let label = predictedLabel(from: prediction),
@@ -128,6 +132,17 @@ struct CoreMLWellnessAnalyzer: WellnessAnalyzing {
             return label
         }
 
+        if let index = prediction.featureValue(for: "classLabel")?.int64Value,
+           let label = classLabel(at: Int(index)) {
+            return label
+        }
+
+        if let doubleIndex = prediction.featureValue(for: "classLabel")?.doubleValue,
+           doubleIndex.isFinite,
+           let label = classLabel(at: Int(doubleIndex)) {
+            return label
+        }
+
         if let label = prediction.featureValue(for: "target_label")?.stringValue, !label.isEmpty {
             return label
         }
@@ -147,10 +162,38 @@ struct CoreMLWellnessAnalyzer: WellnessAnalyzing {
         return dictionary
             .compactMap { key, value -> (String, Double)? in
                 let probability = value.doubleValue
-                let label = key as? String ?? key.description
+                let label: String
+                if let stringKey = key as? String {
+                    label = stringKey
+                } else if let index = key as? Int {
+                    label = classLabel(at: index) ?? "\(index)"
+                } else if let numberKey = key as? NSNumber {
+                    label = classLabel(at: numberKey.intValue) ?? numberKey.stringValue
+                } else {
+                    label = key.description
+                }
                 return label.isEmpty ? nil : (label, probability)
             }
             .max { $0.probability < $1.probability }
+    }
+
+    private func classLabel(at index: Int) -> String? {
+        guard classLabels.indices.contains(index) else {
+            return nil
+        }
+
+        return classLabels[index]
+    }
+
+    private static func loadClassLabels(from url: URL?) -> [String] {
+        guard let url,
+              let data = try? Data(contentsOf: url),
+              let labels = try? JSONDecoder().decode([String].self, from: data)
+        else {
+            return []
+        }
+
+        return labels
     }
 
     private func state(for label: String) -> WellnessState? {

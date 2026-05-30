@@ -94,18 +94,37 @@ python train_wellness_model.py --min-confidence 40
 - `training_metadata.json`：训练样本、标签来源、最佳模型、Core ML 导出状态
 - `StressWatchWellnessClassifier.mlmodel`（可选）：当 `coremltools` 可用且转换成功
 
+模型职责：
+
+- `RandomForest`：主训练模型，用于评估、课程展示和本地 joblib 分析。
+- `LogisticRegression`：Core ML 部署模型，使用更简单的 sklearn Pipeline，避免 `ColumnTransformer` 等 Core ML 不支持的组件。
+- Core ML 部署模型使用 `train_coreml_model.py` 内的专用特征列表，不包含 `active_energy`。
+
 当样本数少于 60 条时，报告会明确提示：
 
 > 当前模型仅适合个人实验和课程展示，不适合泛化。
 
 ## 6) Core ML 导出
 
-脚本会自动尝试导出 Core ML：
+建议先在当前环境训练主模型并保存 joblib：
 
-- 若未安装 `coremltools`：不会中断训练，并提示 `pip install coremltools`
-- 若 RandomForest 无法转换：会尝试 LogisticRegression
-- 若仍失败：会记录失败原因并保留 `.joblib` 产物
-- 当前训练环境可以正常训练并保存 `.joblib`，但 Core ML 导出建议使用兼容环境。
+```bash
+python train_wellness_model.py
+```
+
+如需 Core ML 部署，单独训练 Core ML 兼容模型：
+
+```bash
+python train_coreml_model.py
+```
+
+然后在兼容环境中导出：
+
+```bash
+python export_coreml_logistic.py
+```
+
+主训练脚本不会因为 Core ML 导出失败而报错。若当前 `scikit-learn` 版本高于 1.5.1，导出脚本会提示使用 `scikit-learn==1.5.1`。
 
 推荐单独创建导出环境：
 
@@ -119,19 +138,21 @@ pip install "scikit-learn==1.5.1" pandas numpy joblib coremltools
 
 - 当前 Python 环境可以训练 joblib。
 - Core ML 导出建议使用 Python 3.10 / 3.11 + scikit-learn 1.5.1 + coremltools。
+- `coreml_class_labels.json` 会保存 `label_encoder.classes_`，App 端可用它把模型输出编码或概率列映射为文本标签。
+- `coreml_logistic_model.joblib` 是专门给 Core ML 转换使用的模型，不替代 `wellness_model.joblib`。
 
 如全部转换失败，可后续改用：
 
 - Create ML 重新训练
-- 或改造为对 Core ML 更友好的导出路径
+- 或改造为对 Core ML 更友好的独立转换脚本
 
 ## 7) 接入 StressWatch 的 CoreMLWellnessAnalyzer（建议流程）
 
 1. 将 `StressWatchWellnessClassifier.mlmodel` 拖入 Xcode 工程（勾选主 target）。
-2. 确认推理输入特征顺序与 `feature_columns.json` 一致。
+2. 同步保留 `coreml_class_labels.json` 中的类别顺序，用于 App 端把模型输出映射成文本标签。
 3. 在 `CoreMLWellnessAnalyzer` 中：
    - 构建 `MLFeatureProvider` 输入（21 个数值特征）
-   - 调用模型预测类别与概率
+   - 调用模型预测类别编码或概率
    - 将结果展示为“趋势参考”文案（避免医疗表述）
 4. 若模型缺失、加载失败、预测失败或输入特征不完整，App 会自动使用规则模型 fallback。
 5. 若当前仅有 `.joblib`：先在 Python 侧验证效果，再根据报告选择可转模型继续导出，或后续使用 Create ML / 单独转换脚本。

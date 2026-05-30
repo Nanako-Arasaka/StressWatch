@@ -7,6 +7,7 @@ from pathlib import Path
 import joblib
 import numpy as np
 import pandas as pd
+import sklearn
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.impute import SimpleImputer
@@ -19,6 +20,7 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 RANDOM_STATE = 42
 MIN_CONFIDENCE_DEFAULT = 40.0
 MIN_EXPERIMENT_SAMPLES = 60
+MAX_COREML_SKLEARN_VERSION = (1, 5, 1)
 
 FEATURE_COLUMNS = [
     "avg_hrv_sdnn",
@@ -85,6 +87,16 @@ def detect_placeholder_csv_path(raw_csv_arg: str) -> bool:
 
 def value_counts_dict(series: pd.Series) -> dict:
     return {str(k): int(v) for k, v in series.value_counts(dropna=False).items()}
+
+
+def parse_version_tuple(version: str) -> tuple[int, int, int]:
+    parts = []
+    for part in version.split(".")[:3]:
+        digits = "".join(ch for ch in part if ch.isdigit())
+        parts.append(int(digits) if digits else 0)
+    while len(parts) < 3:
+        parts.append(0)
+    return tuple(parts)
 
 
 def clean_dataframe(df: pd.DataFrame, min_confidence: float):
@@ -293,7 +305,17 @@ def choose_best_model(eval_results, sample_count):
 
 def try_export_coreml(best_name, eval_results, output_dir: Path, feature_columns, class_names):
     mlmodel_path = output_dir / "StressWatchWellnessClassifier.mlmodel"
+    labels_path = output_dir / "coreml_class_labels.json"
     notes = []
+    labels_path.write_text(json.dumps(list(class_names), ensure_ascii=False, indent=2), encoding="utf-8")
+    notes.append(f"Saved Core ML class labels: {labels_path}")
+
+    sklearn_version = parse_version_tuple(sklearn.__version__)
+    if sklearn_version > MAX_COREML_SKLEARN_VERSION:
+        notes.append(
+            f"Core ML export skipped: 当前环境 sklearn 版本 {sklearn.__version__} 不兼容，请使用 sklearn==1.5.1。"
+        )
+        return None, notes
 
     try:
         import coremltools as ct
@@ -301,7 +323,7 @@ def try_export_coreml(best_name, eval_results, output_dir: Path, feature_columns
         notes.append("coremltools not installed. To enable Core ML export: pip install coremltools")
         return None, notes
 
-    conversion_order = [best_name, "RandomForest", "LogisticRegression", "GradientBoosting"]
+    conversion_order = ["LogisticRegression", best_name, "RandomForest", "GradientBoosting"]
     unique_order = []
     for m in conversion_order:
         if m not in unique_order:
@@ -317,11 +339,9 @@ def try_export_coreml(best_name, eval_results, output_dir: Path, feature_columns
 
         try:
             input_features = [(col, ct.models.datatypes.Double()) for col in feature_columns]
-            class_labels = list(class_names)
             mlmodel = ct.converters.sklearn.convert(
                 candidate,
                 input_features=input_features,
-                class_labels=class_labels,
             )
             mlmodel.short_description = "Personal wellness trend classifier for reference only."
             mlmodel.save(str(mlmodel_path))
