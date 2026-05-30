@@ -255,16 +255,17 @@ function App() {
 
   return (
     <main
-      className="font-apple-body min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_14%_10%,rgba(128,191,212,0.72),transparent_28%),linear-gradient(135deg,#f7fbfd_0%,#e7f5fa_46%,#fff1f3_100%)] text-ink"
+      className="site-shell font-apple-body min-h-screen overflow-x-hidden text-ink"
       lang={language === "zh" ? "zh-CN" : "en"}
     >
-      <section className="relative mx-auto flex min-h-screen w-full max-w-[1440px] flex-col px-5 py-8 sm:px-8 lg:px-12">
-        <div className="absolute -left-24 top-28 h-72 w-72 rounded-full bg-mint/45 blur-3xl" />
-        <div className="absolute right-[-120px] top-16 h-80 w-80 rounded-full bg-aqua/30 blur-3xl" />
+      <section className="relative mx-auto flex min-h-screen w-full max-w-[1680px] flex-col px-5 py-8 sm:px-8 lg:px-12">
+        <div className="pointer-events-none absolute -left-28 top-24 h-[28rem] w-[28rem] rounded-full bg-mint/40 blur-3xl" />
+        <div className="pointer-events-none absolute right-[-9rem] top-10 h-[34rem] w-[34rem] rounded-full bg-sun/36 blur-3xl" />
+        <div className="pointer-events-none absolute bottom-16 left-[36%] h-80 w-80 rounded-full bg-teal/18 blur-3xl" />
 
         <LanguageSwitch language={language} setLanguage={setLanguage} label={t.languageLabel} />
 
-        <div className="relative z-10 grid flex-1 items-start gap-10">
+        <div className="hero-stage relative z-10 grid flex-1 items-center gap-10 [@media(min-width:1180px)]:grid-cols-[minmax(250px,330px)_minmax(0,1fr)] min-[1500px]:grid-cols-[minmax(340px,430px)_minmax(0,1fr)]">
           <HeroCopy t={t} />
           <DashboardMockup activeSection={activeSection} language={language} setActiveSection={setActiveSection} t={t} />
         </div>
@@ -286,7 +287,7 @@ function LanguageSwitch({
   label: string;
 }) {
   return (
-    <div className="relative z-20 mb-6 flex justify-end">
+    <div className="relative z-20 mb-6 flex select-none justify-end">
       <div
         aria-label={label}
         className="liquid-glass liquid-glass-soft relative flex items-center rounded-full border border-pine/10 bg-white/54 p-1 text-xs font-black text-pine shadow-soft"
@@ -316,9 +317,9 @@ function LanguageSwitch({
 
 function HeroCopy({ t }: { t: (typeof copy)[Language] }) {
   return (
-    <div className="max-w-xl animate-rise [@media(min-width:1180px)]:max-w-[320px] min-[1320px]:max-w-md min-[1500px]:max-w-xl">
+    <div className="select-none max-w-xl animate-rise [@media(min-width:1180px)]:max-w-[330px] min-[1500px]:max-w-xl">
       <LogoMark className="mb-7 h-16 w-16 shadow-soft" />
-      <h1 className="type-hero-title max-w-[10ch] text-6xl leading-[0.92] text-ink sm:text-7xl [@media(min-width:1180px)]:text-5xl min-[1320px]:text-6xl min-[1500px]:text-8xl">
+      <h1 className="type-hero-title max-w-[10ch] text-6xl leading-[0.92] text-ink sm:text-7xl [@media(min-width:1180px)]:text-5xl min-[1500px]:text-8xl">
         {t.heroTitle}
       </h1>
       <p className="type-section-title mt-7 max-w-xl text-2xl leading-tight text-pine min-[1500px]:text-3xl">
@@ -327,13 +328,13 @@ function HeroCopy({ t }: { t: (typeof copy)[Language] }) {
       <p className="type-body mt-5 max-w-lg text-base leading-8 text-ink/68 min-[1500px]:text-lg">{t.heroSub}</p>
       <div className="mt-9 flex flex-wrap gap-3">
         <a
-          className="rounded-full bg-pine px-6 py-3 text-sm font-bold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-ink"
+          className="select-none rounded-full bg-pine px-6 py-3 text-sm font-bold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-ink"
           href="#dashboard"
         >
           {t.primaryCta}
         </a>
         <a
-          className="rounded-full border border-pine/15 bg-white/55 px-6 py-3 text-sm font-bold text-pine backdrop-blur transition hover:-translate-y-0.5 hover:bg-white"
+          className="select-none rounded-full border border-pine/15 bg-white/55 px-6 py-3 text-sm font-bold text-pine backdrop-blur transition hover:-translate-y-0.5 hover:bg-white"
           href="#privacy"
         >
           {t.secondaryCta}
@@ -357,10 +358,10 @@ function DashboardMockup({
   return (
     <section
       id="dashboard"
-      className="dashboard-shell liquid-glass liquid-glass-strong relative z-10 w-full max-w-[760px] justify-self-start animate-float rounded-[2.35rem] border border-white/70 bg-white/58 p-3 shadow-glass sm:p-4"
+      className="dashboard-shell liquid-glass liquid-glass-strong relative z-10 w-full max-w-[1080px] justify-self-center animate-float select-none rounded-[2.35rem] border border-white/75 bg-white/58 p-3 shadow-glass sm:p-4 [@media(min-width:1180px)]:justify-self-end"
       aria-label="StressWatch dashboard mockup"
     >
-      <div className="grid min-h-[620px] overflow-visible rounded-[1.8rem] bg-[#f8fcf8]/88 shadow-[inset_0_1px_0_rgba(255,255,255,0.82)]">
+      <div className="grid min-h-[620px] overflow-visible rounded-[1.8rem] bg-white/72 shadow-[inset_0_1px_0_rgba(255,255,255,0.82)] [@media(min-width:1180px)]:grid-cols-[156px_minmax(0,1fr)_224px] min-[1500px]:grid-cols-[184px_minmax(0,1fr)_250px]">
         <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} t={t} />
         <DashboardCenter language={language} t={t} />
         <InsightPanel t={t} />
@@ -384,7 +385,7 @@ function Sidebar({
   };
 
   return (
-    <aside className="flex flex-col rounded-t-[1.8rem] bg-pine px-5 py-6 text-white">
+    <aside className="flex flex-col rounded-t-[1.8rem] bg-pine px-5 py-6 text-white [@media(min-width:1180px)]:rounded-l-[1.8rem] [@media(min-width:1180px)]:rounded-tr-none">
       <div className="flex items-center gap-3">
         <LogoMark className="h-12 w-12" />
         <div>
@@ -393,7 +394,7 @@ function Sidebar({
         </div>
       </div>
 
-      <nav className="mt-6 grid grid-cols-2 gap-2 min-[640px]:grid-cols-5">
+      <nav className="mt-6 grid grid-cols-2 gap-2 min-[640px]:grid-cols-5 [@media(min-width:1180px)]:mt-10 [@media(min-width:1180px)]:grid-cols-1">
         {t.nav.map((item, index) => {
           const section = sectionIds[index];
           const isActive = activeSection === section;
@@ -420,7 +421,7 @@ function Sidebar({
         })}
       </nav>
 
-      <div className="hidden">
+      <div className="mt-auto hidden rounded-3xl bg-white/10 p-4 text-xs leading-5 text-white/62 [@media(min-width:1180px)]:block">
         {t.localFirst}
         <div className="mt-4 h-20 rounded-2xl bg-[radial-gradient(circle_at_50%_35%,rgba(252,197,197,0.45),transparent_34%),linear-gradient(140deg,rgba(128,191,212,0.32),rgba(128,191,212,0.18))]" />
       </div>
@@ -649,7 +650,7 @@ function StressLineChart({ language }: { language: Language }) {
                 className="transition-all duration-300"
                 cx={point.x}
                 cy={point.y}
-                fill={isHovered ? "#1D5D70" : "#FCC5C5"}
+                fill={isHovered ? "#27A6CC" : "#FCC5C5"}
                 r={isHovered ? "9" : "6"}
                 stroke="#fff"
                 strokeWidth="4"
@@ -672,7 +673,7 @@ function StressLineChart({ language }: { language: Language }) {
             <text fill="#111F2A" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="11" fontWeight="800" x={tooltip.x + 14} y={tooltip.y + 18}>
               {tooltip.date}
             </text>
-            <text fill="#1D5D70" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="20" fontWeight="900" x={tooltip.x + 14} y={tooltip.y + 41}>
+            <text fill="#27A6CC" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="20" fontWeight="900" x={tooltip.x + 14} y={tooltip.y + 41}>
               {hovered.score}
             </text>
             <text fill="#27A6CC" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="11" fontWeight="800" x={tooltip.x + 52} y={tooltip.y + 39}>
@@ -742,7 +743,7 @@ function HRVTrendChart({ language }: { language: Language }) {
         <defs>
           <linearGradient id="hrvLine" x1="0" x2="1" y1="0" y2="0">
             <stop offset="0%" stopColor="#80BFD4" />
-            <stop offset="100%" stopColor="#1D5D70" />
+            <stop offset="100%" stopColor="#27A6CC" />
           </linearGradient>
           <linearGradient id="hrvGlow" x1="0" x2="0" y1="0" y2="1">
             <stop offset="0%" stopColor="#80BFD4" stopOpacity="0.32" />
@@ -754,7 +755,7 @@ function HRVTrendChart({ language }: { language: Language }) {
         </defs>
         <line
           className="baseline-dash"
-          stroke="#1D5D70"
+          stroke="#27A6CC"
           strokeDasharray="6 7"
           strokeLinecap="round"
           strokeOpacity="0.28"
@@ -776,7 +777,7 @@ function HRVTrendChart({ language }: { language: Language }) {
             y={baselineY - 28}
           />
           <text
-            fill="#1D5D70"
+            fill="#27A6CC"
             fontFamily="Nunito Sans, Noto Sans SC, sans-serif"
             fontSize="10"
             fontWeight="900"
@@ -837,7 +838,7 @@ function HRVTrendChart({ language }: { language: Language }) {
             <text fill="#111F2A" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="11" fontWeight="800" x={tooltip.x + 12} y={tooltip.y + 18}>
               {hovered.date} · {hovered.time}
             </text>
-            <text fill="#1D5D70" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="20" fontWeight="900" x={tooltip.x + 12} y={tooltip.y + 42}>
+            <text fill="#27A6CC" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="20" fontWeight="900" x={tooltip.x + 12} y={tooltip.y + 42}>
               {hovered.value}
             </text>
             <text fill="#27A6CC" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="11" fontWeight="800" x={tooltip.x + 48} y={tooltip.y + 40}>
@@ -923,7 +924,7 @@ function MultiRing({ compact = false, score }: { compact?: boolean; score: numbe
   const rings = [
     { color: "#80BFD4", radius: compact ? 27 : 52, value: 0.78 },
     { color: "#27A6CC", radius: compact ? 21 : 42, value: 0.72 },
-    { color: "#1D5D70", radius: compact ? 15 : 32, value: 0.56 }
+    { color: "#27A6CC", radius: compact ? 15 : 32, value: 0.56 }
   ];
 
   return (

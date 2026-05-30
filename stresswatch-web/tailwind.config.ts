@@ -6,10 +6,10 @@ export default {
     extend: {
       colors: {
         ink: "#111F2A",
-        pine: "#1D5D70",
+        pine: "#27A6CC",
         teal: "#27A6CC",
         mint: "#80BFD4",
-        aqua: "#B7DCE8",
+        aqua: "#80BFD4",
         cream: "#F7FBFD",
         sun: "#FCC5C5"
       },
