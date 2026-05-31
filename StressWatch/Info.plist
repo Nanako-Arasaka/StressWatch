@@ -16,6 +16,17 @@
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.stresswatch.demo</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>stresswatch</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -24,6 +35,8 @@
 	<string>StressWatch 读取心率、HRV、静息心率、步数和睡眠数据，用于展示个人健康趋势参考。</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>StressWatch 当前不会写入健康数据。</string>
+	<key>StressWatchAppGroupIdentifier</key>
+	<string>$(APP_GROUP_IDENTIFIER)</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

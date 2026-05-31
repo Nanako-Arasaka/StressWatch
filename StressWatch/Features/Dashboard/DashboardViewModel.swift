@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import SwiftUI
+import WidgetKit
 
 @MainActor
 class DashboardViewModel: ObservableObject {
@@ -91,12 +92,20 @@ class DashboardViewModel: ObservableObject {
                 to: endDate
             )
             let metrics = fetchResult.metrics
+            let resolvedDataSourceLabel = fetchResult.source == .appleHealth ? "Apple Health" : "Demo Data"
+            self.dataSourceLabel = resolvedDataSourceLabel
             print("[DashboardViewModel] refresh fetched metrics=\(metrics.count) source=\(fetchResult.source)")
 
             guard let baseline = baselineEngine.calculate(from: metrics), baseline.isValid else {
                 self.baseline = nil
                 self.snapshot = .empty
                 self.needsMoreData = true
+                saveWidgetSnapshot(
+                    WidgetSnapshot.placeholder(
+                        dataSource: resolvedDataSourceLabel,
+                        analysisSource: widgetAnalysisSourceText()
+                    )
+                )
                 return
             }
 
@@ -113,7 +122,6 @@ class DashboardViewModel: ObservableObject {
             self.todayHR = todayMetrics.filter { $0.type == .heartRate }
             self.todayHRV = todayMetrics.filter { $0.type == .hrv }
             self.recentMetrics = metrics
-            self.dataSourceLabel = fetchResult.source == .appleHealth ? "Apple Health" : "Demo Data"
             self.snapshot = makeSnapshot(
                 metrics: metrics,
                 todayMetrics: todayMetrics,
@@ -124,6 +132,7 @@ class DashboardViewModel: ObservableObject {
                 trendStartDate: calendar.date(byAdding: .day, value: -6, to: calendar.startOfDay(for: now)) ?? startDate,
                 trendEndDate: endDate
             )
+            saveWidgetSnapshot(generateWidgetSnapshot())
         } catch {
             errorMessage = "无法加载趋势参考数据"
             print("[DashboardViewModel] refresh failed: \(error)")
@@ -140,6 +149,74 @@ class DashboardViewModel: ObservableObject {
         } catch {
             errorMessage = "无法读取本地缓存"
         }
+    }
+
+    private func generateWidgetSnapshot() -> WidgetSnapshot {
+        guard recoveryScore != nil || stressScore != nil || !snapshot.metrics.isEmpty else {
+            return WidgetSnapshot.placeholder(
+                dataSource: dataSourceLabel,
+                analysisSource: widgetAnalysisSourceText()
+            )
+        }
+
+        let recoveryMetric = snapshot.metrics.first { $0.id == "recovery" }
+        let hrvMetric = snapshot.metrics.first { $0.id == "hrv" }
+        let sleepMetric = snapshot.metrics.first { $0.id == "sleep" }
+        let liveStress = snapshot.liveStress
+
+        return WidgetSnapshot(
+            recoveryScore: recoveryScore?.value,
+            recoveryStatus: recoveryMetric?.status ?? recoveryScore.map { recoveryStatus(for: $0.value) } ?? "暂无数据",
+            liveStressScore: liveStress.score.map { Int(round($0)) },
+            liveStressStatus: liveStress.status.displayName,
+            hrvText: widgetMetricText(hrvMetric),
+            sleepText: widgetMetricText(sleepMetric),
+            insightText: snapshot.insight,
+            dataSource: dataSourceLabel,
+            analysisSource: widgetAnalysisSourceText(),
+            generatedAt: Date(),
+            isPlaceholder: false,
+            schemaVersion: WidgetSnapshot.currentSchemaVersion
+        )
+    }
+
+    private func saveWidgetSnapshot(_ widgetSnapshot: WidgetSnapshot) {
+        do {
+            try WidgetStorage.save(widgetSnapshot)
+            WidgetCenter.shared.reloadAllTimelines()
+        } catch {
+            print("[DashboardViewModel] widget snapshot save failed: \(error)")
+        }
+    }
+
+    private func widgetMetricText(_ metric: DashboardMetric?) -> String {
+        guard let metric else {
+            return "暂无"
+        }
+
+        guard metric.value != "暂无" else {
+            return metric.status
+        }
+
+        if metric.unit.isEmpty {
+            return metric.value
+        }
+
+        return "\(metric.value) \(metric.unit)"
+    }
+
+    private func widgetAnalysisSourceText() -> String {
+        let hasCompiledModel = Bundle.main.url(
+            forResource: "StressWatchWellnessClassifier",
+            withExtension: "mlmodelc"
+        ) != nil
+        let hasClassLabels = Bundle.main.url(forResource: "coreml_class_labels", withExtension: "json") != nil
+
+        if hasCompiledModel && hasClassLabels {
+            return WellnessAnalysisSource.coreMLPersonalModel.displayName
+        }
+
+        return WellnessAnalysisSource.coreMLUnavailableRuleFallback.displayName
     }
 
     private func fetchMetrics(

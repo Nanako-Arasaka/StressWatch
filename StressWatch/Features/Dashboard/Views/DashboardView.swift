@@ -8,11 +8,13 @@ struct DashboardView: View {
     @State private var showStartupLogo = true
     @State private var hasLoadedInitialData = false
     @State private var onAppearCount = 0
+    @Binding private var shouldOpenAnalysis: Bool
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    init(viewModel: DashboardViewModel) {
+    init(viewModel: DashboardViewModel, shouldOpenAnalysis: Binding<Bool> = .constant(false)) {
         self.viewModel = viewModel
+        self._shouldOpenAnalysis = shouldOpenAnalysis
     }
 
     var body: some View {
@@ -69,6 +71,15 @@ struct DashboardView: View {
             }
             .overlay {
                 startupLogoOverlay
+            }
+            .navigationDestination(isPresented: $shouldOpenAnalysis) {
+                AnalysisView(
+                    metrics: viewModel.recentMetrics,
+                    stressScore: viewModel.stressScore,
+                    recoveryScore: viewModel.recoveryScore,
+                    stressTrend: viewModel.snapshot.stressTrend,
+                    storage: viewModel.localStorage
+                )
             }
         }
     }

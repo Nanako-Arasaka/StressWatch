@@ -67,7 +67,47 @@
 		A1000000000000000000003E /* CoreMLWellnessAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000041 /* CoreMLWellnessAnalyzer.swift */; };
 		A1000000000000000000003F /* StressWatchWellnessClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000042 /* StressWatchWellnessClassifier.mlmodel */; };
 		A10000000000000000000040 /* coreml_class_labels.json in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000043 /* coreml_class_labels.json */; };
+
+		B10000000000000000000001 /* WidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* WidgetSnapshot.swift */; };
+		B10000000000000000000002 /* WidgetStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* WidgetStorage.swift */; };
+		B10000000000000000000003 /* WidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* WidgetSnapshot.swift */; };
+		B10000000000000000000004 /* WidgetStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* WidgetStorage.swift */; };
+		B10000000000000000000005 /* StressWatchWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000006 /* StressWatchWidgetBundle.swift */; };
+		B10000000000000000000006 /* StressWatchWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000007 /* StressWatchWidget.swift */; };
+		B10000000000000000000007 /* WidgetEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000008 /* WidgetEntry.swift */; };
+		B10000000000000000000008 /* WidgetTimelineProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000009 /* WidgetTimelineProvider.swift */; };
+		B10000000000000000000009 /* WidgetColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2000000000000000000000A /* WidgetColorPalette.swift */; };
+		B1000000000000000000000A /* SmallWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2000000000000000000000B /* SmallWidgetView.swift */; };
+		B1000000000000000000000B /* MediumWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2000000000000000000000C /* MediumWidgetView.swift */; };
+		B1000000000000000000000C /* WidgetSharedComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2000000000000000000000D /* WidgetSharedComponents.swift */; };
+		B1000000000000000000000D /* StressWatchWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B20000000000000000000003 /* StressWatchWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+
+
+/* Begin PBXContainerItemProxy section */
+		B60000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A60000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B50000000000000000000001;
+			remoteInfo = StressWatchWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B30000000000000000000004 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B1000000000000000000000D /* StressWatchWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		A20000000000000000000001 /* StressWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/StressWatchApp.swift; sourceTree = "<group>"; };
@@ -133,6 +173,20 @@
 		A20000000000000000000041 /* CoreMLWellnessAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/CoreMLWellnessAnalyzer.swift; sourceTree = "<group>"; };
 		A20000000000000000000042 /* StressWatchWellnessClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = Resources/ML/StressWatchWellnessClassifier.mlmodel; sourceTree = "<group>"; };
 		A20000000000000000000043 /* coreml_class_labels.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Resources/ML/coreml_class_labels.json; sourceTree = "<group>"; };
+
+		B20000000000000000000001 /* WidgetSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Widget/WidgetSnapshot.swift; sourceTree = "<group>"; };
+		B20000000000000000000002 /* WidgetStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Widget/WidgetStorage.swift; sourceTree = "<group>"; };
+		B20000000000000000000003 /* StressWatchWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = StressWatchWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B20000000000000000000004 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B20000000000000000000005 /* StressWatchWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StressWatchWidgetExtension.entitlements; sourceTree = "<group>"; };
+		B20000000000000000000006 /* StressWatchWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressWatchWidgetBundle.swift; sourceTree = "<group>"; };
+		B20000000000000000000007 /* StressWatchWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressWatchWidget.swift; sourceTree = "<group>"; };
+		B20000000000000000000008 /* WidgetEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetEntry.swift; sourceTree = "<group>"; };
+		B20000000000000000000009 /* WidgetTimelineProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetTimelineProvider.swift; sourceTree = "<group>"; };
+		B2000000000000000000000A /* WidgetColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetColorPalette.swift; sourceTree = "<group>"; };
+		B2000000000000000000000B /* SmallWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallWidgetView.swift; sourceTree = "<group>"; };
+		B2000000000000000000000C /* MediumWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediumWidgetView.swift; sourceTree = "<group>"; };
+		B2000000000000000000000D /* WidgetSharedComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSharedComponents.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -145,6 +199,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+
+		B30000000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -152,6 +214,7 @@
 			isa = PBXGroup;
 			children = (
 				A40000000000000000000002 /* StressWatch */,
+				B40000000000000000000002 /* StressWatchWidgetExtension */,
 				A40000000000000000000003 /* Frameworks */,
 				A40000000000000000000004 /* Products */,
 			);
@@ -206,6 +269,7 @@
 		A40000000000000000000017 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				B40000000000000000000001 /* Widget */,
 				A4000000000000000000002B /* Components */,
 				A4000000000000000000002C /* Charts */,
 				A4000000000000000000002D /* Motion */,
@@ -413,8 +477,52 @@
 			isa = PBXGroup;
 			children = (
 				A2000000000000000000001E /* StressWatch.app */,
+				B20000000000000000000003 /* StressWatchWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+
+		B40000000000000000000001 /* Widget */ = {
+			isa = PBXGroup;
+			children = (
+				B20000000000000000000001 /* WidgetSnapshot.swift */,
+				B20000000000000000000002 /* WidgetStorage.swift */,
+			);
+			name = Widget;
+			sourceTree = "<group>";
+		};
+		B40000000000000000000002 /* StressWatchWidgetExtension */ = {
+			isa = PBXGroup;
+			children = (
+				B40000000000000000000003 /* Widget */,
+				B20000000000000000000004 /* Info.plist */,
+				B20000000000000000000005 /* StressWatchWidgetExtension.entitlements */,
+			);
+			path = StressWatchWidgetExtension;
+			sourceTree = "<group>";
+		};
+		B40000000000000000000003 /* Widget */ = {
+			isa = PBXGroup;
+			children = (
+				B20000000000000000000006 /* StressWatchWidgetBundle.swift */,
+				B20000000000000000000007 /* StressWatchWidget.swift */,
+				B20000000000000000000008 /* WidgetEntry.swift */,
+				B20000000000000000000009 /* WidgetTimelineProvider.swift */,
+				B2000000000000000000000A /* WidgetColorPalette.swift */,
+				B40000000000000000000004 /* Views */,
+			);
+			path = Widget;
+			sourceTree = "<group>";
+		};
+		B40000000000000000000004 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B2000000000000000000000B /* SmallWidgetView.swift */,
+				B2000000000000000000000C /* MediumWidgetView.swift */,
+				B2000000000000000000000D /* WidgetSharedComponents.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -427,15 +535,35 @@
 				A30000000000000000000002 /* Sources */,
 				A30000000000000000000001 /* Frameworks */,
 				A30000000000000000000003 /* Resources */,
+				B30000000000000000000004 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B60000000000000000000002 /* PBXTargetDependency */,
 			);
 			name = StressWatch;
 			productName = StressWatch;
 			productReference = A2000000000000000000001E /* StressWatch.app */;
 			productType = "com.apple.product-type.application";
+		};
+
+		B50000000000000000000001 /* StressWatchWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B90000000000000000000001 /* Build configuration list for PBXNativeTarget "StressWatchWidgetExtension" */;
+			buildPhases = (
+				B30000000000000000000001 /* Sources */,
+				B30000000000000000000002 /* Frameworks */,
+				B30000000000000000000003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StressWatchWidgetExtension;
+			productName = StressWatchWidgetExtension;
+			productReference = B20000000000000000000003 /* StressWatchWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -450,7 +578,18 @@
 					A50000000000000000000001 = {
 						CreatedOnToolsVersion = 15.3;
 						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
 							com.apple.HealthKit = {
+								enabled = 1;
+							};
+						};
+					};
+					B50000000000000000000001 = {
+						CreatedOnToolsVersion = 15.3;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
 								enabled = 1;
 							};
 						};
@@ -471,6 +610,7 @@
 			projectRoot = "";
 			targets = (
 				A50000000000000000000001 /* StressWatch */,
+				B50000000000000000000001 /* StressWatchWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -483,6 +623,14 @@
 				A1000000000000000000002A /* Assets.xcassets in Resources */,
 				A10000000000000000000040 /* coreml_class_labels.json in Resources */,
 				A1000000000000000000002B /* LaunchScreen.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+
+		B30000000000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -548,10 +696,39 @@
 				A1000000000000000000003B /* LiveStressEstimator.swift in Sources */,
 				A1000000000000000000003C /* LiveStressCard.swift in Sources */,
 				A1000000000000000000003D /* DailyWellnessCheckIn.swift in Sources */,
+				B10000000000000000000001 /* WidgetSnapshot.swift in Sources */,
+				B10000000000000000000002 /* WidgetStorage.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+
+		B30000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000003 /* WidgetSnapshot.swift in Sources */,
+				B10000000000000000000004 /* WidgetStorage.swift in Sources */,
+				B10000000000000000000005 /* StressWatchWidgetBundle.swift in Sources */,
+				B10000000000000000000006 /* StressWatchWidget.swift in Sources */,
+				B10000000000000000000007 /* WidgetEntry.swift in Sources */,
+				B10000000000000000000008 /* WidgetTimelineProvider.swift in Sources */,
+				B10000000000000000000009 /* WidgetColorPalette.swift in Sources */,
+				B1000000000000000000000A /* SmallWidgetView.swift in Sources */,
+				B1000000000000000000000B /* MediumWidgetView.swift in Sources */,
+				B1000000000000000000000C /* WidgetSharedComponents.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+
+/* Begin PBXTargetDependency section */
+		B60000000000000000000002 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B50000000000000000000001 /* StressWatchWidgetExtension */;
+			targetProxy = B60000000000000000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		A70000000000000000000001 /* Debug */ = {
@@ -667,6 +844,7 @@
 		A80000000000000000000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APP_GROUP_IDENTIFIER = group.com.stresswatch.demo;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = StressWatch/StressWatch.entitlements;
@@ -697,6 +875,7 @@
 		A80000000000000000000002 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APP_GROUP_IDENTIFIER = group.com.stresswatch.demo;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = StressWatch/StressWatch.entitlements;
@@ -724,6 +903,69 @@
 			};
 			name = Release;
 		};
+
+		B80000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				APP_GROUP_IDENTIFIER = group.com.stresswatch.demo;
+				CODE_SIGN_ENTITLEMENTS = StressWatchWidgetExtension/StressWatchWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = StressWatchWidgetExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stresswatch.demo.StressWatchWidgetExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B80000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				APP_GROUP_IDENTIFIER = group.com.stresswatch.demo;
+				CODE_SIGN_ENTITLEMENTS = StressWatchWidgetExtension/StressWatchWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = StressWatchWidgetExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stresswatch.demo.StressWatchWidgetExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -741,6 +983,16 @@
 			buildConfigurations = (
 				A80000000000000000000001 /* Debug */,
 				A80000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+
+		B90000000000000000000001 /* Build configuration list for PBXNativeTarget "StressWatchWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B80000000000000000000001 /* Debug */,
+				B80000000000000000000002 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

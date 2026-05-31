@@ -6,6 +6,7 @@ struct StressWatchApp: App {
     @StateObject private var trendViewModel: TrendViewModel
     @StateObject private var settingsViewModel: SettingsViewModel
     @State private var selectedTab: AppTab = .dashboard
+    @State private var shouldOpenAnalysisFromWidget = false
 
     init() {
         let storage = LocalStorage()
@@ -40,7 +41,10 @@ struct StressWatchApp: App {
                 Group {
                     switch selectedTab {
                     case .dashboard:
-                        DashboardView(viewModel: dashboardViewModel)
+                        DashboardView(
+                            viewModel: dashboardViewModel,
+                            shouldOpenAnalysis: $shouldOpenAnalysisFromWidget
+                        )
 
                     case .trend:
                         TrendView(viewModel: trendViewModel)
@@ -54,6 +58,24 @@ struct StressWatchApp: App {
                 FloatingTabBar(selection: $selectedTab)
             }
             .ignoresSafeArea(.keyboard, edges: .bottom)
+            .onOpenURL(perform: handleWidgetURL)
+        }
+    }
+
+    private func handleWidgetURL(_ url: URL) {
+        guard url.scheme == "stresswatch" else {
+            return
+        }
+
+        switch url.host {
+        case "analysis":
+            selectedTab = .dashboard
+            shouldOpenAnalysisFromWidget = true
+        case "dashboard":
+            selectedTab = .dashboard
+            shouldOpenAnalysisFromWidget = false
+        default:
+            break
         }
     }
 }

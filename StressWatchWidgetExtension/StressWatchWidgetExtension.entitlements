@@ -6,7 +6,5 @@
 	<array>
 		<string>group.com.stresswatch.demo</string>
 	</array>
-	<key>com.apple.developer.healthkit</key>
-	<true/>
 </dict>
 </plist>
