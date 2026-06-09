@@ -54,17 +54,26 @@ struct CoreMLWellnessAnalyzer: WellnessAnalyzing {
                 .withSource(.coreMLUnavailableRuleFallback)
         }
 
+        let confidence = predictedConfidence(from: prediction) ?? features.dataConfidence
+        let generatedAt = Date()
+        let insight = MLWellnessInsightFactory.makeInsight(
+            label: label,
+            state: state,
+            confidence: confidence,
+            features: features,
+            source: .coreMLPersonalModel,
+            generatedAt: generatedAt
+        )
+
         return WellnessAnalysis(
             state: state,
-            confidence: predictedConfidence(from: prediction) ?? features.dataConfidence,
-            primaryFactors: [
-                "Core ML Personal Model",
-                "输入来自本地趋势特征",
-                "结果仅作个人健康趋势参考"
-            ],
+            predictedLabel: label,
+            confidence: confidence,
+            primaryFactors: insight.keyFactors,
             features: features,
-            generatedAt: Date(),
-            source: .coreMLPersonalModel
+            generatedAt: generatedAt,
+            source: .coreMLPersonalModel,
+            mlInsight: insight
         )
     }
 
@@ -78,9 +87,7 @@ struct CoreMLWellnessAnalyzer: WellnessAnalyzing {
 
         var values: [String: MLFeatureValue] = [:]
         for column in featureColumns where expectedInputs.contains(column) {
-            guard let value = featureValue(for: column, features: features) else {
-                return nil
-            }
+            let value = featureValue(for: column, features: features) ?? Double.nan
             values[column] = MLFeatureValue(double: value)
         }
 
@@ -92,6 +99,10 @@ struct CoreMLWellnessAnalyzer: WellnessAnalyzing {
         switch column {
         case "avg_hrv_sdnn":
             value = features.avgHRV
+        case "min_hrv_sdnn":
+            value = estimatedMinimumHRV(features)
+        case "max_hrv_sdnn":
+            value = estimatedMaximumHRV(features)
         case "avg_heart_rate":
             value = features.avgHeartRate
         case "resting_heart_rate":
@@ -114,6 +125,18 @@ struct CoreMLWellnessAnalyzer: WellnessAnalyzing {
             value = features.exerciseMinutesAverage
         case "stand_hours":
             value = features.standHoursAverage
+        case "hrv_7d_baseline":
+            value = features.avgHRV
+        case "hrv_deviation_percent":
+            value = estimatedHRVDeviationPercent(features)
+        case "resting_hr_7d_baseline":
+            value = estimatedRestingHRBaseline(features)
+        case "resting_hr_deviation":
+            value = estimatedRestingHRDeviation(features)
+        case "sleep_7d_baseline":
+            value = estimatedSleepBaseline(features)
+        case "sleep_ratio":
+            value = estimatedSleepRatio(features)
         case "data_confidence":
             value = features.dataConfidence * 100
         default:
@@ -125,6 +148,64 @@ struct CoreMLWellnessAnalyzer: WellnessAnalyzing {
         }
 
         return value
+    }
+
+    private func estimatedMinimumHRV(_ features: WellnessFeatures) -> Double? {
+        guard let average = features.avgHRV else {
+            return nil
+        }
+
+        let trend = features.hrvTrend ?? 0
+        return max(0, average + min(0, trend))
+    }
+
+    private func estimatedMaximumHRV(_ features: WellnessFeatures) -> Double? {
+        guard let average = features.avgHRV else {
+            return nil
+        }
+
+        let trend = features.hrvTrend ?? 0
+        return max(0, average + max(0, trend))
+    }
+
+    private func estimatedHRVDeviationPercent(_ features: WellnessFeatures) -> Double? {
+        guard let average = features.avgHRV,
+              let trend = features.hrvTrend,
+              average > 0 else {
+            return nil
+        }
+
+        return (trend / average) * 100
+    }
+
+    private func estimatedRestingHRBaseline(_ features: WellnessFeatures) -> Double? {
+        features.avgRestingHR
+    }
+
+    private func estimatedRestingHRDeviation(_ features: WellnessFeatures) -> Double? {
+        guard let restingHR = features.avgRestingHR else {
+            return nil
+        }
+
+        return restingHR - 70
+    }
+
+    private func estimatedSleepBaseline(_ features: WellnessFeatures) -> Double? {
+        if let sleepAverage = features.sleepAverage {
+            return max(sleepAverage, 7.5)
+        }
+
+        return 7.5
+    }
+
+    private func estimatedSleepRatio(_ features: WellnessFeatures) -> Double? {
+        guard let sleepAverage = features.sleepAverage,
+              let baseline = estimatedSleepBaseline(features),
+              baseline > 0 else {
+            return nil
+        }
+
+        return sleepAverage / baseline
     }
 
     private func predictedLabel(from prediction: MLFeatureProvider) -> String? {

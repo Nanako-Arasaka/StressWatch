@@ -8,6 +8,10 @@ protocol AdviceGenerating {
 // 文案只使用“可能、趋势、参考、建议关注”，不提供医疗用途结论。
 struct AdviceGenerator: AdviceGenerating {
     func advice(for analysis: WellnessAnalysis) -> [String] {
+        if !analysis.mlInsight.recommendations.isEmpty {
+            return analysis.mlInsight.recommendations
+        }
+
         switch analysis.state {
         case .balanced:
             return [

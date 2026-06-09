@@ -1,6 +1,6 @@
 import Foundation
 
-// Live Stress 只表示当前压力趋势参考，不用于医疗诊断。
+// Live Stress 只表示当前压力趋势参考，不用于专业健康判断。
 enum LiveStressStatus: String, Codable {
     case recoveryGood
     case normal

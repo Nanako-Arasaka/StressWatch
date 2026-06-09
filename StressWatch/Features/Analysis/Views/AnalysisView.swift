@@ -37,20 +37,23 @@ struct AnalysisView: View {
                 statusCard
                     .appStaggeredCard(isVisible: contentVisible, delay: 0.06, reduceMotion: reduceMotion)
 
-                dailyCheckInCard
+                assessmentCard
                     .appStaggeredCard(isVisible: contentVisible, delay: 0.09, reduceMotion: reduceMotion)
 
+                dailyCheckInCard
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.12, reduceMotion: reduceMotion)
+
                 factorsCard
-                    .appStaggeredCard(isVisible: contentVisible, delay: 0.15, reduceMotion: reduceMotion)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.18, reduceMotion: reduceMotion)
 
                 adviceCard
-                    .appStaggeredCard(isVisible: contentVisible, delay: 0.21, reduceMotion: reduceMotion)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.24, reduceMotion: reduceMotion)
 
                 featuresCard
-                    .appStaggeredCard(isVisible: contentVisible, delay: 0.27, reduceMotion: reduceMotion)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.30, reduceMotion: reduceMotion)
 
                 disclaimerCard
-                    .appStaggeredCard(isVisible: contentVisible, delay: 0.33, reduceMotion: reduceMotion)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.36, reduceMotion: reduceMotion)
             }
             .padding(.horizontal, 18)
             .padding(.top, 18)
@@ -72,11 +75,11 @@ struct AnalysisView: View {
             VStack(alignment: .leading, spacing: 16) {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(viewModel.analysis.state.rawValue)
+                        Text(viewModel.analysis.predictedLabel)
                             .font(.caption.weight(.bold))
                             .foregroundStyle(stateColor)
 
-                        Text(viewModel.analysis.state.displayName)
+                        Text(viewModel.analysis.mlInsight.predictedState)
                             .font(.system(size: 34, weight: .bold, design: .rounded))
                             .foregroundStyle(AppColors.primaryText(for: colorScheme))
                             .minimumScaleFactor(0.78)
@@ -100,7 +103,7 @@ struct AnalysisView: View {
                     .background(stateColor.opacity(colorScheme == .dark ? 0.16 : 0.12), in: Capsule())
                 }
 
-                Text(viewModel.analysis.state.shortSummary)
+                Text(viewModel.analysis.mlInsight.summary)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                     .fixedSize(horizontal: false, vertical: true)
@@ -121,6 +124,48 @@ struct AnalysisView: View {
         }
     }
 
+    private var assessmentCard: some View {
+        GlassCardView(cornerRadius: 30, padding: 18) {
+            VStack(alignment: .leading, spacing: 12) {
+                GlassSectionHeader(
+                    title: "综合健康趋势建议",
+                    subtitle: "由模型输出和近期特征转换为可读参考。",
+                    systemImage: "sparkles.rectangle.stack"
+                )
+
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 142), spacing: 10)], spacing: 10) {
+                    assessmentTile(title: "当前压力状况", value: viewModel.analysis.mlInsight.stressAssessment, icon: "waveform.path.ecg")
+                    assessmentTile(title: "睡眠质量", value: viewModel.analysis.mlInsight.sleepAssessment, icon: "moon.zzz.fill")
+                    assessmentTile(title: "恢复状态", value: viewModel.analysis.mlInsight.recoveryAssessment, icon: "heart.circle.fill")
+                    assessmentTile(title: "HRV 相对基线", value: viewModel.analysis.mlInsight.hrvAssessment, icon: "waveform")
+                }
+            }
+        }
+    }
+
+    private func assessmentTile(title: String, value: String, icon: String) -> some View {
+        VStack(alignment: .leading, spacing: 9) {
+            HStack(spacing: 7) {
+                Image(systemName: icon)
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(stateColor)
+
+                Text(title)
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                    .lineLimit(1)
+            }
+
+            Text(value)
+                .font(.subheadline.weight(.bold))
+                .foregroundStyle(AppColors.primaryText(for: colorScheme))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
+        .background(AppColors.subtleActivityFill(for: colorScheme), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+    }
+
     private var factorsCard: some View {
         GlassCardView(cornerRadius: 28, padding: 18) {
             VStack(alignment: .leading, spacing: 12) {
@@ -130,7 +175,7 @@ struct AnalysisView: View {
                     systemImage: "slider.horizontal.3"
                 )
 
-                ForEach(viewModel.analysis.primaryFactors, id: \.self) { factor in
+                ForEach(viewModel.analysis.mlInsight.keyFactors, id: \.self) { factor in
                     HStack(spacing: 10) {
                         Circle()
                             .fill(stateColor)

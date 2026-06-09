@@ -176,11 +176,45 @@ struct DashboardView: View {
             VStack(alignment: .leading, spacing: 12) {
                 GlassSectionHeader(
                     title: "Today's insight",
-                    subtitle: viewModel.snapshot.insight,
+                    subtitle: viewModel.snapshot.wellnessInsight?.predictedState ?? "个人健康趋势参考",
                     systemImage: "sparkles"
                 )
+
+                if let insight = viewModel.snapshot.wellnessInsight {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 132), spacing: 10)], spacing: 10) {
+                        dashboardInsightTile(title: "Pressure", value: insight.stressAssessment)
+                        dashboardInsightTile(title: "Sleep", value: insight.sleepAssessment)
+                        dashboardInsightTile(title: "Recovery", value: insight.recoveryAssessment)
+                    }
+
+                    Text(insight.summary)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(AppColors.primaryText(for: colorScheme))
+                        .fixedSize(horizontal: false, vertical: true)
+                } else {
+                    Text(viewModel.snapshot.insight)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(AppColors.primaryText(for: colorScheme))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
         }
+    }
+
+    private func dashboardInsightTile(title: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text(title)
+                .font(.caption2.weight(.bold))
+                .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+
+            Text(value)
+                .font(.caption.weight(.bold))
+                .foregroundStyle(AppColors.primaryText(for: colorScheme))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(10)
+        .background(AppColors.subtleTealFill(for: colorScheme), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
 
     private var loadingCard: some View {
@@ -192,7 +226,7 @@ struct DashboardView: View {
     }
 
     private var disclaimer: some View {
-        Text("本应用仅用于个人健康趋势参考，不提供医疗诊断、治疗建议或紧急用途。如有健康问题，请咨询专业人士。")
+        Text("本应用仅用于个人健康趋势参考，不提供专业健康判断或紧急用途。如有健康问题，请咨询专业人士。")
             .font(.footnote)
             .foregroundStyle(AppColors.secondaryText(for: colorScheme))
             .fixedSize(horizontal: false, vertical: true)

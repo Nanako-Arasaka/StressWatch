@@ -64,6 +64,7 @@ struct HealthDashboardSnapshot {
     let sleepStages: [SleepStageSummary]
     let liveStress: LiveStressSnapshot
     let insight: String
+    let wellnessInsight: MLWellnessInsight?
 
     static let empty = HealthDashboardSnapshot(
         metrics: [],
@@ -81,7 +82,8 @@ struct HealthDashboardSnapshot {
         activitySource: .unavailable,
         sleepStages: [],
         liveStress: .empty,
-        insight: "正在准备趋势参考数据。"
+        insight: "正在准备趋势参考数据。",
+        wellnessInsight: nil
     )
 }
 

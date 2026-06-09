@@ -82,14 +82,44 @@ struct WellnessAnalyzer: WellnessAnalyzing {
         features: WellnessFeatures,
         factors: [String]
     ) -> WellnessAnalysis {
-        WellnessAnalysis(
+        let label = label(for: state)
+        let generatedAt = Date()
+        let insight = MLWellnessInsightFactory.makeInsight(
+            label: label,
             state: state,
             confidence: features.dataConfidence,
-            primaryFactors: Array(factors.prefix(3)),
             features: features,
-            generatedAt: Date(),
-            source: .ruleBased
+            source: .ruleBased,
+            generatedAt: generatedAt
         )
+
+        WellnessAnalysis(
+            state: state,
+            predictedLabel: label,
+            confidence: features.dataConfidence,
+            primaryFactors: insight.keyFactors,
+            features: features,
+            generatedAt: generatedAt,
+            source: .ruleBased,
+            mlInsight: insight
+        )
+    }
+
+    private func label(for state: WellnessState) -> String {
+        switch state {
+        case .balanced:
+            return "normal"
+        case .needRecovery:
+            return "mild_stress"
+        case .highStrain:
+            return "attention_stress"
+        case .lowActivity:
+            return "low_activity"
+        case .sleepDebt:
+            return "sleep_debt"
+        case .dataInsufficient:
+            return "data_insufficient"
+        }
     }
 
     private func compactFactors(_ factors: [String?]) -> [String] {

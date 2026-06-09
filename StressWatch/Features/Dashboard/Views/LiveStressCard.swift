@@ -82,7 +82,7 @@ struct LiveStressCard: View {
     }
 
     private var disclaimer: some View {
-        Text("仅用于个人健康趋势参考，不提供医疗诊断。")
+        Text("仅用于个人健康趋势参考，不提供专业健康判断。")
             .font(.caption)
             .foregroundStyle(AppColors.secondaryText(for: colorScheme))
     }

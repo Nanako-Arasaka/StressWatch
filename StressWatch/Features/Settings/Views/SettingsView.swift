@@ -161,7 +161,7 @@ struct SettingsView: View {
                     .appStaggeredCard(isVisible: contentVisible, delay: 0.34, reduceMotion: reduceMotion)
 
                     GlassCardView(cornerRadius: 22, padding: 14) {
-                        Text("本应用仅用于个人健康趋势参考，不提供医疗诊断、治疗建议或紧急用途。如有健康问题，请咨询专业人士。")
+                        Text("本应用仅用于个人健康趋势参考，不提供专业健康判断或紧急用途。如有健康问题，请咨询专业人士。")
                             .font(.footnote)
                             .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                     }

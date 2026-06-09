@@ -63,10 +63,10 @@ struct MetricChart: View {
                                 .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                                 .lineLimit(1)
                                 .fixedSize(horizontal: true, vertical: false)
+                                .rotationEffect(.degrees(-35), anchor: .topLeading)
+                                .offset(x: -10, y: 8)
                         }
                     }
-                    .rotationEffect(.degrees(-35), anchor: .topLeading)
-                    .offset(x: -10, y: 8)
                 }
             }
             .chartYAxis {

@@ -23,6 +23,8 @@ class DashboardViewModel: ObservableObject {
     private let stressModel: any StressComputing
     private let recoveryModel: any RecoveryComputing
     private let storage: any LocalStorageProtocol
+    private let featureExtractor: any HealthFeatureExtracting
+    private let wellnessAnalyzer: any WellnessAnalyzing
     private let calendar: Calendar
     private var isRefreshing = false
 
@@ -37,6 +39,8 @@ class DashboardViewModel: ObservableObject {
         stressModel: any StressComputing,
         recoveryModel: any RecoveryComputing,
         storage: any LocalStorageProtocol,
+        featureExtractor: any HealthFeatureExtracting = FeatureExtractor(),
+        wellnessAnalyzer: any WellnessAnalyzing = CoreMLWellnessAnalyzer(),
         calendar: Calendar = .current
     ) {
         self.healthDataProvider = healthDataProvider
@@ -45,6 +49,8 @@ class DashboardViewModel: ObservableObject {
         self.stressModel = stressModel
         self.recoveryModel = recoveryModel
         self.storage = storage
+        self.featureExtractor = featureExtractor
+        self.wellnessAnalyzer = wellnessAnalyzer
         self.calendar = calendar
         self.todayHR = []
         self.todayHRV = []
@@ -300,6 +306,15 @@ class DashboardViewModel: ObservableObject {
             baseline: baseline,
             source: source(for: [.hrv], appleMetricTypes: appleMetricTypes, metrics: metrics)
         )
+        let wellnessFeatures = featureExtractor.extract(
+            metrics: metrics,
+            stressScore: stressScore,
+            recoveryScore: recoveryScore,
+            stressTrend: stressTrend,
+            now: Date()
+        )
+        let wellnessAnalysis = wellnessAnalyzer.analyze(features: wellnessFeatures)
+        let insightSummary = wellnessAnalysis.mlInsight.summary
 
         let cards = [
             stressMetric(stressScore, trend: stressTrend, source: source(for: [.heartRate, .hrv, .steps, .sleep], appleMetricTypes: appleMetricTypes, metrics: metrics)),
@@ -327,7 +342,8 @@ class DashboardViewModel: ObservableObject {
             activitySource: activitySource,
             sleepStages: sleepStages,
             liveStress: liveStress,
-            insight: "分数仅用于个人健康趋势参考，请结合近期睡眠、活动和主观感受一起观察。"
+            insight: insightSummary,
+            wellnessInsight: wellnessAnalysis.mlInsight
         )
     }
 
