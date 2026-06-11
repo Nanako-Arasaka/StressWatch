@@ -106,7 +106,7 @@ struct WellnessAnalysis {
             generatedAt: generatedAt
         )
 
-        WellnessAnalysis(
+        return WellnessAnalysis(
             state: state,
             predictedLabel: predictedLabel,
             confidence: confidence,
