@@ -392,31 +392,55 @@ private struct StressBarTrendView: View {
 
     var body: some View {
         let maxValue = max(bars.map(\.value).max() ?? 100, 100)
+        let barWidth: CGFloat = bars.count > 60 ? 9 : (bars.count > 20 ? 12 : 22)
+        let spacing: CGFloat = bars.count > 60 ? 6 : 8
+        let contentWidth = max(320, CGFloat(bars.count) * (barWidth + spacing) + 28)
 
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(alignment: .bottom, spacing: 8) {
-                ForEach(bars) { bar in
-                    Button {
-                        onSelect(bar)
-                    } label: {
-                        VStack(spacing: 7) {
-                            RoundedRectangle(cornerRadius: 7, style: .continuous)
-                                .fill(bar.level.color.gradient)
-                                .frame(width: bars.count > 20 ? 10 : 16, height: max(16, CGFloat(bar.value) / CGFloat(maxValue) * 150))
-                                .opacity(selectedBar?.id == bar.id ? 1 : 0.72)
-
-                            Text(label(for: bar.date))
-                                .font(.caption2.weight(.medium))
-                                .foregroundStyle(AppColors.secondaryText(for: colorScheme))
-                                .frame(width: 34)
-                                .lineLimit(1)
-                        }
+            ZStack(alignment: .bottomLeading) {
+                VStack {
+                    ForEach(0..<4, id: \.self) { _ in
+                        Rectangle()
+                            .fill(AppColors.chartGrid(for: colorScheme))
+                            .frame(height: 0.8)
+                        Spacer()
                     }
-                    .buttonStyle(.plain)
                 }
+                .padding(.horizontal, 10)
+                .padding(.bottom, 34)
+
+                HStack(alignment: .bottom, spacing: spacing) {
+                    ForEach(bars) { bar in
+                        Button {
+                            onSelect(bar)
+                        } label: {
+                            VStack(spacing: 7) {
+                                RoundedRectangle(cornerRadius: 7, style: .continuous)
+                                    .fill(bar.level.color.gradient)
+                                    .frame(width: barWidth, height: max(18, CGFloat(bar.value) / CGFloat(maxValue) * 156))
+                                    .overlay {
+                                        if selectedBar?.id == bar.id {
+                                            RoundedRectangle(cornerRadius: 7, style: .continuous)
+                                                .strokeBorder(AppColors.primaryText(for: colorScheme).opacity(0.35), lineWidth: 1)
+                                                .allowsHitTesting(false)
+                                        }
+                                    }
+                                    .opacity(selectedBar?.id == bar.id ? 1 : 0.86)
+
+                                Text(label(for: bar.date))
+                                    .font(.caption2.weight(.bold))
+                                    .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                                    .frame(width: max(34, barWidth + 14))
+                                    .lineLimit(1)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
             }
-            .frame(minWidth: 320, maxHeight: .infinity, alignment: .bottomLeading)
-            .padding(.vertical, 10)
+            .frame(width: contentWidth, maxHeight: .infinity, alignment: .bottomLeading)
         }
         .background(AppColors.subtleActivityFill(for: colorScheme), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
     }
@@ -430,19 +454,56 @@ private struct StressBarTrendView: View {
 
 private struct SegmentedDistributionBar: View {
     let buckets: [StressDistributionBucket]
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         GeometryReader { proxy in
-            HStack(spacing: 3) {
-                ForEach(buckets) { bucket in
-                    let band = StressBand(rawValue: bucket.id) ?? .normal
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .fill(band.color)
-                        .frame(width: max(8, proxy.size.width * bucket.percentage))
+            let segments = normalizedSegments
+            let gap: CGFloat = 5
+
+            ZStack(alignment: .leading) {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(AppColors.subtleActivityFill(for: colorScheme))
+
+                ForEach(Array(segments.enumerated()), id: \.offset) { index, segment in
+                    RoundedRectangle(cornerRadius: 15, style: .continuous)
+                        .fill(segment.color)
+                        .frame(
+                            width: max(0, proxy.size.width * segment.percentage - gap),
+                            height: 30
+                        )
+                        .offset(x: segmentOffset(index: index, segments: segments, width: proxy.size.width))
                 }
             }
         }
     }
+
+    private var normalizedSegments: [DistributionSegment] {
+        let total = buckets.reduce(0) { $0 + $1.percentage }
+        let source = total > 0 ? buckets : StressBand.allCases.map {
+            StressDistributionBucket(id: $0.rawValue, title: $0.title, count: 0, percentage: 0.25, previousCount: 0)
+        }
+
+        return source.map { bucket in
+            let band = StressBand(rawValue: bucket.id) ?? .normal
+            return DistributionSegment(
+                id: bucket.id,
+                percentage: max(0, bucket.percentage / max(total, 1)),
+                color: band.color
+            )
+        }
+    }
+
+    private func segmentOffset(index: Int, segments: [DistributionSegment], width: CGFloat) -> CGFloat {
+        guard index > 0 else { return 0 }
+        return segments.prefix(index).reduce(0) { $0 + width * $1.percentage }
+    }
+}
+
+private struct DistributionSegment {
+    let id: String
+    let percentage: Double
+    let color: Color
 }
 
 private struct StressHeatmapView: View {
@@ -569,11 +630,11 @@ private extension StressBand {
     var color: Color {
         switch self {
         case .recovered:
-            return AppColors.softBlue
+            return AppColors.primaryBlue
         case .normal:
-            return AppColors.primaryBlue.opacity(0.58)
+            return AppColors.softBlue
         case .attention:
-            return AppColors.chartSecondary.opacity(0.78)
+            return Color(red: 0.96, green: 0.62, blue: 0.48)
         case .overload:
             return AppColors.stressWarm
         }

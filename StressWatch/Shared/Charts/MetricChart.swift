@@ -5,7 +5,10 @@ struct MetricChart: View {
     let metrics: [HealthMetric]
 
     @State private var selectedMetric: HealthMetric?
-    @State private var visibleDomain: TimeInterval?
+    @State private var visibleStartDate: Date?
+    @State private var visibleEndDate: Date?
+    @State private var panStartRange: ClosedRange<Date>?
+    @State private var lastMagnification: CGFloat = 1
     @State private var onAppearCount = 0
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -46,8 +49,9 @@ struct MetricChart: View {
                         .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
                 }
             }
+            .chartXScale(domain: visibleDateRange ?? fullDateRange)
             .chartXAxis {
-                AxisMarks(values: .automatic(desiredCount: 5)) { value in
+                AxisMarks(values: .automatic(desiredCount: 4)) { value in
                     AxisGridLine()
                         .foregroundStyle(AppColors.chartGrid(for: colorScheme))
 
@@ -61,8 +65,8 @@ struct MetricChart: View {
                                 .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                                 .lineLimit(1)
                                 .fixedSize(horizontal: true, vertical: false)
-                                .rotationEffect(.degrees(-35), anchor: .topLeading)
-                                .offset(x: -10, y: 8)
+                                .rotationEffect(.degrees(-48), anchor: .topLeading)
+                                .offset(x: -14, y: 10)
                         }
                     }
                 }
@@ -100,9 +104,28 @@ struct MetricChart: View {
                                     )
                                 }
                         )
+                        .simultaneousGesture(
+                            DragGesture(minimumDistance: 8)
+                                .onChanged { value in
+                                    panVisibleRange(
+                                        translationX: value.translation.width,
+                                        proxy: proxy,
+                                        geometry: geometry
+                                    )
+                                }
+                                .onEnded { _ in
+                                    panStartRange = nil
+                                }
+                        )
                 }
             }
             .simultaneousGesture(zoomGesture)
+            .simultaneousGesture(
+                TapGesture(count: 2)
+                    .onEnded {
+                        resetZoom()
+                    }
+            )
             .onAppear {
                 onAppearCount += 1
                 print("[MetricChart] onAppear count=\(onAppearCount) raw=\(metrics.count) displayed=\(displayMetrics.count)")
@@ -110,7 +133,23 @@ struct MetricChart: View {
             }
             .onChange(of: metricsSignature) { _ in
                 selectedMetric = nil
-                visibleDomain = defaultVisibleDomain
+                setVisibleDomain(defaultVisibleDomain, centeredAt: sortedMetrics.last?.date)
+            }
+            .overlay(alignment: .topTrailing) {
+                Button("重置") {
+                    resetZoom()
+                }
+                .font(.caption2.weight(.bold))
+                .foregroundStyle(AppColors.primaryText(for: colorScheme))
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(.thinMaterial, in: Capsule())
+                .overlay {
+                    Capsule()
+                        .strokeBorder(AppColors.glassStroke(for: colorScheme), lineWidth: 0.8)
+                        .allowsHitTesting(false)
+                }
+                .padding(10)
             }
             .padding(.bottom, 28)
         }
@@ -141,6 +180,28 @@ struct MetricChart: View {
         return max(last.timeIntervalSince(first), 60 * 60)
     }
 
+    private var fullDateRange: ClosedRange<Date> {
+        guard let first = sortedMetrics.first?.date,
+              let last = sortedMetrics.last?.date else {
+            let now = Date()
+            return now...now.addingTimeInterval(60 * 60)
+        }
+
+        guard last > first else {
+            return first...first.addingTimeInterval(60 * 60)
+        }
+
+        return first...last
+    }
+
+    private var visibleDateRange: ClosedRange<Date>? {
+        guard let visibleStartDate, let visibleEndDate else {
+            return nil
+        }
+
+        return visibleStartDate...visibleEndDate
+    }
+
     private var minVisibleDomain: TimeInterval {
         min(max(totalDomain / 28, 60 * 60 * 2), totalDomain)
     }
@@ -157,14 +218,41 @@ struct MetricChart: View {
 
     private var zoomGesture: some Gesture {
         MagnificationGesture()
-            .onEnded { value in
+            .onChanged { value in
                 guard !reduceMotion else {
                     return
                 }
 
-                let baseDomain = visibleDomain ?? defaultVisibleDomain
-                visibleDomain = clampedVisibleDomain(baseDomain / max(Double(value), 0.2))
+                let range = visibleDateRange ?? fullDateRange
+                let center = selectedMetric?.date ?? midpoint(of: range)
+                let visibleDuration = range.upperBound.timeIntervalSince(range.lowerBound)
+                let incrementalScale = max(Double(value / max(lastMagnification, 0.01)), 0.05)
+                let nextDomain = clampedVisibleDomain(visibleDuration / incrementalScale)
+                setVisibleDomain(nextDomain, centeredAt: center)
+                lastMagnification = value
             }
+            .onEnded { _ in
+                lastMagnification = 1
+            }
+    }
+
+    private func panVisibleRange(translationX: CGFloat, proxy: ChartProxy, geometry: GeometryProxy) {
+        let plotFrame = geometry[proxy.plotAreaFrame]
+        guard plotFrame.width > 1 else {
+            return
+        }
+
+        let startRange = panStartRange ?? (visibleDateRange ?? fullDateRange)
+        if panStartRange == nil {
+            panStartRange = startRange
+        }
+
+        let duration = startRange.upperBound.timeIntervalSince(startRange.lowerBound)
+        let secondsDelta = -Double(translationX / plotFrame.width) * duration
+        setVisibleRange(
+            start: startRange.lowerBound.addingTimeInterval(secondsDelta),
+            end: startRange.upperBound.addingTimeInterval(secondsDelta)
+        )
     }
 
     private func selectNearestMetric(at location: CGPoint, proxy: ChartProxy, geometry: GeometryProxy) {
@@ -229,6 +317,49 @@ struct MetricChart: View {
         clamp(domain, minVisibleDomain, totalDomain)
     }
 
+    private func setVisibleDomain(_ domain: TimeInterval, centeredAt centerDate: Date?) {
+        let domain = clampedVisibleDomain(domain)
+        let center = centerDate ?? sortedMetrics.last?.date ?? Date()
+        setVisibleRange(
+            start: center.addingTimeInterval(-domain / 2),
+            end: center.addingTimeInterval(domain / 2)
+        )
+    }
+
+    private func setVisibleRange(start: Date, end: Date) {
+        guard let first = sortedMetrics.first?.date,
+              let last = sortedMetrics.last?.date else {
+            return
+        }
+
+        guard last > first else {
+            visibleStartDate = first
+            visibleEndDate = first.addingTimeInterval(60 * 60)
+            return
+        }
+
+        let domain = clampedVisibleDomain(end.timeIntervalSince(start))
+        var lower = start
+        var upper = start.addingTimeInterval(domain)
+
+        if lower < first {
+            lower = first
+            upper = first.addingTimeInterval(domain)
+        }
+
+        if upper > last {
+            upper = last
+            lower = last.addingTimeInterval(-domain)
+        }
+
+        visibleStartDate = max(lower, first)
+        visibleEndDate = min(upper, last)
+    }
+
+    private func midpoint(of range: ClosedRange<Date>) -> Date {
+        range.lowerBound.addingTimeInterval(range.upperBound.timeIntervalSince(range.lowerBound) / 2)
+    }
+
     private func downsample(_ metrics: [HealthMetric], maxCount: Int) -> [HealthMetric] {
         guard metrics.count > maxCount, maxCount > 2 else {
             return metrics
@@ -247,10 +378,16 @@ struct MetricChart: View {
     }
 
     private func resetVisibleDomainIfNeeded() {
-        guard visibleDomain == nil else {
+        guard visibleDateRange == nil else {
             return
         }
 
-        visibleDomain = defaultVisibleDomain
+        setVisibleDomain(defaultVisibleDomain, centeredAt: sortedMetrics.last?.date)
+    }
+
+    private func resetZoom() {
+        selectedMetric = nil
+        panStartRange = nil
+        setVisibleDomain(defaultVisibleDomain, centeredAt: sortedMetrics.last?.date)
     }
 }

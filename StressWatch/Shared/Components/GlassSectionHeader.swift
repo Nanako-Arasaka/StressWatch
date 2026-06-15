@@ -16,15 +16,15 @@ struct GlassSectionHeader: View {
         HStack(alignment: .top, spacing: 12) {
             if let systemImage {
                 Image(systemName: systemImage)
-                    .font(.headline)
-                    .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                    .font(.headline.weight(.bold))
+                    .foregroundStyle(AppColors.primaryBlue)
                     .frame(width: 28, height: 28)
                     .background(.thinMaterial, in: Circle())
             }
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.headline.weight(.semibold))
+                    .font(.headline.weight(.bold))
                     .foregroundStyle(AppColors.primaryText(for: colorScheme))
 
                 Text(subtitle)

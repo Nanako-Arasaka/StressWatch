@@ -205,8 +205,10 @@ class TrendViewModel: ObservableObject {
         previous: [StressScore],
         range: TrendRange
     ) -> TrendDashboardAnalysis {
-        let displayScores = current.isEmpty ? makeReferenceScores(days: range.days) : current
-        let previousScores = previous.isEmpty ? makeReferenceScores(days: max(7, min(range.days, 31)), offset: -range.days) : previous
+        let displayScores = normalizedScores(current, range: range)
+        let previousScores = previous.isEmpty
+            ? makeReferenceScores(days: max(7, min(range.days, 31)), offset: -range.days)
+            : normalizedScores(previous, range: range, offset: -range.days)
         let features = makeWellnessFeatures(from: displayScores)
         let wellnessAnalysis = analyzer.analyze(features: features)
 
@@ -260,6 +262,25 @@ class TrendViewModel: ObservableObject {
             let band = StressBand.band(for: score.value)
             return StressTrendBar(date: score.date, value: score.value, status: band.title, level: band)
         }
+    }
+
+    private func normalizedScores(_ scores: [StressScore], range: TrendRange, offset: Int = 0) -> [StressScore] {
+        let reference = makeReferenceScores(days: range.days, offset: offset)
+        guard !scores.isEmpty else {
+            return reference
+        }
+
+        var mergedByDay = Dictionary(uniqueKeysWithValues: reference.map { (calendar.startOfDay(for: $0.date), $0) })
+        for score in scores {
+            mergedByDay[calendar.startOfDay(for: score.date)] = score
+        }
+
+        let targetStart = reference.first.map { calendar.startOfDay(for: $0.date) } ?? calendar.startOfDay(for: Date())
+        let targetEnd = reference.last.map { calendar.endOfDay(for: $0.date) } ?? calendar.endOfDay(for: Date())
+
+        return mergedByDay.values
+            .filter { $0.date >= targetStart && $0.date <= targetEnd }
+            .sorted { $0.date < $1.date }
     }
 
     private func makeHeatmapRows(from scores: [StressScore]) -> [StressHeatmapRow] {

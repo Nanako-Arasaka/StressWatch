@@ -24,23 +24,23 @@ enum AppColors {
     static let deepSleep = Color(red: 0.105, green: 0.210, blue: 0.310)
 
     static func primaryText(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.94) : Color(red: 0.08, green: 0.13, blue: 0.17)
+        scheme == .dark ? Color.white.opacity(0.96) : Color(red: 0.067, green: 0.122, blue: 0.165)
     }
 
     static func secondaryText(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.58) : Color(red: 0.08, green: 0.13, blue: 0.17).opacity(0.56)
+        scheme == .dark ? Color.white.opacity(0.68) : Color(red: 0.067, green: 0.122, blue: 0.165).opacity(0.68)
     }
 
     static func glassFill(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.065) : Color.white.opacity(0.42)
+        scheme == .dark ? Color.white.opacity(0.075) : Color.white.opacity(0.62)
     }
 
     static func glassBorder(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.105) : Color.white.opacity(0.46)
+        scheme == .dark ? Color.white.opacity(0.14) : Color.white.opacity(0.70)
     }
 
     static func cardBackground(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.10)
+        scheme == .dark ? Color.white.opacity(0.06) : Color.white.opacity(0.28)
     }
 
     static func glassStroke(for scheme: ColorScheme) -> Color {
@@ -48,7 +48,7 @@ enum AppColors {
     }
 
     static func chartGrid(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.045) : Color(red: 0.08, green: 0.13, blue: 0.17).opacity(0.045)
+        scheme == .dark ? Color.white.opacity(0.10) : Color(red: 0.067, green: 0.122, blue: 0.165).opacity(0.13)
     }
 
     static func chartPointHalo(for scheme: ColorScheme) -> Color {
@@ -56,15 +56,15 @@ enum AppColors {
     }
 
     static func shadow(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.black.opacity(0.16) : primaryBlue.opacity(0.08)
+        scheme == .dark ? Color.black.opacity(0.20) : Color(red: 0.067, green: 0.122, blue: 0.165).opacity(0.10)
     }
 
     static func floatingBarFill(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.070) : Color.white.opacity(0.34)
+        scheme == .dark ? Color.white.opacity(0.082) : Color.white.opacity(0.68)
     }
 
     static func floatingBarHighlight(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? primaryBlue.opacity(0.18) : softBlue.opacity(0.26)
+        scheme == .dark ? primaryBlue.opacity(0.22) : softBlue.opacity(0.42)
     }
 
     static func badgeFill(for scheme: ColorScheme) -> Color {
@@ -72,11 +72,11 @@ enum AppColors {
     }
 
     static func subtleTealFill(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? primaryBlue.opacity(0.14) : primaryBlue.opacity(0.075)
+        scheme == .dark ? primaryBlue.opacity(0.16) : primaryBlue.opacity(0.13)
     }
 
     static func subtleActivityFill(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? softBlue.opacity(0.11) : softBlue.opacity(0.095)
+        scheme == .dark ? softBlue.opacity(0.13) : softBlue.opacity(0.16)
     }
 
     static func heroGlow(for scheme: ColorScheme) -> [Color] {

@@ -27,10 +27,11 @@ body {
 .site-shell {
   position: relative;
   background:
-    radial-gradient(circle at 78% 14%, rgba(252, 197, 197, 0.76), transparent 34%),
-    radial-gradient(circle at 19% 13%, rgba(39, 166, 204, 0.38), transparent 29%),
-    radial-gradient(circle at 54% 42%, rgba(128, 191, 212, 0.42), transparent 34%),
-    linear-gradient(135deg, #f7fbfd 0%, rgba(128, 191, 212, 0.30) 46%, rgba(252, 197, 197, 0.30) 100%);
+    radial-gradient(circle at 82% 10%, rgba(252, 197, 197, 0.88), transparent 32%),
+    radial-gradient(circle at 12% 8%, rgba(39, 166, 204, 0.56), transparent 30%),
+    radial-gradient(circle at 58% 36%, rgba(128, 191, 212, 0.58), transparent 36%),
+    radial-gradient(circle at 84% 70%, rgba(252, 197, 197, 0.38), transparent 32%),
+    linear-gradient(135deg, #f7fbfd 0%, rgba(128, 191, 212, 0.46) 45%, rgba(252, 197, 197, 0.44) 100%);
 }
 
 .site-shell::before {
@@ -52,10 +53,10 @@ body {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.13;
+  opacity: 0.16;
   background-image:
-    radial-gradient(circle at 18% 22%, rgba(17, 31, 42, 0.58) 0 1px, transparent 1.2px),
-    radial-gradient(circle at 78% 42%, rgba(17, 31, 42, 0.38) 0 1px, transparent 1.2px);
+    radial-gradient(circle at 18% 22%, rgba(39, 166, 204, 0.58) 0 1px, transparent 1.2px),
+    radial-gradient(circle at 78% 42%, rgba(252, 197, 197, 0.52) 0 1px, transparent 1.2px);
   background-size: 18px 18px, 23px 23px;
 }
 
@@ -125,16 +126,16 @@ a {
   transform: rotateX(2.2deg) rotateY(-4deg) translateZ(0);
   transform-origin: 50% 45%;
   box-shadow:
-    0 34px 100px rgba(39, 166, 204, 0.18),
-    0 18px 44px rgba(252, 197, 197, 0.14),
+    0 34px 100px rgba(39, 166, 204, 0.26),
+    0 18px 52px rgba(252, 197, 197, 0.22),
     inset 0 1px 0 rgba(255, 255, 255, 0.92);
 }
 
 .dashboard-shell::before {
   background:
-    linear-gradient(135deg, rgba(39, 166, 204, 0.22), rgba(255, 255, 255, 0.62) 34%, rgba(252, 197, 197, 0.26)),
+    linear-gradient(135deg, rgba(39, 166, 204, 0.34), rgba(255, 255, 255, 0.62) 34%, rgba(252, 197, 197, 0.36)),
     radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.92), transparent 32%),
-    radial-gradient(circle at 92% 100%, rgba(252, 197, 197, 0.28), transparent 34%);
+    radial-gradient(circle at 92% 100%, rgba(252, 197, 197, 0.36), transparent 34%);
 }
 
 @keyframes dashboardFloat {

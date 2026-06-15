@@ -262,13 +262,13 @@ function App() {
       lang={language === "zh" ? "zh-CN" : "en"}
     >
       <section className="relative mx-auto flex min-h-screen w-full max-w-[1680px] flex-col px-5 py-8 sm:px-8 lg:px-12">
-        <div className="pointer-events-none absolute -left-28 top-24 h-[28rem] w-[28rem] rounded-full bg-mint/40 blur-3xl" />
-        <div className="pointer-events-none absolute right-[-9rem] top-10 h-[34rem] w-[34rem] rounded-full bg-sun/36 blur-3xl" />
-        <div className="pointer-events-none absolute bottom-16 left-[36%] h-80 w-80 rounded-full bg-teal/18 blur-3xl" />
+        <div className="pointer-events-none absolute -left-28 top-24 h-[28rem] w-[28rem] rounded-full bg-mint/55 blur-3xl" />
+        <div className="pointer-events-none absolute right-[-9rem] top-10 h-[34rem] w-[34rem] rounded-full bg-sun/50 blur-3xl" />
+        <div className="pointer-events-none absolute bottom-16 left-[36%] h-80 w-80 rounded-full bg-teal/30 blur-3xl" />
 
         <LanguageSwitch language={language} setLanguage={setLanguage} label={t.languageLabel} />
 
-        <div className="hero-stage relative z-10 grid flex-1 items-center gap-10 [@media(min-width:1180px)]:grid-cols-[minmax(250px,330px)_minmax(0,1fr)] min-[1500px]:grid-cols-[minmax(340px,430px)_minmax(0,1fr)]">
+        <div className="hero-stage relative z-10 grid flex-1 items-center gap-10 min-[1360px]:grid-cols-[minmax(230px,280px)_minmax(0,1fr)] min-[1360px]:gap-8 min-[1500px]:grid-cols-[minmax(340px,430px)_minmax(0,1fr)] min-[1500px]:gap-10">
           <HeroCopy t={t} />
           <DashboardMockup
             activeDetail={activeDetail}
@@ -326,9 +326,9 @@ function LanguageSwitch({
 
 function HeroCopy({ t }: { t: (typeof copy)[Language] }) {
   return (
-    <div className="select-none max-w-xl animate-rise [@media(min-width:1180px)]:max-w-[330px] min-[1500px]:max-w-xl">
+    <div className="select-none max-w-xl animate-rise min-[1360px]:max-w-[280px] min-[1500px]:max-w-xl">
       <LogoMark className="mb-7 h-16 w-16 shadow-soft" />
-      <h1 className="type-hero-title max-w-[10ch] text-6xl leading-[0.92] text-ink sm:text-7xl [@media(min-width:1180px)]:text-5xl min-[1500px]:text-8xl">
+      <h1 className="type-hero-title max-w-[10ch] text-6xl leading-[0.92] text-ink sm:text-7xl min-[1360px]:text-5xl min-[1500px]:text-8xl">
         {t.heroTitle}
       </h1>
       <p className="type-section-title mt-7 max-w-xl text-2xl leading-tight text-pine min-[1500px]:text-3xl">
@@ -371,10 +371,10 @@ function DashboardMockup({
   return (
     <section
       id="dashboard"
-      className="dashboard-shell liquid-glass liquid-glass-strong relative z-10 w-full max-w-[1080px] justify-self-center animate-float select-none rounded-[2.35rem] border border-white/75 bg-white/58 p-3 shadow-glass sm:p-4 [@media(min-width:1180px)]:justify-self-end"
+      className="dashboard-shell liquid-glass liquid-glass-strong relative z-10 w-full max-w-[1080px] justify-self-center animate-float select-none rounded-[2.35rem] border border-white/75 bg-white/58 p-3 shadow-glass sm:p-4 min-[1360px]:justify-self-end"
       aria-label="StressWatch dashboard mockup"
     >
-      <div className="relative grid min-h-[620px] overflow-hidden rounded-[1.8rem] bg-white/72 shadow-[inset_0_1px_0_rgba(255,255,255,0.82)] [@media(min-width:1180px)]:grid-cols-[220px_minmax(0,1fr)_248px] min-[1500px]:grid-cols-[236px_minmax(0,1fr)_270px]">
+      <div className="relative grid min-h-[620px] overflow-hidden rounded-[1.8rem] bg-white/72 shadow-[inset_0_1px_0_rgba(255,255,255,0.82)] min-[1360px]:grid-cols-[190px_minmax(0,1fr)_220px] min-[1500px]:grid-cols-[220px_minmax(0,1fr)_250px]">
         <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} t={t} />
         <DashboardCenter language={language} openDetail={openDetail} t={t} />
         <InsightPanel t={t} />
@@ -401,7 +401,7 @@ function Sidebar({
   };
 
   return (
-    <aside className="flex flex-col rounded-t-[1.8rem] bg-pine px-5 py-6 text-white [@media(min-width:1180px)]:rounded-l-[1.8rem] [@media(min-width:1180px)]:rounded-tr-none">
+    <aside className="flex flex-col rounded-t-[1.8rem] bg-pine px-5 py-6 text-white min-[1360px]:rounded-l-[1.8rem] min-[1360px]:rounded-tr-none">
       <div className="flex min-w-0 items-center gap-3">
         <LogoMark className="h-12 w-12 shrink-0" />
         <div className="min-w-0">
@@ -410,7 +410,7 @@ function Sidebar({
         </div>
       </div>
 
-      <nav className="mt-6 grid grid-cols-2 gap-2 min-[640px]:grid-cols-5 [@media(min-width:1180px)]:mt-10 [@media(min-width:1180px)]:grid-cols-1">
+      <nav className="mt-6 grid grid-cols-2 gap-2 min-[640px]:grid-cols-5 min-[1360px]:mt-10 min-[1360px]:grid-cols-1">
         {t.nav.map((item, index) => {
           const section = sectionIds[index];
           const isActive = activeSection === section;
@@ -437,7 +437,7 @@ function Sidebar({
         })}
       </nav>
 
-      <div className="mt-auto hidden rounded-3xl bg-white/10 p-4 text-xs leading-5 text-white/62 [@media(min-width:1180px)]:block">
+      <div className="mt-auto hidden rounded-3xl bg-white/10 p-4 text-xs leading-5 text-white/62 min-[1360px]:block">
         {t.localFirst}
         <div className="mt-4 h-20 rounded-2xl bg-[radial-gradient(circle_at_50%_35%,rgba(252,197,197,0.45),transparent_34%),linear-gradient(140deg,rgba(128,191,212,0.32),rgba(128,191,212,0.18))]" />
       </div>
@@ -470,9 +470,9 @@ function DashboardCenter({
   t: (typeof copy)[Language];
 }) {
   return (
-    <div className="min-w-0 px-4 py-5 sm:px-6">
-      <div className="flex flex-col gap-4 min-[1320px]:flex-row min-[1320px]:items-center min-[1320px]:justify-between">
-        <div className="liquid-glass liquid-glass-soft min-w-0 rounded-full border border-pine/10 bg-white/70 px-4 py-3 text-sm font-semibold text-ink/55 shadow-[0_10px_30px_rgba(17,31,42,0.07)]">
+    <div className="min-w-0 px-4 py-5 sm:px-6 min-[1180px]:px-5 min-[1180px]:py-4">
+      <div className="flex flex-col gap-3 min-[1320px]:flex-row min-[1320px]:items-center min-[1320px]:justify-between">
+        <div className="liquid-glass liquid-glass-soft min-w-0 rounded-full border border-pine/10 bg-white/70 px-4 py-2.5 text-sm font-semibold text-ink/55 shadow-[0_10px_30px_rgba(17,31,42,0.07)]">
           <span className="block truncate">
           {t.search}
           </span>
@@ -483,7 +483,7 @@ function DashboardCenter({
         </div>
       </div>
 
-      <div id="metrics" className="scroll-mt-24 mt-5 grid gap-3 sm:grid-cols-2 [@media(min-width:1180px)]:grid-cols-3 min-[1320px]:grid-cols-5">
+      <div id="metrics" className="scroll-mt-24 mt-4 grid gap-3 sm:grid-cols-2 min-[1180px]:grid-cols-3 min-[1360px]:grid-cols-5">
         {t.metrics.map((metric, index) => (
           <MetricCard
             key={metric.label}
@@ -495,27 +495,27 @@ function DashboardCenter({
         ))}
       </div>
 
-      <div id="trends" className="scroll-mt-24 mt-5 grid gap-4 xl:grid-cols-[1.35fr_0.85fr]">
-        <GlassPanel className="min-h-[246px]" onClick={() => openDetail("trend")}>
+      <div id="trends" className="scroll-mt-24 mt-4 grid gap-4 min-[1360px]:grid-cols-[1.35fr_0.85fr]">
+        <GlassPanel className="min-h-[218px] min-[1360px]:min-h-[210px]" onClick={() => openDetail("trend")}>
           <PanelHeader title={t.panels.stressTrend} value={t.panels.balanced} />
           <StressLineChart language={language} />
         </GlassPanel>
 
-        <GlassPanel className="min-h-[246px]" onClick={() => openDetail("hrv")}>
+        <GlassPanel className="min-h-[218px] min-[1360px]:min-h-[210px]" onClick={() => openDetail("hrv")}>
           <PanelHeader title={t.panels.hrv} value="52 ms · +4%" />
           <HRVTrendCard language={language} />
         </GlassPanel>
       </div>
 
-      <div className="mt-4 grid gap-4">
-        <GlassPanel className="min-h-[176px]" onClick={() => openDetail("sleep")}>
+      <div className="mt-4 grid gap-4 min-[1180px]:grid-cols-2">
+        <GlassPanel className="min-h-[190px]" onClick={() => openDetail("sleep")}>
           <PanelHeader title={t.panels.sleepTimeline} value="7h 32m" />
           <SleepPanel language={language} />
         </GlassPanel>
 
-        <GlassPanel className="min-h-[236px]" onClick={() => openDetail("steps")}>
+        <GlassPanel className="min-h-[190px]" onClick={() => openDetail("steps")}>
           <PanelHeader title={t.panels.activityContext} value={t.panels.stepsValue} />
-          <ActivityPanel language={language} />
+          <ActivitySummaryPanel language={language} />
         </GlassPanel>
       </div>
     </div>
@@ -582,24 +582,24 @@ function MetricCard({
 
   return (
     <button
-      className={`liquid-glass liquid-glass-soft group rounded-[1.35rem] border border-white/75 p-4 text-left shadow-soft transition duration-300 hover:-translate-y-1.5 hover:scale-[1.015] ${metric.tone}`}
+      className={`liquid-glass liquid-glass-soft group rounded-[1.35rem] border border-white/75 p-4 text-left shadow-soft transition duration-300 hover:-translate-y-1.5 hover:scale-[1.015] min-[1180px]:rounded-[1.05rem] min-[1180px]:p-3 ${metric.tone}`}
       onClick={onOpen}
       style={{ animation: `rise 620ms ease-out ${index * 80}ms both` }}
       type="button"
     >
       <p className="type-caption text-[11px] uppercase text-ink/45">{metric.label}</p>
-      <p className="type-metric-number metric-value-pulse mt-3 text-2xl leading-none transition duration-300 group-hover:text-teal">
+      <p className="type-metric-number metric-value-pulse mt-3 text-2xl leading-none transition duration-300 group-hover:text-teal min-[1180px]:text-xl">
         {metric.value}
       </p>
       <div className="mt-2 flex items-center justify-between gap-3">
         <p className="type-caption text-xs text-ink/48">{metric.detail}</p>
-        <span className="rounded-full bg-white/55 px-2 py-1 text-[10px] font-black text-pine/58">
+        <span className="rounded-full bg-white/55 px-2 py-1 text-[10px] font-black text-pine/58 min-[1180px]:hidden min-[1500px]:inline-flex">
           {helper}
         </span>
       </div>
-      {variant === "stress" ? <MiniSparkline values={stressSparkData} color="#27A6CC" /> : null}
-      {variant === "recovery" ? <MiniSparkline values={recoverySparkData} color="#80BFD4" /> : null}
-      {variant === "hrv" ? <MiniSparkline values={hrvTrendData} color="#27A6CC" /> : null}
+      {variant === "stress" ? <MiniSparkline className="mt-3 h-8" values={stressSparkData} color="#27A6CC" /> : null}
+      {variant === "recovery" ? <MiniSparkline className="mt-3 h-8" values={recoverySparkData} color="#80BFD4" /> : null}
+      {variant === "hrv" ? <MiniSparkline className="mt-3 h-8" values={hrvTrendData} color="#27A6CC" /> : null}
       {variant === "sleep" ? <SleepMiniRings /> : null}
     </button>
   );
@@ -618,7 +618,7 @@ function GlassPanel({
 
   return (
     <Component
-      className={`liquid-glass liquid-glass-soft w-full rounded-[1.6rem] border border-white/75 bg-white/70 p-5 text-left shadow-soft transition hover:-translate-y-1 ${onClick ? "cursor-pointer" : ""} ${className}`}
+      className={`liquid-glass liquid-glass-soft w-full rounded-[1.6rem] border border-white/75 bg-white/70 p-5 text-left shadow-soft transition hover:-translate-y-1 min-[1180px]:p-4 ${onClick ? "cursor-pointer" : ""} ${className}`}
       onClick={onClick}
       type={onClick ? "button" : undefined}
     >
@@ -657,7 +657,7 @@ function StressLineChart({ language }: { language: Language }) {
     : null;
 
   return (
-    <div className="relative mt-5 h-44 w-full" ref={ref}>
+    <div className="relative mt-4 h-40 w-full min-[1180px]:h-36" ref={ref}>
       <svg className="h-full w-full" viewBox="0 0 520 180" role="img" aria-label="7-day stress trend line chart">
         <defs>
           <linearGradient id="stressLine" x1="0" x2="1" y1="0" y2="0">
@@ -740,10 +740,10 @@ function StressLineChart({ language }: { language: Language }) {
 
 function HRVTrendCard({ language }: { language: Language }) {
   return (
-    <div className="mt-5">
+    <div className="mt-4">
       <div className="flex items-end justify-between gap-4">
         <div>
-          <p className="type-metric-number text-4xl text-pine">52</p>
+          <p className="type-metric-number text-4xl text-pine min-[1180px]:text-3xl">52</p>
           <p className="type-caption text-xs text-ink/45">
             ms · {language === "zh" ? "今日 07:16" : "today 07:16"}
           </p>
@@ -790,8 +790,8 @@ function HRVTrendChart({ language }: { language: Language }) {
     : null;
 
   return (
-    <div className="mt-6" ref={ref}>
-      <svg className="h-36 w-full overflow-visible" viewBox="0 0 280 132" aria-label="HRV seven day trend with baseline">
+    <div className="mt-4" ref={ref}>
+      <svg className="h-32 w-full overflow-visible min-[1180px]:h-28" viewBox="0 0 280 132" aria-label="HRV seven day trend with baseline">
         <defs>
           <linearGradient id="hrvLine" x1="0" x2="1" y1="0" y2="0">
             <stop offset="0%" stopColor="#80BFD4" />
@@ -907,18 +907,19 @@ function SleepPanel({ language }: { language: Language }) {
   const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
 
   return (
-    <div className="mt-4 grid gap-5 sm:grid-cols-[128px_minmax(0,1fr)]" ref={ref}>
-      <div className="flex justify-center">
-        <MultiRing score={84} />
+    <div className="mt-4 grid gap-3" ref={ref}>
+      <div className="flex items-center gap-3">
+        <MultiRing compact score={84} />
+        <div>
+          <p className="type-metric-number text-2xl text-pine">84</p>
+          <p className="type-caption text-[11px] text-ink/48">Sleep Score</p>
+        </div>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <SleepStage color="bg-sun" delay={0} isVisible={isVisible} label={language === "zh" ? "清醒" : "Awake"} percent={18} value="18m" />
         <SleepStage color="bg-aqua" delay={80} isVisible={isVisible} label="REM" percent={58} value="1h 32m" />
         <SleepStage color="bg-teal" delay={160} isVisible={isVisible} label="Core" percent={86} value="4h 44m" />
-        <SleepStage color="bg-pine" delay={240} isVisible={isVisible} label="Deep" percent={42} value="58m" />
-        <p className="type-caption pt-1 text-xs text-ink/48">
-          {language === "zh" ? "今日睡眠状态：恢复良好" : "Sleep state: restorative"}
-        </p>
+        <SleepStage color="bg-pine" delay={240} isVisible={isVisible} label="Deep" percent={42} value="58m" compact />
       </div>
     </div>
   );
@@ -1030,6 +1031,7 @@ function MultiRing({ compact = false, score }: { compact?: boolean; score: numbe
 }
 
 function SleepStage({
+  compact = false,
   color,
   delay,
   isVisible,
@@ -1037,6 +1039,7 @@ function SleepStage({
   percent,
   value
 }: {
+  compact?: boolean;
   color: string;
   delay: number;
   isVisible: boolean;
@@ -1046,7 +1049,7 @@ function SleepStage({
 }) {
   return (
     <div
-      className={`${isVisible ? "sleep-stage-cell" : "sleep-stage-hidden"} group rounded-2xl bg-pine/5 px-3 py-2 transition duration-300 hover:-translate-y-0.5 hover:bg-white/58 hover:shadow-soft`}
+      className={`${isVisible ? "sleep-stage-cell" : "sleep-stage-hidden"} group rounded-2xl bg-pine/5 px-3 transition duration-300 hover:-translate-y-0.5 hover:bg-white/58 hover:shadow-soft ${compact ? "py-1.5" : "py-2"}`}
       style={{ animationDelay: `${delay}ms` }}
     >
       <div className="flex items-center justify-between">
@@ -1056,7 +1059,7 @@ function SleepStage({
         </span>
         <span className="type-metric-number text-sm text-pine">{value}</span>
       </div>
-      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-pine/8">
+      <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-pine/8">
         <div
           className={`${isVisible ? "sleep-stage-fill" : "sleep-stage-fill-hidden"} h-full rounded-full ${color}`}
           style={{ "--stage-width": `${percent}%`, animationDelay: `${delay + 120}ms` } as CSSProperties}
@@ -1262,6 +1265,33 @@ function InsightRow({ label, value }: { label: string; value: string }) {
     <div className="flex items-center justify-between rounded-2xl bg-pine/5 px-3 py-3">
       <span className="text-xs font-bold text-ink/48">{label}</span>
       <span className="text-sm font-black text-pine">{value}</span>
+    </div>
+  );
+}
+
+function ActivitySummaryPanel({ language }: { language: Language }) {
+  const bars = activityWeekData.map((day) => Math.round((day.energy / 720) * 100));
+
+  return (
+    <div className="mt-5">
+      <div className="flex items-end justify-between gap-2">
+        {bars.map((height, index) => (
+          <div className="flex flex-1 flex-col items-center gap-2" key={`${activityWeekData[index].date}-summary`}>
+            <div className="flex h-20 w-full items-end rounded-full bg-pine/7 p-1">
+              <div
+                className="w-full rounded-full bg-gradient-to-t from-[#27A6CC] to-[#FCC5C5] shadow-[0_8px_18px_rgba(39,166,204,0.18)]"
+                style={{ height: `${height}%` }}
+              />
+            </div>
+            <span className="type-caption text-[10px] text-ink/42">{activityWeekData[index].day}</span>
+          </div>
+        ))}
+      </div>
+      <div className="mt-4 grid grid-cols-3 gap-2">
+        <ActivityStat label={language === "zh" ? "活动" : "Move"} value="620" />
+        <ActivityStat label={language === "zh" ? "锻炼" : "Exercise"} value="39m" />
+        <ActivityStat label={language === "zh" ? "站立" : "Stand"} value="13" />
+      </div>
     </div>
   );
 }
