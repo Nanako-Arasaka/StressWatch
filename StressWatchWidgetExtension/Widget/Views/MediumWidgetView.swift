@@ -62,8 +62,6 @@ struct MediumWidgetView: View {
             }
             .padding(14)
         }
-        .containerBackground(for: .widget) {
-            WidgetBackgroundView()
-        }
+        .stressWatchWidgetBackground()
     }
 }

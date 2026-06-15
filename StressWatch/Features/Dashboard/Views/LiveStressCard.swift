@@ -47,8 +47,7 @@ struct LiveStressCard: View {
             Text(scoreText)
                 .font(.system(size: 54, weight: .bold, design: .rounded))
                 .foregroundStyle(statusColor)
-                .contentTransition(.numericText())
-                .animation(AppMotion.numericChange(reduceMotion: reduceMotion), value: scoreText)
+                .appNumericChange(value: scoreText, reduceMotion: reduceMotion)
 
             Text("/100")
                 .font(.title3.weight(.semibold))

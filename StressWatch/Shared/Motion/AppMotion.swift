@@ -82,21 +82,15 @@ private struct StaggeredCardModifier: ViewModifier {
     }
 }
 
-// 数字文本变化动画。iOS 17+ 使用 numericText；较低版本退回到轻量 opacity 动画。
+// 数字文本变化动画。保持在 iOS 16 可编译的基础 API 上，避免依赖 iOS 17 SDK 符号。
 private struct NumericChangeModifier<Value: Equatable>: ViewModifier {
     let value: Value
     let reduceMotion: Bool
 
     func body(content: Content) -> some View {
-        if #available(iOS 17.0, *) {
-            content
-                .contentTransition(reduceMotion ? .opacity : .numericText())
-                .animation(AppMotion.numericChange(reduceMotion: reduceMotion), value: value)
-        } else {
-            content
-                .transition(.opacity)
-                .animation(AppMotion.numericChange(reduceMotion: reduceMotion), value: value)
-        }
+        content
+            .transition(.opacity)
+            .animation(AppMotion.numericChange(reduceMotion: reduceMotion), value: value)
     }
 }
 

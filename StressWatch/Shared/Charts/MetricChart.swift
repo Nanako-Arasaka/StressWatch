@@ -46,8 +46,6 @@ struct MetricChart: View {
                         .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
                 }
             }
-            .chartScrollableAxes(.horizontal)
-            .chartXVisibleDomain(length: visibleDomain ?? defaultVisibleDomain)
             .chartXAxis {
                 AxisMarks(values: .automatic(desiredCount: 5)) { value in
                     AxisGridLine()
@@ -110,7 +108,7 @@ struct MetricChart: View {
                 print("[MetricChart] onAppear count=\(onAppearCount) raw=\(metrics.count) displayed=\(displayMetrics.count)")
                 resetVisibleDomainIfNeeded()
             }
-            .onChange(of: metricsSignature) { _, _ in
+            .onChange(of: metricsSignature) { _ in
                 selectedMetric = nil
                 visibleDomain = defaultVisibleDomain
             }

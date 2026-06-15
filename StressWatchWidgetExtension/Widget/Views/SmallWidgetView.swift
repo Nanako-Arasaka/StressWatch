@@ -39,9 +39,7 @@ struct SmallWidgetView: View {
             .padding(14)
         }
         .widgetURL(WidgetDeepLink.dashboard)
-        .containerBackground(for: .widget) {
-            WidgetBackgroundView()
-        }
+        .stressWatchWidgetBackground()
     }
 
     private var scoreText: String {

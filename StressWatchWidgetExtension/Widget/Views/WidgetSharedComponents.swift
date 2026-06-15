@@ -143,6 +143,14 @@ struct WidgetMetricTile: View {
     }
 }
 
+extension View {
+    func stressWatchWidgetBackground() -> some View {
+        background {
+            WidgetBackgroundView()
+        }
+    }
+}
+
 enum WidgetDeepLink {
     static let dashboard = URL(string: "stresswatch://dashboard")!
     static let analysis = URL(string: "stresswatch://analysis")!
