@@ -440,7 +440,8 @@ private struct StressBarTrendView: View {
                 .padding(.horizontal, 12)
                 .padding(.vertical, 10)
             }
-            .frame(width: contentWidth, maxHeight: .infinity, alignment: .bottomLeading)
+            .frame(width: contentWidth, alignment: .bottomLeading)
+            .frame(maxHeight: .infinity, alignment: .bottomLeading)
         }
         .background(AppColors.subtleActivityFill(for: colorScheme), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
     }
