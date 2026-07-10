@@ -163,7 +163,7 @@ struct MetricDetailView: View {
                 .staggeredDetail(isVisible: contentVisible, delay: 0.16, reduceMotion: reduceMotion)
             }
             .padding()
-            .padding(.bottom, 118)
+            .padding(.bottom, 24)
         }
         .background(pageBackground)
         .navigationTitle(title)

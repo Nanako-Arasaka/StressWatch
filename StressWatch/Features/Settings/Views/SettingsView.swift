@@ -169,7 +169,7 @@ struct SettingsView: View {
                 }
                 .padding(.horizontal, 18)
                 .padding(.top, 18)
-                .padding(.bottom, 118)
+                .padding(.bottom, 24)
             }
             .background(pageBackground)
             .navigationTitle("设置")

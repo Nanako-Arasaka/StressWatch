@@ -7,71 +7,70 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A10000000000000000000001 /* StressWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* StressWatchApp.swift */; };
-		A10000000000000000000002 /* HealthMetric.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000002 /* HealthMetric.swift */; };
-		A10000000000000000000003 /* Baseline.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* Baseline.swift */; };
-		A10000000000000000000004 /* StressScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* StressScore.swift */; };
-		A10000000000000000000005 /* RecoveryScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000005 /* RecoveryScore.swift */; };
-		A10000000000000000000006 /* HealthKitDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000006 /* HealthKitDataProvider.swift */; };
-		A10000000000000000000007 /* LocalStorageProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000007 /* LocalStorageProtocol.swift */; };
-		A10000000000000000000008 /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* HealthKitService.swift */; };
-		A10000000000000000000009 /* MockHealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000009 /* MockHealthKitService.swift */; };
-		A1000000000000000000000A /* BaselineEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000A /* BaselineEngine.swift */; };
-		A1000000000000000000000B /* StressModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000B /* StressModel.swift */; };
-		A1000000000000000000000C /* RecoveryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000C /* RecoveryModel.swift */; };
-		A1000000000000000000000D /* LocalStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000D /* LocalStorage.swift */; };
-		A1000000000000000000000E /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000E /* DashboardViewModel.swift */; };
-		A1000000000000000000000F /* TrendViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000F /* TrendViewModel.swift */; };
-		A10000000000000000000010 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* SettingsViewModel.swift */; };
-		A10000000000000000000011 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000011 /* DashboardView.swift */; };
-		A10000000000000000000015 /* TrendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000015 /* TrendView.swift */; };
-		A10000000000000000000016 /* TrendChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000016 /* TrendChart.swift */; };
-		A10000000000000000000017 /* MetricDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000017 /* MetricDetailView.swift */; };
-		A10000000000000000000018 /* MetricChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000018 /* MetricChart.swift */; };
-		A10000000000000000000019 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000019 /* SettingsView.swift */; };
+		A10000000000000000000001 /* App/StressWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* App/StressWatchApp.swift */; };
+		A10000000000000000000002 /* Core/Models/HealthMetric.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000002 /* Core/Models/HealthMetric.swift */; };
+		A10000000000000000000003 /* Core/Models/Baseline.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* Core/Models/Baseline.swift */; };
+		A10000000000000000000004 /* Core/Models/StressScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* Core/Models/StressScore.swift */; };
+		A10000000000000000000005 /* Core/Models/RecoveryScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000005 /* Core/Models/RecoveryScore.swift */; };
+		A10000000000000000000006 /* Core/HealthKit/HealthKitDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000006 /* Core/HealthKit/HealthKitDataProvider.swift */; };
+		A10000000000000000000007 /* Core/Storage/LocalStorageProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000007 /* Core/Storage/LocalStorageProtocol.swift */; };
+		A10000000000000000000008 /* Core/HealthKit/HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* Core/HealthKit/HealthKitService.swift */; };
+		A10000000000000000000009 /* Core/HealthKit/MockHealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000009 /* Core/HealthKit/MockHealthKitService.swift */; };
+		A1000000000000000000000A /* Core/Analysis/BaselineEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000A /* Core/Analysis/BaselineEngine.swift */; };
+		A1000000000000000000000B /* Core/Analysis/StressModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000B /* Core/Analysis/StressModel.swift */; };
+		A1000000000000000000000C /* Core/Analysis/RecoveryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000C /* Core/Analysis/RecoveryModel.swift */; };
+		A1000000000000000000000D /* Core/Storage/LocalStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000D /* Core/Storage/LocalStorage.swift */; };
+		A1000000000000000000000E /* Features/Dashboard/DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000E /* Features/Dashboard/DashboardViewModel.swift */; };
+		A1000000000000000000000F /* Features/Trend/TrendViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000F /* Features/Trend/TrendViewModel.swift */; };
+		A10000000000000000000010 /* Features/Settings/SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* Features/Settings/SettingsViewModel.swift */; };
+		A10000000000000000000011 /* Features/Dashboard/Views/DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000011 /* Features/Dashboard/Views/DashboardView.swift */; };
+		A10000000000000000000015 /* Features/Trend/Views/TrendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000015 /* Features/Trend/Views/TrendView.swift */; };
+		A10000000000000000000016 /* Features/Trend/Components/TrendChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000016 /* Features/Trend/Components/TrendChart.swift */; };
+		A10000000000000000000017 /* Features/Detail/Views/MetricDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000017 /* Features/Detail/Views/MetricDetailView.swift */; };
+		A10000000000000000000018 /* Shared/Charts/MetricChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000018 /* Shared/Charts/MetricChart.swift */; };
+		A10000000000000000000019 /* Features/Settings/Views/SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000019 /* Features/Settings/Views/SettingsView.swift */; };
 		A1000000000000000000001A /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2000000000000000000001A /* HealthKit.framework */; };
 		A1000000000000000000001B /* Charts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2000000000000000000001B /* Charts.framework */; };
-		A1000000000000000000001C /* MathHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000001F /* MathHelpers.swift */; };
-		A1000000000000000000001D /* DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000020 /* DateExtensions.swift */; };
-		A1000000000000000000001E /* GlassCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000021 /* GlassCardView.swift */; };
-		A1000000000000000000001F /* LiquidMetricCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000022 /* LiquidMetricCard.swift */; };
-		A10000000000000000000021 /* GlassSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000024 /* GlassSectionHeader.swift */; };
-		A10000000000000000000022 /* DataSourceBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000025 /* DataSourceBadge.swift */; };
-		A10000000000000000000023 /* DashboardMetric.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000026 /* DashboardMetric.swift */; };
-		A10000000000000000000024 /* DashboardSparklineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000027 /* DashboardSparklineView.swift */; };
-		A10000000000000000000025 /* DashboardMetricCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000028 /* DashboardMetricCardView.swift */; };
-		A10000000000000000000026 /* DashboardTrendChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000029 /* DashboardTrendChartView.swift */; };
-		A10000000000000000000027 /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002A /* AppColors.swift */; };
-		A10000000000000000000028 /* AppMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002B /* AppMotion.swift */; };
-		A10000000000000000000029 /* TimeFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002C /* TimeFormatting.swift */; };
-		A1000000000000000000002A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002D /* Assets.xcassets */; };
+		A1000000000000000000001C /* Core/Utils/MathHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000001F /* Core/Utils/MathHelpers.swift */; };
+		A1000000000000000000001D /* Core/Extensions/DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000020 /* Core/Extensions/DateExtensions.swift */; };
+		A1000000000000000000001E /* Shared/Glass/GlassCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000021 /* Shared/Glass/GlassCardView.swift */; };
+		A1000000000000000000001F /* Shared/Components/LiquidMetricCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000022 /* Shared/Components/LiquidMetricCard.swift */; };
+		A10000000000000000000021 /* Shared/Components/GlassSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000024 /* Shared/Components/GlassSectionHeader.swift */; };
+		A10000000000000000000022 /* Shared/Components/DataSourceBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000025 /* Shared/Components/DataSourceBadge.swift */; };
+		A10000000000000000000023 /* Features/Dashboard/DashboardMetric.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000026 /* Features/Dashboard/DashboardMetric.swift */; };
+		A10000000000000000000024 /* Features/Dashboard/Components/DashboardSparklineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000027 /* Features/Dashboard/Components/DashboardSparklineView.swift */; };
+		A10000000000000000000025 /* Features/Dashboard/Components/DashboardMetricCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000028 /* Features/Dashboard/Components/DashboardMetricCardView.swift */; };
+		A10000000000000000000026 /* Features/Dashboard/Components/DashboardTrendChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000029 /* Features/Dashboard/Components/DashboardTrendChartView.swift */; };
+		A10000000000000000000027 /* Shared/Theme/AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002A /* Shared/Theme/AppColors.swift */; };
+		A10000000000000000000028 /* Shared/Motion/AppMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002B /* Shared/Motion/AppMotion.swift */; };
+		A10000000000000000000029 /* Core/Utils/TimeFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002C /* Core/Utils/TimeFormatting.swift */; };
+		A1000000000000000000002A /* Resources/Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002D /* Resources/Assets.xcassets */; };
 		A1000000000000000000002B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002E /* LaunchScreen.storyboard */; };
-		A1000000000000000000002C /* FloatingTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002F /* FloatingTabBar.swift */; };
-		A1000000000000000000002D /* WellnessAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000030 /* WellnessAnalysis.swift */; };
-		A1000000000000000000002E /* FeatureExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000031 /* FeatureExtractor.swift */; };
-		A1000000000000000000002F /* WellnessAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000032 /* WellnessAnalyzer.swift */; };
-		A10000000000000000000030 /* AdviceGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000033 /* AdviceGenerator.swift */; };
-		A10000000000000000000031 /* AnalysisViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000034 /* AnalysisViewModel.swift */; };
-		A10000000000000000000032 /* AnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000035 /* AnalysisView.swift */; };
-		A10000000000000000000033 /* DashboardHeroSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000036 /* DashboardHeroSection.swift */; };
-		A10000000000000000000034 /* DashboardAnalysisEntryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000037 /* DashboardAnalysisEntryCard.swift */; };
-		A10000000000000000000035 /* DashboardMetricNavigationCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000038 /* DashboardMetricNavigationCard.swift */; };
-		A10000000000000000000036 /* DashboardKeySignalsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000039 /* DashboardKeySignalsSection.swift */; };
-		A10000000000000000000037 /* DashboardDetailGridSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003A /* DashboardDetailGridSection.swift */; };
-		A10000000000000000000038 /* DashboardSleepStagesSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003B /* DashboardSleepStagesSection.swift */; };
-		A10000000000000000000039 /* DashboardActivityContextSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003C /* DashboardActivityContextSection.swift */; };
-		A1000000000000000000003A /* LiveStressSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003D /* LiveStressSnapshot.swift */; };
-		A1000000000000000000003B /* LiveStressEstimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003E /* LiveStressEstimator.swift */; };
-		A1000000000000000000003C /* LiveStressCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003F /* LiveStressCard.swift */; };
-		A1000000000000000000003D /* DailyWellnessCheckIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000040 /* DailyWellnessCheckIn.swift */; };
-		A1000000000000000000003E /* CoreMLWellnessAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000041 /* CoreMLWellnessAnalyzer.swift */; };
-		A1000000000000000000003F /* StressWatchWellnessClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000042 /* StressWatchWellnessClassifier.mlmodel */; };
-		A10000000000000000000040 /* coreml_class_labels.json in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000043 /* coreml_class_labels.json */; };
-
-		B10000000000000000000001 /* WidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* WidgetSnapshot.swift */; };
-		B10000000000000000000002 /* WidgetStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* WidgetStorage.swift */; };
-		B10000000000000000000003 /* WidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* WidgetSnapshot.swift */; };
-		B10000000000000000000004 /* WidgetStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* WidgetStorage.swift */; };
+		A1000000000000000000002C /* Shared/Components/FloatingTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002F /* Shared/Components/FloatingTabBar.swift */; };
+		A1000000000000000000002D /* Core/Analysis/WellnessAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000030 /* Core/Analysis/WellnessAnalysis.swift */; };
+		A1000000000000000000002E /* Core/Analysis/FeatureExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000031 /* Core/Analysis/FeatureExtractor.swift */; };
+		A1000000000000000000002F /* Core/Analysis/WellnessAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000032 /* Core/Analysis/WellnessAnalyzer.swift */; };
+		A10000000000000000000030 /* Core/Analysis/AdviceGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000033 /* Core/Analysis/AdviceGenerator.swift */; };
+		A10000000000000000000031 /* Features/Analysis/AnalysisViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000034 /* Features/Analysis/AnalysisViewModel.swift */; };
+		A10000000000000000000032 /* Features/Analysis/Views/AnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000035 /* Features/Analysis/Views/AnalysisView.swift */; };
+		A10000000000000000000033 /* Features/Dashboard/Components/DashboardHeroSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000036 /* Features/Dashboard/Components/DashboardHeroSection.swift */; };
+		A10000000000000000000034 /* Features/Dashboard/Components/DashboardAnalysisEntryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000037 /* Features/Dashboard/Components/DashboardAnalysisEntryCard.swift */; };
+		A10000000000000000000035 /* Features/Dashboard/Components/DashboardMetricNavigationCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000038 /* Features/Dashboard/Components/DashboardMetricNavigationCard.swift */; };
+		A10000000000000000000036 /* Features/Dashboard/Components/DashboardKeySignalsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000039 /* Features/Dashboard/Components/DashboardKeySignalsSection.swift */; };
+		A10000000000000000000037 /* Features/Dashboard/Components/DashboardDetailGridSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003A /* Features/Dashboard/Components/DashboardDetailGridSection.swift */; };
+		A10000000000000000000038 /* Features/Dashboard/Components/DashboardSleepStagesSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003B /* Features/Dashboard/Components/DashboardSleepStagesSection.swift */; };
+		A10000000000000000000039 /* Features/Dashboard/Components/DashboardActivityContextSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003C /* Features/Dashboard/Components/DashboardActivityContextSection.swift */; };
+		A1000000000000000000003A /* Core/LiveStress/LiveStressSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003D /* Core/LiveStress/LiveStressSnapshot.swift */; };
+		A1000000000000000000003B /* Core/LiveStress/LiveStressEstimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003E /* Core/LiveStress/LiveStressEstimator.swift */; };
+		A1000000000000000000003C /* Features/Dashboard/Views/LiveStressCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003F /* Features/Dashboard/Views/LiveStressCard.swift */; };
+		A1000000000000000000003D /* Core/Models/DailyWellnessCheckIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000040 /* Core/Models/DailyWellnessCheckIn.swift */; };
+		A1000000000000000000003E /* Core/Analysis/CoreMLWellnessAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000041 /* Core/Analysis/CoreMLWellnessAnalyzer.swift */; };
+		A1000000000000000000003F /* Resources/ML/StressWatchWellnessClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000042 /* Resources/ML/StressWatchWellnessClassifier.mlmodel */; };
+		A10000000000000000000040 /* Resources/ML/coreml_class_labels.json in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000043 /* Resources/ML/coreml_class_labels.json */; };
+		B10000000000000000000001 /* Shared/Widget/WidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* Shared/Widget/WidgetSnapshot.swift */; };
+		B10000000000000000000002 /* Shared/Widget/WidgetStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* Shared/Widget/WidgetStorage.swift */; };
+		B10000000000000000000003 /* Shared/Widget/WidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* Shared/Widget/WidgetSnapshot.swift */; };
+		B10000000000000000000004 /* Shared/Widget/WidgetStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* Shared/Widget/WidgetStorage.swift */; };
 		B10000000000000000000005 /* StressWatchWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000006 /* StressWatchWidgetBundle.swift */; };
 		B10000000000000000000006 /* StressWatchWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000007 /* StressWatchWidget.swift */; };
 		B10000000000000000000007 /* WidgetEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000008 /* WidgetEntry.swift */; };
@@ -82,8 +81,6 @@
 		B1000000000000000000000C /* WidgetSharedComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2000000000000000000000D /* WidgetSharedComponents.swift */; };
 		B1000000000000000000000D /* StressWatchWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B20000000000000000000003 /* StressWatchWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
-
-
 
 /* Begin PBXContainerItemProxy section */
 		B60000000000000000000001 /* PBXContainerItemProxy */ = {
@@ -110,72 +107,71 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		A20000000000000000000001 /* StressWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/StressWatchApp.swift; sourceTree = "<group>"; };
-		A20000000000000000000002 /* HealthMetric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/HealthMetric.swift; sourceTree = "<group>"; };
-		A20000000000000000000003 /* Baseline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/Baseline.swift; sourceTree = "<group>"; };
-		A20000000000000000000004 /* StressScore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/StressScore.swift; sourceTree = "<group>"; };
-		A20000000000000000000005 /* RecoveryScore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/RecoveryScore.swift; sourceTree = "<group>"; };
-		A20000000000000000000006 /* HealthKitDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/HealthKit/HealthKitDataProvider.swift; sourceTree = "<group>"; };
-		A20000000000000000000007 /* LocalStorageProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Storage/LocalStorageProtocol.swift; sourceTree = "<group>"; };
-		A20000000000000000000008 /* HealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/HealthKit/HealthKitService.swift; sourceTree = "<group>"; };
-		A20000000000000000000009 /* MockHealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/HealthKit/MockHealthKitService.swift; sourceTree = "<group>"; };
-		A2000000000000000000000A /* BaselineEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/BaselineEngine.swift; sourceTree = "<group>"; };
-		A2000000000000000000000B /* StressModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/StressModel.swift; sourceTree = "<group>"; };
-		A2000000000000000000000C /* RecoveryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/RecoveryModel.swift; sourceTree = "<group>"; };
-		A2000000000000000000000D /* LocalStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Storage/LocalStorage.swift; sourceTree = "<group>"; };
-		A2000000000000000000000E /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/DashboardViewModel.swift; sourceTree = "<group>"; };
-		A2000000000000000000000F /* TrendViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Trend/TrendViewModel.swift; sourceTree = "<group>"; };
-		A20000000000000000000010 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Settings/SettingsViewModel.swift; sourceTree = "<group>"; };
-		A20000000000000000000011 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Views/DashboardView.swift; sourceTree = "<group>"; };
-		A20000000000000000000015 /* TrendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Trend/Views/TrendView.swift; sourceTree = "<group>"; };
-		A20000000000000000000016 /* TrendChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Trend/Components/TrendChart.swift; sourceTree = "<group>"; };
-		A20000000000000000000017 /* MetricDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Detail/Views/MetricDetailView.swift; sourceTree = "<group>"; };
-		A20000000000000000000018 /* MetricChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Charts/MetricChart.swift; sourceTree = "<group>"; };
-		A20000000000000000000019 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Settings/Views/SettingsView.swift; sourceTree = "<group>"; };
+		A20000000000000000000001 /* App/StressWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/StressWatchApp.swift; sourceTree = "<group>"; };
+		A20000000000000000000002 /* Core/Models/HealthMetric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/HealthMetric.swift; sourceTree = "<group>"; };
+		A20000000000000000000003 /* Core/Models/Baseline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/Baseline.swift; sourceTree = "<group>"; };
+		A20000000000000000000004 /* Core/Models/StressScore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/StressScore.swift; sourceTree = "<group>"; };
+		A20000000000000000000005 /* Core/Models/RecoveryScore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/RecoveryScore.swift; sourceTree = "<group>"; };
+		A20000000000000000000006 /* Core/HealthKit/HealthKitDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/HealthKit/HealthKitDataProvider.swift; sourceTree = "<group>"; };
+		A20000000000000000000007 /* Core/Storage/LocalStorageProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Storage/LocalStorageProtocol.swift; sourceTree = "<group>"; };
+		A20000000000000000000008 /* Core/HealthKit/HealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/HealthKit/HealthKitService.swift; sourceTree = "<group>"; };
+		A20000000000000000000009 /* Core/HealthKit/MockHealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/HealthKit/MockHealthKitService.swift; sourceTree = "<group>"; };
+		A2000000000000000000000A /* Core/Analysis/BaselineEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/BaselineEngine.swift; sourceTree = "<group>"; };
+		A2000000000000000000000B /* Core/Analysis/StressModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/StressModel.swift; sourceTree = "<group>"; };
+		A2000000000000000000000C /* Core/Analysis/RecoveryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/RecoveryModel.swift; sourceTree = "<group>"; };
+		A2000000000000000000000D /* Core/Storage/LocalStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Storage/LocalStorage.swift; sourceTree = "<group>"; };
+		A2000000000000000000000E /* Features/Dashboard/DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/DashboardViewModel.swift; sourceTree = "<group>"; };
+		A2000000000000000000000F /* Features/Trend/TrendViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Trend/TrendViewModel.swift; sourceTree = "<group>"; };
+		A20000000000000000000010 /* Features/Settings/SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Settings/SettingsViewModel.swift; sourceTree = "<group>"; };
+		A20000000000000000000011 /* Features/Dashboard/Views/DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Views/DashboardView.swift; sourceTree = "<group>"; };
+		A20000000000000000000015 /* Features/Trend/Views/TrendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Trend/Views/TrendView.swift; sourceTree = "<group>"; };
+		A20000000000000000000016 /* Features/Trend/Components/TrendChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Trend/Components/TrendChart.swift; sourceTree = "<group>"; };
+		A20000000000000000000017 /* Features/Detail/Views/MetricDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Detail/Views/MetricDetailView.swift; sourceTree = "<group>"; };
+		A20000000000000000000018 /* Shared/Charts/MetricChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Charts/MetricChart.swift; sourceTree = "<group>"; };
+		A20000000000000000000019 /* Features/Settings/Views/SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Settings/Views/SettingsView.swift; sourceTree = "<group>"; };
 		A2000000000000000000001A /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		A2000000000000000000001B /* Charts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Charts.framework; path = System/Library/Frameworks/Charts.framework; sourceTree = SDKROOT; };
 		A2000000000000000000001C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A2000000000000000000001D /* StressWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StressWatch.entitlements; sourceTree = "<group>"; };
 		A2000000000000000000001E /* StressWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StressWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A2000000000000000000001F /* MathHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Utils/MathHelpers.swift; sourceTree = "<group>"; };
-		A20000000000000000000020 /* DateExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Extensions/DateExtensions.swift; sourceTree = "<group>"; };
-		A20000000000000000000021 /* GlassCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Glass/GlassCardView.swift; sourceTree = "<group>"; };
-		A20000000000000000000022 /* LiquidMetricCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Components/LiquidMetricCard.swift; sourceTree = "<group>"; };
-		A20000000000000000000024 /* GlassSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Components/GlassSectionHeader.swift; sourceTree = "<group>"; };
-		A20000000000000000000025 /* DataSourceBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Components/DataSourceBadge.swift; sourceTree = "<group>"; };
-		A20000000000000000000026 /* DashboardMetric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/DashboardMetric.swift; sourceTree = "<group>"; };
-		A20000000000000000000027 /* DashboardSparklineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardSparklineView.swift; sourceTree = "<group>"; };
-		A20000000000000000000028 /* DashboardMetricCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardMetricCardView.swift; sourceTree = "<group>"; };
-		A20000000000000000000029 /* DashboardTrendChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardTrendChartView.swift; sourceTree = "<group>"; };
-		A2000000000000000000002A /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Theme/AppColors.swift; sourceTree = "<group>"; };
-		A2000000000000000000002B /* AppMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Motion/AppMotion.swift; sourceTree = "<group>"; };
-		A2000000000000000000002C /* TimeFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Utils/TimeFormatting.swift; sourceTree = "<group>"; };
-		A2000000000000000000002D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Resources/Assets.xcassets; sourceTree = "<group>"; };
+		A2000000000000000000001F /* Core/Utils/MathHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Utils/MathHelpers.swift; sourceTree = "<group>"; };
+		A20000000000000000000020 /* Core/Extensions/DateExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Extensions/DateExtensions.swift; sourceTree = "<group>"; };
+		A20000000000000000000021 /* Shared/Glass/GlassCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Glass/GlassCardView.swift; sourceTree = "<group>"; };
+		A20000000000000000000022 /* Shared/Components/LiquidMetricCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Components/LiquidMetricCard.swift; sourceTree = "<group>"; };
+		A20000000000000000000024 /* Shared/Components/GlassSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Components/GlassSectionHeader.swift; sourceTree = "<group>"; };
+		A20000000000000000000025 /* Shared/Components/DataSourceBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Components/DataSourceBadge.swift; sourceTree = "<group>"; };
+		A20000000000000000000026 /* Features/Dashboard/DashboardMetric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/DashboardMetric.swift; sourceTree = "<group>"; };
+		A20000000000000000000027 /* Features/Dashboard/Components/DashboardSparklineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardSparklineView.swift; sourceTree = "<group>"; };
+		A20000000000000000000028 /* Features/Dashboard/Components/DashboardMetricCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardMetricCardView.swift; sourceTree = "<group>"; };
+		A20000000000000000000029 /* Features/Dashboard/Components/DashboardTrendChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardTrendChartView.swift; sourceTree = "<group>"; };
+		A2000000000000000000002A /* Shared/Theme/AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Theme/AppColors.swift; sourceTree = "<group>"; };
+		A2000000000000000000002B /* Shared/Motion/AppMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Motion/AppMotion.swift; sourceTree = "<group>"; };
+		A2000000000000000000002C /* Core/Utils/TimeFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Utils/TimeFormatting.swift; sourceTree = "<group>"; };
+		A2000000000000000000002D /* Resources/Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Resources/Assets.xcassets; sourceTree = "<group>"; };
 		A2000000000000000000002E /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
-		A2000000000000000000002F /* FloatingTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Components/FloatingTabBar.swift; sourceTree = "<group>"; };
-		A20000000000000000000030 /* WellnessAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/WellnessAnalysis.swift; sourceTree = "<group>"; };
-		A20000000000000000000031 /* FeatureExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/FeatureExtractor.swift; sourceTree = "<group>"; };
-		A20000000000000000000032 /* WellnessAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/WellnessAnalyzer.swift; sourceTree = "<group>"; };
-		A20000000000000000000033 /* AdviceGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/AdviceGenerator.swift; sourceTree = "<group>"; };
-		A20000000000000000000034 /* AnalysisViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Analysis/AnalysisViewModel.swift; sourceTree = "<group>"; };
-		A20000000000000000000035 /* AnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Analysis/Views/AnalysisView.swift; sourceTree = "<group>"; };
-		A20000000000000000000036 /* DashboardHeroSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardHeroSection.swift; sourceTree = "<group>"; };
-		A20000000000000000000037 /* DashboardAnalysisEntryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardAnalysisEntryCard.swift; sourceTree = "<group>"; };
-		A20000000000000000000038 /* DashboardMetricNavigationCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardMetricNavigationCard.swift; sourceTree = "<group>"; };
-		A20000000000000000000039 /* DashboardKeySignalsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardKeySignalsSection.swift; sourceTree = "<group>"; };
-		A2000000000000000000003A /* DashboardDetailGridSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardDetailGridSection.swift; sourceTree = "<group>"; };
-		A2000000000000000000003B /* DashboardSleepStagesSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardSleepStagesSection.swift; sourceTree = "<group>"; };
-		A2000000000000000000003C /* DashboardActivityContextSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardActivityContextSection.swift; sourceTree = "<group>"; };
-		A2000000000000000000003D /* LiveStressSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/LiveStress/LiveStressSnapshot.swift; sourceTree = "<group>"; };
-		A2000000000000000000003E /* LiveStressEstimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/LiveStress/LiveStressEstimator.swift; sourceTree = "<group>"; };
-		A2000000000000000000003F /* LiveStressCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Views/LiveStressCard.swift; sourceTree = "<group>"; };
-		A20000000000000000000040 /* DailyWellnessCheckIn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/DailyWellnessCheckIn.swift; sourceTree = "<group>"; };
-		A20000000000000000000041 /* CoreMLWellnessAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/CoreMLWellnessAnalyzer.swift; sourceTree = "<group>"; };
-		A20000000000000000000042 /* StressWatchWellnessClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = Resources/ML/StressWatchWellnessClassifier.mlmodel; sourceTree = "<group>"; };
-		A20000000000000000000043 /* coreml_class_labels.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Resources/ML/coreml_class_labels.json; sourceTree = "<group>"; };
-
-		B20000000000000000000001 /* WidgetSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Widget/WidgetSnapshot.swift; sourceTree = "<group>"; };
-		B20000000000000000000002 /* WidgetStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Widget/WidgetStorage.swift; sourceTree = "<group>"; };
+		A2000000000000000000002F /* Shared/Components/FloatingTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Components/FloatingTabBar.swift; sourceTree = "<group>"; };
+		A20000000000000000000030 /* Core/Analysis/WellnessAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/WellnessAnalysis.swift; sourceTree = "<group>"; };
+		A20000000000000000000031 /* Core/Analysis/FeatureExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/FeatureExtractor.swift; sourceTree = "<group>"; };
+		A20000000000000000000032 /* Core/Analysis/WellnessAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/WellnessAnalyzer.swift; sourceTree = "<group>"; };
+		A20000000000000000000033 /* Core/Analysis/AdviceGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/AdviceGenerator.swift; sourceTree = "<group>"; };
+		A20000000000000000000034 /* Features/Analysis/AnalysisViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Analysis/AnalysisViewModel.swift; sourceTree = "<group>"; };
+		A20000000000000000000035 /* Features/Analysis/Views/AnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Analysis/Views/AnalysisView.swift; sourceTree = "<group>"; };
+		A20000000000000000000036 /* Features/Dashboard/Components/DashboardHeroSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardHeroSection.swift; sourceTree = "<group>"; };
+		A20000000000000000000037 /* Features/Dashboard/Components/DashboardAnalysisEntryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardAnalysisEntryCard.swift; sourceTree = "<group>"; };
+		A20000000000000000000038 /* Features/Dashboard/Components/DashboardMetricNavigationCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardMetricNavigationCard.swift; sourceTree = "<group>"; };
+		A20000000000000000000039 /* Features/Dashboard/Components/DashboardKeySignalsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardKeySignalsSection.swift; sourceTree = "<group>"; };
+		A2000000000000000000003A /* Features/Dashboard/Components/DashboardDetailGridSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardDetailGridSection.swift; sourceTree = "<group>"; };
+		A2000000000000000000003B /* Features/Dashboard/Components/DashboardSleepStagesSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardSleepStagesSection.swift; sourceTree = "<group>"; };
+		A2000000000000000000003C /* Features/Dashboard/Components/DashboardActivityContextSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Components/DashboardActivityContextSection.swift; sourceTree = "<group>"; };
+		A2000000000000000000003D /* Core/LiveStress/LiveStressSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/LiveStress/LiveStressSnapshot.swift; sourceTree = "<group>"; };
+		A2000000000000000000003E /* Core/LiveStress/LiveStressEstimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/LiveStress/LiveStressEstimator.swift; sourceTree = "<group>"; };
+		A2000000000000000000003F /* Features/Dashboard/Views/LiveStressCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Dashboard/Views/LiveStressCard.swift; sourceTree = "<group>"; };
+		A20000000000000000000040 /* Core/Models/DailyWellnessCheckIn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/DailyWellnessCheckIn.swift; sourceTree = "<group>"; };
+		A20000000000000000000041 /* Core/Analysis/CoreMLWellnessAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/CoreMLWellnessAnalyzer.swift; sourceTree = "<group>"; };
+		A20000000000000000000042 /* Resources/ML/StressWatchWellnessClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = Resources/ML/StressWatchWellnessClassifier.mlmodel; sourceTree = "<group>"; };
+		A20000000000000000000043 /* Resources/ML/coreml_class_labels.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Resources/ML/coreml_class_labels.json; sourceTree = "<group>"; };
+		B20000000000000000000001 /* Shared/Widget/WidgetSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Widget/WidgetSnapshot.swift; sourceTree = "<group>"; };
+		B20000000000000000000002 /* Shared/Widget/WidgetStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/Widget/WidgetStorage.swift; sourceTree = "<group>"; };
 		B20000000000000000000003 /* StressWatchWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = StressWatchWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B20000000000000000000004 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B20000000000000000000005 /* StressWatchWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StressWatchWidgetExtension.entitlements; sourceTree = "<group>"; };
@@ -199,7 +195,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-
 		B30000000000000000000002 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -232,10 +227,28 @@
 			path = StressWatch;
 			sourceTree = "<group>";
 		};
+		A40000000000000000000003 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A2000000000000000000001A /* HealthKit.framework */,
+				A2000000000000000000001B /* Charts.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000004 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A2000000000000000000001E /* StressWatch.app */,
+				B20000000000000000000003 /* StressWatchWidgetExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		A40000000000000000000010 /* App */ = {
 			isa = PBXGroup;
 			children = (
-				A20000000000000000000001 /* StressWatchApp.swift */,
+				A20000000000000000000001 /* App/StressWatchApp.swift */,
 			);
 			name = App;
 			sourceTree = "<group>";
@@ -279,138 +292,23 @@
 			name = Shared;
 			sourceTree = "<group>";
 		};
-		A40000000000000000000024 /* HealthKit */ = {
-			isa = PBXGroup;
-			children = (
-				A20000000000000000000006 /* HealthKitDataProvider.swift */,
-				A20000000000000000000008 /* HealthKitService.swift */,
-				A20000000000000000000009 /* MockHealthKitService.swift */,
-			);
-			name = HealthKit;
-			sourceTree = "<group>";
-		};
-		A40000000000000000000025 /* Storage */ = {
-			isa = PBXGroup;
-			children = (
-				A20000000000000000000007 /* LocalStorageProtocol.swift */,
-				A2000000000000000000000D /* LocalStorage.swift */,
-			);
-			name = Storage;
-			sourceTree = "<group>";
-		};
-		A40000000000000000000026 /* Analysis */ = {
-			isa = PBXGroup;
-			children = (
-				A2000000000000000000000A /* BaselineEngine.swift */,
-				A2000000000000000000000B /* StressModel.swift */,
-				A2000000000000000000000C /* RecoveryModel.swift */,
-				A20000000000000000000030 /* WellnessAnalysis.swift */,
-				A20000000000000000000031 /* FeatureExtractor.swift */,
-				A20000000000000000000032 /* WellnessAnalyzer.swift */,
-				A20000000000000000000041 /* CoreMLWellnessAnalyzer.swift */,
-				A20000000000000000000033 /* AdviceGenerator.swift */,
-			);
-			name = Analysis;
-			sourceTree = "<group>";
-		};
-		A4000000000000000000002F /* LiveStress */ = {
-			isa = PBXGroup;
-			children = (
-				A2000000000000000000003D /* LiveStressSnapshot.swift */,
-				A2000000000000000000003E /* LiveStressEstimator.swift */,
-			);
-			name = LiveStress;
-			sourceTree = "<group>";
-		};
-		A40000000000000000000027 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				A20000000000000000000002 /* HealthMetric.swift */,
-				A20000000000000000000003 /* Baseline.swift */,
-				A20000000000000000000004 /* StressScore.swift */,
-				A20000000000000000000005 /* RecoveryScore.swift */,
-				A20000000000000000000040 /* DailyWellnessCheckIn.swift */,
-			);
-			name = Models;
-			sourceTree = "<group>";
-		};
-		A40000000000000000000028 /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				A2000000000000000000001F /* MathHelpers.swift */,
-				A2000000000000000000002C /* TimeFormatting.swift */,
-			);
-			name = Utils;
-			sourceTree = "<group>";
-		};
-		A40000000000000000000029 /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				A20000000000000000000020 /* DateExtensions.swift */,
-			);
-			name = Extensions;
-			sourceTree = "<group>";
-		};
-		A4000000000000000000002A /* Theme */ = {
-			isa = PBXGroup;
-			children = (
-				A2000000000000000000002A /* AppColors.swift */,
-			);
-			name = Theme;
-			sourceTree = "<group>";
-		};
-		A4000000000000000000002B /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				A20000000000000000000022 /* LiquidMetricCard.swift */,
-				A20000000000000000000024 /* GlassSectionHeader.swift */,
-				A20000000000000000000025 /* DataSourceBadge.swift */,
-				A2000000000000000000002F /* FloatingTabBar.swift */,
-			);
-			name = Components;
-			sourceTree = "<group>";
-		};
-		A4000000000000000000002C /* Charts */ = {
-			isa = PBXGroup;
-			children = (
-				A20000000000000000000018 /* MetricChart.swift */,
-			);
-			name = Charts;
-			sourceTree = "<group>";
-		};
-		A4000000000000000000002D /* Motion */ = {
-			isa = PBXGroup;
-			children = (
-				A2000000000000000000002B /* AppMotion.swift */,
-			);
-			name = Motion;
-			sourceTree = "<group>";
-		};
-		A4000000000000000000002E /* Glass */ = {
-			isa = PBXGroup;
-			children = (
-				A20000000000000000000021 /* GlassCardView.swift */,
-			);
-			name = Glass;
-			sourceTree = "<group>";
-		};
 		A40000000000000000000018 /* Dashboard */ = {
 			isa = PBXGroup;
 			children = (
-				A2000000000000000000000E /* DashboardViewModel.swift */,
-				A20000000000000000000026 /* DashboardMetric.swift */,
-				A20000000000000000000011 /* DashboardView.swift */,
-				A2000000000000000000003F /* LiveStressCard.swift */,
-				A20000000000000000000027 /* DashboardSparklineView.swift */,
-				A20000000000000000000028 /* DashboardMetricCardView.swift */,
-				A20000000000000000000029 /* DashboardTrendChartView.swift */,
-				A20000000000000000000036 /* DashboardHeroSection.swift */,
-				A20000000000000000000037 /* DashboardAnalysisEntryCard.swift */,
-				A20000000000000000000038 /* DashboardMetricNavigationCard.swift */,
-				A20000000000000000000039 /* DashboardKeySignalsSection.swift */,
-				A2000000000000000000003A /* DashboardDetailGridSection.swift */,
-				A2000000000000000000003B /* DashboardSleepStagesSection.swift */,
-				A2000000000000000000003C /* DashboardActivityContextSection.swift */,
+				A2000000000000000000000E /* Features/Dashboard/DashboardViewModel.swift */,
+				A20000000000000000000026 /* Features/Dashboard/DashboardMetric.swift */,
+				A20000000000000000000011 /* Features/Dashboard/Views/DashboardView.swift */,
+				A2000000000000000000003F /* Features/Dashboard/Views/LiveStressCard.swift */,
+				A20000000000000000000027 /* Features/Dashboard/Components/DashboardSparklineView.swift */,
+				A20000000000000000000028 /* Features/Dashboard/Components/DashboardMetricCardView.swift */,
+				A20000000000000000000029 /* Features/Dashboard/Components/DashboardTrendChartView.swift */,
+				A20000000000000000000036 /* Features/Dashboard/Components/DashboardHeroSection.swift */,
+				A20000000000000000000037 /* Features/Dashboard/Components/DashboardAnalysisEntryCard.swift */,
+				A20000000000000000000038 /* Features/Dashboard/Components/DashboardMetricNavigationCard.swift */,
+				A20000000000000000000039 /* Features/Dashboard/Components/DashboardKeySignalsSection.swift */,
+				A2000000000000000000003A /* Features/Dashboard/Components/DashboardDetailGridSection.swift */,
+				A2000000000000000000003B /* Features/Dashboard/Components/DashboardSleepStagesSection.swift */,
+				A2000000000000000000003C /* Features/Dashboard/Components/DashboardActivityContextSection.swift */,
 			);
 			name = Dashboard;
 			sourceTree = "<group>";
@@ -418,9 +316,9 @@
 		A40000000000000000000019 /* Trend */ = {
 			isa = PBXGroup;
 			children = (
-				A2000000000000000000000F /* TrendViewModel.swift */,
-				A20000000000000000000015 /* TrendView.swift */,
-				A20000000000000000000016 /* TrendChart.swift */,
+				A2000000000000000000000F /* Features/Trend/TrendViewModel.swift */,
+				A20000000000000000000015 /* Features/Trend/Views/TrendView.swift */,
+				A20000000000000000000016 /* Features/Trend/Components/TrendChart.swift */,
 			);
 			name = Trend;
 			sourceTree = "<group>";
@@ -428,7 +326,7 @@
 		A4000000000000000000001A /* Detail */ = {
 			isa = PBXGroup;
 			children = (
-				A20000000000000000000017 /* MetricDetailView.swift */,
+				A20000000000000000000017 /* Features/Detail/Views/MetricDetailView.swift */,
 			);
 			name = Detail;
 			sourceTree = "<group>";
@@ -436,9 +334,9 @@
 		A4000000000000000000001C /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				A2000000000000000000002D /* Assets.xcassets */,
-				A20000000000000000000042 /* StressWatchWellnessClassifier.mlmodel */,
-				A20000000000000000000043 /* coreml_class_labels.json */,
+				A2000000000000000000002D /* Resources/Assets.xcassets */,
+				A20000000000000000000042 /* Resources/ML/StressWatchWellnessClassifier.mlmodel */,
+				A20000000000000000000043 /* Resources/ML/coreml_class_labels.json */,
 				A2000000000000000000002E /* LaunchScreen.storyboard */,
 				A2000000000000000000001C /* Info.plist */,
 				A2000000000000000000001D /* StressWatch.entitlements */,
@@ -449,8 +347,8 @@
 		A4000000000000000000001D /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				A20000000000000000000010 /* SettingsViewModel.swift */,
-				A20000000000000000000019 /* SettingsView.swift */,
+				A20000000000000000000010 /* Features/Settings/SettingsViewModel.swift */,
+				A20000000000000000000019 /* Features/Settings/Views/SettingsView.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -458,36 +356,132 @@
 		A4000000000000000000001E /* Analysis */ = {
 			isa = PBXGroup;
 			children = (
-				A20000000000000000000034 /* AnalysisViewModel.swift */,
-				A20000000000000000000035 /* AnalysisView.swift */,
+				A20000000000000000000034 /* Features/Analysis/AnalysisViewModel.swift */,
+				A20000000000000000000035 /* Features/Analysis/Views/AnalysisView.swift */,
 			);
 			name = Analysis;
 			sourceTree = "<group>";
 		};
-		A40000000000000000000003 /* Frameworks */ = {
+		A40000000000000000000024 /* HealthKit */ = {
 			isa = PBXGroup;
 			children = (
-				A2000000000000000000001A /* HealthKit.framework */,
-				A2000000000000000000001B /* Charts.framework */,
+				A20000000000000000000006 /* Core/HealthKit/HealthKitDataProvider.swift */,
+				A20000000000000000000008 /* Core/HealthKit/HealthKitService.swift */,
+				A20000000000000000000009 /* Core/HealthKit/MockHealthKitService.swift */,
 			);
-			name = Frameworks;
+			name = HealthKit;
 			sourceTree = "<group>";
 		};
-		A40000000000000000000004 /* Products */ = {
+		A40000000000000000000025 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
-				A2000000000000000000001E /* StressWatch.app */,
-				B20000000000000000000003 /* StressWatchWidgetExtension.appex */,
+				A20000000000000000000007 /* Core/Storage/LocalStorageProtocol.swift */,
+				A2000000000000000000000D /* Core/Storage/LocalStorage.swift */,
 			);
-			name = Products;
+			name = Storage;
 			sourceTree = "<group>";
 		};
-
+		A40000000000000000000026 /* Analysis */ = {
+			isa = PBXGroup;
+			children = (
+				A2000000000000000000000A /* Core/Analysis/BaselineEngine.swift */,
+				A2000000000000000000000B /* Core/Analysis/StressModel.swift */,
+				A2000000000000000000000C /* Core/Analysis/RecoveryModel.swift */,
+				A20000000000000000000030 /* Core/Analysis/WellnessAnalysis.swift */,
+				A20000000000000000000031 /* Core/Analysis/FeatureExtractor.swift */,
+				A20000000000000000000032 /* Core/Analysis/WellnessAnalyzer.swift */,
+				A20000000000000000000041 /* Core/Analysis/CoreMLWellnessAnalyzer.swift */,
+				A20000000000000000000033 /* Core/Analysis/AdviceGenerator.swift */,
+			);
+			name = Analysis;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000027 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000002 /* Core/Models/HealthMetric.swift */,
+				A20000000000000000000003 /* Core/Models/Baseline.swift */,
+				A20000000000000000000004 /* Core/Models/StressScore.swift */,
+				A20000000000000000000005 /* Core/Models/RecoveryScore.swift */,
+				A20000000000000000000040 /* Core/Models/DailyWellnessCheckIn.swift */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000028 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				A2000000000000000000001F /* Core/Utils/MathHelpers.swift */,
+				A2000000000000000000002C /* Core/Utils/TimeFormatting.swift */,
+			);
+			name = Utils;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000029 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000020 /* Core/Extensions/DateExtensions.swift */,
+			);
+			name = Extensions;
+			sourceTree = "<group>";
+		};
+		A4000000000000000000002A /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				A2000000000000000000002A /* Shared/Theme/AppColors.swift */,
+			);
+			name = Theme;
+			sourceTree = "<group>";
+		};
+		A4000000000000000000002B /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000022 /* Shared/Components/LiquidMetricCard.swift */,
+				A20000000000000000000024 /* Shared/Components/GlassSectionHeader.swift */,
+				A20000000000000000000025 /* Shared/Components/DataSourceBadge.swift */,
+				A2000000000000000000002F /* Shared/Components/FloatingTabBar.swift */,
+			);
+			name = Components;
+			sourceTree = "<group>";
+		};
+		A4000000000000000000002C /* Charts */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000018 /* Shared/Charts/MetricChart.swift */,
+			);
+			name = Charts;
+			sourceTree = "<group>";
+		};
+		A4000000000000000000002D /* Motion */ = {
+			isa = PBXGroup;
+			children = (
+				A2000000000000000000002B /* Shared/Motion/AppMotion.swift */,
+			);
+			name = Motion;
+			sourceTree = "<group>";
+		};
+		A4000000000000000000002E /* Glass */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000021 /* Shared/Glass/GlassCardView.swift */,
+			);
+			name = Glass;
+			sourceTree = "<group>";
+		};
+		A4000000000000000000002F /* LiveStress */ = {
+			isa = PBXGroup;
+			children = (
+				A2000000000000000000003D /* Core/LiveStress/LiveStressSnapshot.swift */,
+				A2000000000000000000003E /* Core/LiveStress/LiveStressEstimator.swift */,
+			);
+			name = LiveStress;
+			sourceTree = "<group>";
+		};
 		B40000000000000000000001 /* Widget */ = {
 			isa = PBXGroup;
 			children = (
-				B20000000000000000000001 /* WidgetSnapshot.swift */,
-				B20000000000000000000002 /* WidgetStorage.swift */,
+				B20000000000000000000001 /* Shared/Widget/WidgetSnapshot.swift */,
+				B20000000000000000000002 /* Shared/Widget/WidgetStorage.swift */,
 			);
 			name = Widget;
 			sourceTree = "<group>";
@@ -547,7 +541,6 @@
 			productReference = A2000000000000000000001E /* StressWatch.app */;
 			productType = "com.apple.product-type.application";
 		};
-
 		B50000000000000000000001 /* StressWatchWidgetExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B90000000000000000000001 /* Build configuration list for PBXNativeTarget "StressWatchWidgetExtension" */;
@@ -620,13 +613,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1000000000000000000002A /* Assets.xcassets in Resources */,
-				A10000000000000000000040 /* coreml_class_labels.json in Resources */,
+				A1000000000000000000002A /* Resources/Assets.xcassets in Resources */,
+				A10000000000000000000040 /* Resources/ML/coreml_class_labels.json in Resources */,
 				A1000000000000000000002B /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-
 		B30000000000000000000003 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -641,73 +633,72 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A10000000000000000000001 /* StressWatchApp.swift in Sources */,
-				A10000000000000000000002 /* HealthMetric.swift in Sources */,
-				A10000000000000000000003 /* Baseline.swift in Sources */,
-				A10000000000000000000004 /* StressScore.swift in Sources */,
-				A10000000000000000000005 /* RecoveryScore.swift in Sources */,
-				A10000000000000000000006 /* HealthKitDataProvider.swift in Sources */,
-				A10000000000000000000007 /* LocalStorageProtocol.swift in Sources */,
-				A10000000000000000000008 /* HealthKitService.swift in Sources */,
-				A10000000000000000000009 /* MockHealthKitService.swift in Sources */,
-				A1000000000000000000000A /* BaselineEngine.swift in Sources */,
-				A1000000000000000000000B /* StressModel.swift in Sources */,
-				A1000000000000000000000C /* RecoveryModel.swift in Sources */,
-				A1000000000000000000000D /* LocalStorage.swift in Sources */,
-				A1000000000000000000000E /* DashboardViewModel.swift in Sources */,
-				A1000000000000000000000F /* TrendViewModel.swift in Sources */,
-				A10000000000000000000010 /* SettingsViewModel.swift in Sources */,
-				A10000000000000000000011 /* DashboardView.swift in Sources */,
-				A10000000000000000000015 /* TrendView.swift in Sources */,
-				A10000000000000000000016 /* TrendChart.swift in Sources */,
-				A10000000000000000000017 /* MetricDetailView.swift in Sources */,
-				A10000000000000000000018 /* MetricChart.swift in Sources */,
-				A10000000000000000000019 /* SettingsView.swift in Sources */,
-				A1000000000000000000001C /* MathHelpers.swift in Sources */,
-				A1000000000000000000001D /* DateExtensions.swift in Sources */,
-				A1000000000000000000001E /* GlassCardView.swift in Sources */,
-				A1000000000000000000001F /* LiquidMetricCard.swift in Sources */,
-				A10000000000000000000021 /* GlassSectionHeader.swift in Sources */,
-				A10000000000000000000022 /* DataSourceBadge.swift in Sources */,
-				A10000000000000000000023 /* DashboardMetric.swift in Sources */,
-				A10000000000000000000024 /* DashboardSparklineView.swift in Sources */,
-				A10000000000000000000025 /* DashboardMetricCardView.swift in Sources */,
-				A10000000000000000000026 /* DashboardTrendChartView.swift in Sources */,
-				A10000000000000000000027 /* AppColors.swift in Sources */,
-				A10000000000000000000028 /* AppMotion.swift in Sources */,
-				A10000000000000000000029 /* TimeFormatting.swift in Sources */,
-				A1000000000000000000002C /* FloatingTabBar.swift in Sources */,
-				A1000000000000000000002D /* WellnessAnalysis.swift in Sources */,
-				A1000000000000000000002E /* FeatureExtractor.swift in Sources */,
-				A1000000000000000000002F /* WellnessAnalyzer.swift in Sources */,
-				A1000000000000000000003E /* CoreMLWellnessAnalyzer.swift in Sources */,
-				A1000000000000000000003F /* StressWatchWellnessClassifier.mlmodel in Sources */,
-				A10000000000000000000030 /* AdviceGenerator.swift in Sources */,
-				A10000000000000000000031 /* AnalysisViewModel.swift in Sources */,
-				A10000000000000000000032 /* AnalysisView.swift in Sources */,
-				A10000000000000000000033 /* DashboardHeroSection.swift in Sources */,
-				A10000000000000000000034 /* DashboardAnalysisEntryCard.swift in Sources */,
-				A10000000000000000000035 /* DashboardMetricNavigationCard.swift in Sources */,
-				A10000000000000000000036 /* DashboardKeySignalsSection.swift in Sources */,
-				A10000000000000000000037 /* DashboardDetailGridSection.swift in Sources */,
-				A10000000000000000000038 /* DashboardSleepStagesSection.swift in Sources */,
-				A10000000000000000000039 /* DashboardActivityContextSection.swift in Sources */,
-				A1000000000000000000003A /* LiveStressSnapshot.swift in Sources */,
-				A1000000000000000000003B /* LiveStressEstimator.swift in Sources */,
-				A1000000000000000000003C /* LiveStressCard.swift in Sources */,
-				A1000000000000000000003D /* DailyWellnessCheckIn.swift in Sources */,
-				B10000000000000000000001 /* WidgetSnapshot.swift in Sources */,
-				B10000000000000000000002 /* WidgetStorage.swift in Sources */,
+				A10000000000000000000001 /* App/StressWatchApp.swift in Sources */,
+				A10000000000000000000002 /* Core/Models/HealthMetric.swift in Sources */,
+				A10000000000000000000003 /* Core/Models/Baseline.swift in Sources */,
+				A10000000000000000000004 /* Core/Models/StressScore.swift in Sources */,
+				A10000000000000000000005 /* Core/Models/RecoveryScore.swift in Sources */,
+				A10000000000000000000006 /* Core/HealthKit/HealthKitDataProvider.swift in Sources */,
+				A10000000000000000000007 /* Core/Storage/LocalStorageProtocol.swift in Sources */,
+				A10000000000000000000008 /* Core/HealthKit/HealthKitService.swift in Sources */,
+				A10000000000000000000009 /* Core/HealthKit/MockHealthKitService.swift in Sources */,
+				A1000000000000000000000A /* Core/Analysis/BaselineEngine.swift in Sources */,
+				A1000000000000000000000B /* Core/Analysis/StressModel.swift in Sources */,
+				A1000000000000000000000C /* Core/Analysis/RecoveryModel.swift in Sources */,
+				A1000000000000000000000D /* Core/Storage/LocalStorage.swift in Sources */,
+				A1000000000000000000000E /* Features/Dashboard/DashboardViewModel.swift in Sources */,
+				A1000000000000000000000F /* Features/Trend/TrendViewModel.swift in Sources */,
+				A10000000000000000000010 /* Features/Settings/SettingsViewModel.swift in Sources */,
+				A10000000000000000000011 /* Features/Dashboard/Views/DashboardView.swift in Sources */,
+				A10000000000000000000015 /* Features/Trend/Views/TrendView.swift in Sources */,
+				A10000000000000000000016 /* Features/Trend/Components/TrendChart.swift in Sources */,
+				A10000000000000000000017 /* Features/Detail/Views/MetricDetailView.swift in Sources */,
+				A10000000000000000000018 /* Shared/Charts/MetricChart.swift in Sources */,
+				A10000000000000000000019 /* Features/Settings/Views/SettingsView.swift in Sources */,
+				A1000000000000000000001C /* Core/Utils/MathHelpers.swift in Sources */,
+				A1000000000000000000001D /* Core/Extensions/DateExtensions.swift in Sources */,
+				A1000000000000000000001E /* Shared/Glass/GlassCardView.swift in Sources */,
+				A1000000000000000000001F /* Shared/Components/LiquidMetricCard.swift in Sources */,
+				A10000000000000000000021 /* Shared/Components/GlassSectionHeader.swift in Sources */,
+				A10000000000000000000022 /* Shared/Components/DataSourceBadge.swift in Sources */,
+				A10000000000000000000023 /* Features/Dashboard/DashboardMetric.swift in Sources */,
+				A10000000000000000000024 /* Features/Dashboard/Components/DashboardSparklineView.swift in Sources */,
+				A10000000000000000000025 /* Features/Dashboard/Components/DashboardMetricCardView.swift in Sources */,
+				A10000000000000000000026 /* Features/Dashboard/Components/DashboardTrendChartView.swift in Sources */,
+				A10000000000000000000027 /* Shared/Theme/AppColors.swift in Sources */,
+				A10000000000000000000028 /* Shared/Motion/AppMotion.swift in Sources */,
+				A10000000000000000000029 /* Core/Utils/TimeFormatting.swift in Sources */,
+				A1000000000000000000002C /* Shared/Components/FloatingTabBar.swift in Sources */,
+				A1000000000000000000002D /* Core/Analysis/WellnessAnalysis.swift in Sources */,
+				A1000000000000000000002E /* Core/Analysis/FeatureExtractor.swift in Sources */,
+				A1000000000000000000002F /* Core/Analysis/WellnessAnalyzer.swift in Sources */,
+				A1000000000000000000003E /* Core/Analysis/CoreMLWellnessAnalyzer.swift in Sources */,
+				A1000000000000000000003F /* Resources/ML/StressWatchWellnessClassifier.mlmodel in Sources */,
+				A10000000000000000000030 /* Core/Analysis/AdviceGenerator.swift in Sources */,
+				A10000000000000000000031 /* Features/Analysis/AnalysisViewModel.swift in Sources */,
+				A10000000000000000000032 /* Features/Analysis/Views/AnalysisView.swift in Sources */,
+				A10000000000000000000033 /* Features/Dashboard/Components/DashboardHeroSection.swift in Sources */,
+				A10000000000000000000034 /* Features/Dashboard/Components/DashboardAnalysisEntryCard.swift in Sources */,
+				A10000000000000000000035 /* Features/Dashboard/Components/DashboardMetricNavigationCard.swift in Sources */,
+				A10000000000000000000036 /* Features/Dashboard/Components/DashboardKeySignalsSection.swift in Sources */,
+				A10000000000000000000037 /* Features/Dashboard/Components/DashboardDetailGridSection.swift in Sources */,
+				A10000000000000000000038 /* Features/Dashboard/Components/DashboardSleepStagesSection.swift in Sources */,
+				A10000000000000000000039 /* Features/Dashboard/Components/DashboardActivityContextSection.swift in Sources */,
+				A1000000000000000000003A /* Core/LiveStress/LiveStressSnapshot.swift in Sources */,
+				A1000000000000000000003B /* Core/LiveStress/LiveStressEstimator.swift in Sources */,
+				A1000000000000000000003C /* Features/Dashboard/Views/LiveStressCard.swift in Sources */,
+				A1000000000000000000003D /* Core/Models/DailyWellnessCheckIn.swift in Sources */,
+				B10000000000000000000001 /* Shared/Widget/WidgetSnapshot.swift in Sources */,
+				B10000000000000000000002 /* Shared/Widget/WidgetStorage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-
 		B30000000000000000000001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B10000000000000000000003 /* WidgetSnapshot.swift in Sources */,
-				B10000000000000000000004 /* WidgetStorage.swift in Sources */,
+				B10000000000000000000003 /* Shared/Widget/WidgetSnapshot.swift in Sources */,
+				B10000000000000000000004 /* Shared/Widget/WidgetStorage.swift in Sources */,
 				B10000000000000000000005 /* StressWatchWidgetBundle.swift in Sources */,
 				B10000000000000000000006 /* StressWatchWidget.swift in Sources */,
 				B10000000000000000000007 /* WidgetEntry.swift in Sources */,
@@ -720,7 +711,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
 
 /* Begin PBXTargetDependency section */
 		B60000000000000000000002 /* PBXTargetDependency */ = {
@@ -844,14 +834,14 @@
 		A80000000000000000000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APP_GROUP_IDENTIFIER = group.com.stresswatch.demo;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				APP_GROUP_IDENTIFIER = group.com.stresswatch.h8l2cagp84;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = StressWatch/StressWatch.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = H8L2CAGP84;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = StressWatch/Info.plist;
@@ -875,14 +865,14 @@
 		A80000000000000000000002 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APP_GROUP_IDENTIFIER = group.com.stresswatch.demo;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				APP_GROUP_IDENTIFIER = group.com.stresswatch.h8l2cagp84;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = StressWatch/StressWatch.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = H8L2CAGP84;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = StressWatch/Info.plist;
@@ -903,16 +893,15 @@
 			};
 			name = Release;
 		};
-
 		B80000000000000000000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
-				APP_GROUP_IDENTIFIER = group.com.stresswatch.demo;
+				APP_GROUP_IDENTIFIER = group.com.stresswatch.h8l2cagp84;
 				CODE_SIGN_ENTITLEMENTS = StressWatchWidgetExtension/StressWatchWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = H8L2CAGP84;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = StressWatchWidgetExtension/Info.plist;
@@ -939,11 +928,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
-				APP_GROUP_IDENTIFIER = group.com.stresswatch.demo;
+				APP_GROUP_IDENTIFIER = group.com.stresswatch.h8l2cagp84;
 				CODE_SIGN_ENTITLEMENTS = StressWatchWidgetExtension/StressWatchWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = H8L2CAGP84;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = StressWatchWidgetExtension/Info.plist;
@@ -987,7 +976,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-
 		B90000000000000000000001 /* Build configuration list for PBXNativeTarget "StressWatchWidgetExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

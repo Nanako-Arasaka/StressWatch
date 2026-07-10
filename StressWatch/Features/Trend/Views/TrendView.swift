@@ -40,7 +40,7 @@ struct TrendView: View {
                 }
                 .padding(.horizontal, 18)
                 .padding(.top, 18)
-                .padding(.bottom, 118)
+                .padding(.bottom, 24)
             }
             .background(pageBackground)
             .navigationTitle("趋势")
@@ -93,8 +93,8 @@ struct TrendView: View {
     }
 
     private var stressTrendCard: some View {
-        GlassCardView(cornerRadius: 30, padding: 18) {
-            VStack(alignment: .leading, spacing: 16) {
+        GlassCardView(cornerRadius: 26, padding: 16) {
+            VStack(alignment: .leading, spacing: 14) {
                 GlassSectionHeader(
                     title: "Monthly Stress Trend",
                     subtitle: "综合压力趋势，支持周 / 月 / 年视图",
@@ -110,7 +110,7 @@ struct TrendView: View {
                         selectedBar: viewModel.selectedTrendBar,
                         onSelect: { viewModel.selectedTrendBar = $0 }
                     )
-                    .frame(height: 230)
+                    .frame(height: 196)
 
                     if let selected = viewModel.selectedTrendBar {
                         selectedTrendSummary(selected)
@@ -394,7 +394,8 @@ private struct StressBarTrendView: View {
         let maxValue = max(bars.map(\.value).max() ?? 100, 100)
         let barWidth: CGFloat = bars.count > 60 ? 9 : (bars.count > 20 ? 12 : 22)
         let spacing: CGFloat = bars.count > 60 ? 6 : 8
-        let contentWidth = max(320, CGFloat(bars.count) * (barWidth + spacing) + 28)
+        let labelWidth: CGFloat = bars.count > 20 ? 36 : 42
+        let contentWidth = max(320, CGFloat(bars.count) * (labelWidth + spacing) + 24)
 
         ScrollView(.horizontal, showsIndicators: false) {
             ZStack(alignment: .bottomLeading) {
@@ -430,7 +431,7 @@ private struct StressBarTrendView: View {
                                 Text(label(for: bar.date))
                                     .font(.caption2.weight(.bold))
                                     .foregroundStyle(AppColors.secondaryText(for: colorScheme))
-                                    .frame(width: max(34, barWidth + 14))
+                                    .frame(width: labelWidth)
                                     .lineLimit(1)
                             }
                         }
