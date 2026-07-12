@@ -7,6 +7,7 @@ struct MetricDetailView: View {
     let metrics: [HealthMetric]
 
     @State private var contentVisible = false
+    @State private var chartResetToken = 0
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -132,13 +133,38 @@ struct MetricDetailView: View {
 
                 GlassCardView {
                     VStack(alignment: .leading, spacing: 14) {
-                        GlassSectionHeader(
-                            title: "最近 7 天图表",
-                            subtitle: "用于观察该指标的近期波动。",
-                            systemImage: "chart.line.uptrend.xyaxis"
-                        )
+                        HStack(alignment: .top, spacing: 12) {
+                            GlassSectionHeader(
+                                title: "最近 7 天图表",
+                                subtitle: "用于观察该指标的近期波动。",
+                                systemImage: "chart.line.uptrend.xyaxis"
+                            )
 
-                        MetricChart(metrics: metrics)
+                            Spacer(minLength: 0)
+
+                            Button {
+                                chartResetToken += 1
+                            } label: {
+                                Image(systemName: "arrow.counterclockwise")
+                                    .font(.subheadline.weight(.bold))
+                                    .foregroundStyle(AppColors.primaryText(for: colorScheme))
+                                    .frame(width: 36, height: 36)
+                                    .background(AppColors.subtleActivityFill(for: colorScheme), in: Circle())
+                                    .overlay {
+                                        Circle()
+                                            .strokeBorder(AppColors.glassStroke(for: colorScheme), lineWidth: 0.8)
+                                            .allowsHitTesting(false)
+                                    }
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("重置图表缩放")
+                        }
+
+                        MetricChart(
+                            metricType: metricType,
+                            metrics: metrics,
+                            resetToken: chartResetToken
+                        )
                             .frame(height: 300)
                             .opacity(contentVisible ? 1 : 0)
                             .animation(AppMotion.cardEntrance(reduceMotion: reduceMotion, delay: 0.16), value: contentVisible)

@@ -30,15 +30,26 @@ discover_device_ids() {
         return 0
     fi
 
-    local device_json
+    local device_json device_index device_type
     device_json=$(mktemp)
     if ! xcrun devicectl list devices --json-output "$device_json" >/dev/null; then
         rm -f "$device_json"
         return 1
     fi
 
-    CORE_DEVICE_ID="${CORE_DEVICE_ID:-$(plutil -extract result.devices.0.identifier raw "$device_json" 2>/dev/null || true)}"
-    XCODE_DEVICE_ID="${XCODE_DEVICE_ID:-$(plutil -extract result.devices.0.hardwareProperties.udid raw "$device_json" 2>/dev/null || true)}"
+    device_index=0
+    while true; do
+        device_type=$(plutil -extract "result.devices.$device_index.hardwareProperties.deviceType" raw "$device_json" 2>/dev/null || true)
+        [[ -z "$device_type" ]] && break
+
+        if [[ "$device_type" == "iPhone" ]]; then
+            CORE_DEVICE_ID=$(plutil -extract "result.devices.$device_index.identifier" raw "$device_json" 2>/dev/null || true)
+            XCODE_DEVICE_ID=$(plutil -extract "result.devices.$device_index.hardwareProperties.udid" raw "$device_json" 2>/dev/null || true)
+            break
+        fi
+
+        device_index=$((device_index + 1))
+    done
     rm -f "$device_json"
 
     [[ -n "$XCODE_DEVICE_ID" && -n "$CORE_DEVICE_ID" ]]
