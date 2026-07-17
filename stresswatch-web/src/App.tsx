@@ -21,6 +21,36 @@ const heatmapValues = Array.from({ length: 70 }, (_, i) => {
   return (Math.sin((r + 1) * 0.7) * Math.cos((c + 1) * 0.5) + 1) / 2;
 });
 
+// Recovery heatmap color scale: low recovery reads warm (red/orange),
+// high recovery reads cool (green/blue). A multi-hue ramp gives clear
+// contrast where a single blue could not. Shared by cells + legend.
+const HEAT_STOPS: { p: number; c: string }[] = [
+  { p: 0.0, c: "#FF453A" }, // red    — low recovery
+  { p: 0.28, c: "#FF9F0A" }, // orange
+  { p: 0.52, c: "#FFD60A" }, // yellow
+  { p: 0.76, c: "#30D158" }, // green
+  { p: 1.0, c: "#2997FF" } // blue   — high recovery (Action Blue)
+];
+
+const heatGradientCss = `linear-gradient(90deg, ${HEAT_STOPS.map((s) => `${s.c} ${(s.p * 100).toFixed(0)}%`).join(", ")})`;
+
+function heatmapColor(v: number): string {
+  const t = Math.max(0, Math.min(1, v));
+  const toRgb = (h: string) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+  for (let i = 0; i < HEAT_STOPS.length - 1; i++) {
+    const s = HEAT_STOPS[i];
+    const e = HEAT_STOPS[i + 1];
+    if (t >= s.p && t <= e.p) {
+      const k = (t - s.p) / (e.p - s.p);
+      const a = toRgb(s.c);
+      const b = toRgb(e.c);
+      const ch = (x: number, y: number) => Math.round(x + (y - x) * k);
+      return `rgb(${ch(a[0], b[0])}, ${ch(a[1], b[1])}, ${ch(a[2], b[2])})`;
+    }
+  }
+  return HEAT_STOPS[HEAT_STOPS.length - 1].c;
+}
+
 const sleepColors: Record<string, string> = {
   awake: "#FF9F0A",
   rem: "#BF5AF2",
@@ -53,7 +83,7 @@ type Copy = {
     assessments: { label: string; value: number; level: string }[];
     ringNote: string;
   };
-  trends: { eyebrow: string; title: string; tagline: string; cta: string; monthlyLabel: string; daysLabel: string; heatmapLabel: string; monthlyNote: string; heatmapNote: string };
+  trends: { eyebrow: string; title: string; tagline: string; cta: string; monthlyLabel: string; daysLabel: string; heatmapLabel: string; monthlyNote: string; heatmapNote: string; heatmapLow: string; heatmapHigh: string };
   sleep: { eyebrow: string; title: string; tagline: string; cta: string; legendTitle: string; note: string; stages: { key: string; label: string; minutes: number }[] };
   checkIn: { eyebrow: string; title: string; tagline: string; cta: string; items: { title: string; detail: string }[]; addHint: string };
   privacy: {
@@ -126,7 +156,9 @@ const copy: Record<Lang, Copy> = {
       daysLabel: "days",
       heatmapLabel: "Recovery heatmap",
       monthlyNote: "Bar height shows that day's stress score — taller and deeper blue means higher stress.",
-      heatmapNote: "Each cell is one time block across the last 7 days; brighter blue means better recovery."
+      heatmapNote: "Each cell is one time block across the last 7 days. Color runs from red (low recovery) to blue (high recovery).",
+      heatmapLow: "Low recovery",
+      heatmapHigh: "High recovery"
     },
     sleep: {
       eyebrow: "Sleep",
@@ -236,7 +268,9 @@ const copy: Record<Lang, Copy> = {
       daysLabel: "天",
       heatmapLabel: "恢复热力图",
       monthlyNote: "柱高表示当天的压力评分，越高、颜色越深代表压力越大。",
-      heatmapNote: "每个格子是过去 7 天里的一个时段，颜色越亮代表恢复水平越高。"
+      heatmapNote: "每个格子是过去 7 天里的一个时段。颜色由红（恢复低）到蓝（恢复高）依次过渡。",
+      heatmapLow: "恢复低",
+      heatmapHigh: "恢复高"
     },
     sleep: {
       eyebrow: "睡眠",
@@ -830,9 +864,15 @@ function TrendsMockup({ t, active }: { t: Copy; active: boolean }) {
             <div
               key={i}
               className={`cell-pop aspect-square rounded-[3px] ${active ? "is-on" : ""}`}
-              style={{ background: `rgba(41,151,255,${0.12 + val * 0.8})`, transitionDelay: `${i * 12}ms` }}
+              style={{ background: heatmapColor(val), transitionDelay: `${i * 12}ms` }}
             />
           ))}
+        </div>
+
+        <div className="mt-4 flex items-center gap-3">
+          <span className="text-[12px] text-white/50">{tr.heatmapLow}</span>
+          <div className="h-2 flex-1 rounded-full" style={{ background: heatGradientCss }} aria-hidden="true" />
+          <span className="text-[12px] text-white/50">{tr.heatmapHigh}</span>
         </div>
         <p className="mt-3 text-[12px] leading-snug text-white/45">{tr.heatmapNote}</p>
       </div>
