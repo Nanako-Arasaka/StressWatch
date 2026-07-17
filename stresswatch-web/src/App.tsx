@@ -341,6 +341,14 @@ function App() {
 
 /* ───────────────────────── Nav ───────────────────────── */
 function NavBar({ language, setLanguage, t }: { language: Lang; setLanguage: (l: Lang) => void; t: Copy }) {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
@@ -353,7 +361,7 @@ function NavBar({ language, setLanguage, t }: { language: Lang; setLanguage: (l:
   ];
 
   return (
-    <header className="apple-nav fixed inset-x-0 top-0 z-50 h-11">
+    <header className={`apple-nav fixed inset-x-0 top-0 z-50 h-11 ${scrolled ? "scrolled" : ""}`}>
       <nav className="mx-auto flex h-11 max-w-[1024px] items-center justify-between px-5">
         <a
           className="flex items-center gap-2 transition hover:opacity-80"
@@ -423,9 +431,9 @@ function HeroSection({ language, t }: { language: Lang; t: Copy }) {
     <section
       id="hero"
       ref={ref}
-      className={`bg-white px-5 pb-24 pt-32 reveal sm:pb-28 sm:pt-40 ${isVisible ? "is-visible" : ""}`}
+      className={`bg-white px-5 pb-24 pt-32 reveal-group sm:pb-28 sm:pt-40 ${isVisible ? "is-visible" : ""}`}
     >
-      <div className="mx-auto max-w-[820px] text-center">
+      <div className="reveal-item mx-auto max-w-[820px] text-center">
         <span className="type-eyebrow text-blue">{h.badge}</span>
         <h1 className="type-hero mt-3 text-ink">{h.title}</h1>
         <p className="type-lead mx-auto mt-5 max-w-[640px] text-ink-2">{h.subtitle}</p>
@@ -440,7 +448,7 @@ function HeroSection({ language, t }: { language: Lang; t: Copy }) {
         <p className="type-caption mx-auto mt-6 max-w-[520px] text-ink-2">{h.trust}</p>
       </div>
 
-      <div className="mx-auto mt-16 max-w-[720px]">
+      <div className="reveal-item mx-auto mt-16 max-w-[720px]" style={{ transitionDelay: "0.15s" }}>
         <DashboardMockup language={language} t={t} isVisible={isVisible} />
       </div>
     </section>
@@ -463,8 +471,8 @@ function DashboardMockup({ language, t, isVisible }: { language: Lang; t: Copy; 
       </div>
 
       <div className="mt-6 grid grid-cols-3 gap-3">
-        {d.metrics.map((m) => (
-          <div key={m.label} className="rounded-2xl bg-parchment p-4">
+        {d.metrics.map((m, i) => (
+          <div key={m.label} className="reveal-item rounded-2xl bg-parchment p-4" style={{ transitionDelay: `${0.25 + i * 0.09}s` }}>
             <p className="type-caption text-ink-2">{m.label}</p>
             <p className="type-metric mt-2 text-3xl font-semibold text-ink">{m.value}</p>
             <p className="type-caption mt-1 text-[11px] font-semibold text-blue">{m.detail}</p>
@@ -571,7 +579,7 @@ function TileHeading({
 }) {
   const isDark = theme === "dark";
   return (
-    <div className="mx-auto max-w-[680px] text-center">
+    <div className="reveal-item mx-auto max-w-[680px] text-center">
       <span className={`type-eyebrow ${isDark ? "text-blue-sky" : "text-blue"}`}>{eyebrow}</span>
       <h2 className="type-display mt-3">{title}</h2>
       <p className={`type-lead mt-4 ${isDark ? "text-white/70" : "text-ink-2"}`}>{tagline}</p>
@@ -592,24 +600,24 @@ function LiveStressTile({ t }: { t: Copy }) {
   const s = t.liveStress;
   return (
     <Tile theme="dark" id="live">
-      <div ref={ref} className={`reveal ${isVisible ? "is-visible" : ""}`}>
+      <div ref={ref} className={`reveal-group ${isVisible ? "is-visible" : ""}`}>
         <TileHeading theme="dark" eyebrow={s.eyebrow} title={s.title} tagline={s.tagline} cta={s.cta} ctaHref="#live" />
-        <div className="mx-auto mt-12 max-w-[520px]">
-          <LiveStressMockup t={t} />
+        <div className="reveal-item mx-auto mt-12 max-w-[520px]" style={{ transitionDelay: "0.12s" }}>
+          <LiveStressMockup t={t} isVisible={isVisible} />
         </div>
       </div>
     </Tile>
   );
 }
 
-function LiveStressMockup({ t }: { t: Copy }) {
+function LiveStressMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
   const v = liveState.value;
   const C = 2 * Math.PI * 80;
   const offset = C * (1 - v / 100);
   const s = t.liveStress;
 
   return (
-    <div className="product-shadow-dark mx-auto w-full max-w-[520px] rounded-[28px] border border-white/10 bg-black/40 p-8">
+    <div className="mockup-card product-shadow-dark mx-auto w-full max-w-[520px] rounded-[28px] border border-white/10 bg-black/40 p-8">
       <div className="flex items-center justify-between">
         <span className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-wider text-white/60">
           <span className="relative flex h-2 w-2">
@@ -625,6 +633,7 @@ function LiveStressMockup({ t }: { t: Copy }) {
 
       <div className="mt-6 flex flex-col items-center">
         <div className="relative h-[200px] w-[200px]">
+          <div className="ring-breathe h-full w-full">
           <svg viewBox="0 0 200 200" className="h-full w-full -rotate-90">
             <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="14" />
             <circle
@@ -636,10 +645,11 @@ function LiveStressMockup({ t }: { t: Copy }) {
               strokeWidth="14"
               strokeLinecap="round"
               strokeDasharray={C}
-              strokeDashoffset={offset}
-              style={{ transition: "stroke-dashoffset 1.2s ease" }}
+              strokeDashoffset={isVisible ? offset : C}
+              style={{ transition: "stroke-dashoffset 1.4s var(--ease-out)" }}
             />
           </svg>
+          </div>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className="type-metric text-5xl font-semibold text-white">{v}</span>
             <span className="mt-1 text-[15px] font-medium text-white/70">{s.level}</span>
@@ -656,20 +666,20 @@ function AIAnalysisTile({ t }: { t: Copy }) {
   const a = t.aiAnalysis;
   return (
     <Tile theme="parchment" id="analysis">
-      <div ref={ref} className={`reveal ${isVisible ? "is-visible" : ""}`}>
+      <div ref={ref} className={`reveal-group ${isVisible ? "is-visible" : ""}`}>
         <TileHeading theme="parchment" eyebrow={a.eyebrow} title={a.title} tagline={a.tagline} cta={a.cta} ctaHref="#analysis" />
-        <div className="mx-auto mt-12 max-w-[680px]">
-          <AIAnalysisMockup t={t} />
+        <div className="reveal-item mx-auto mt-12 max-w-[680px]" style={{ transitionDelay: "0.12s" }}>
+          <AIAnalysisMockup t={t} isVisible={isVisible} />
         </div>
       </div>
     </Tile>
   );
 }
 
-function AIAnalysisMockup({ t }: { t: Copy }) {
+function AIAnalysisMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
   const a = t.aiAnalysis;
   return (
-    <div className="product-shadow mx-auto w-full max-w-[680px] rounded-[28px] border border-black/10 bg-white p-8">
+    <div className="mockup-card product-shadow mx-auto w-full max-w-[680px] rounded-[28px] border border-black/10 bg-white p-8">
       <div className="flex items-center gap-6">
         <div className="relative h-[110px] w-[110px] shrink-0">
           <svg viewBox="0 0 120 120" className="-rotate-90">
@@ -683,7 +693,8 @@ function AIAnalysisMockup({ t }: { t: Copy }) {
               strokeWidth="10"
               strokeLinecap="round"
               strokeDasharray={2 * Math.PI * 50}
-              strokeDashoffset={2 * Math.PI * 50 * (1 - liveState.confidence)}
+              strokeDashoffset={isVisible ? 2 * Math.PI * 50 * (1 - liveState.confidence) : 2 * Math.PI * 50}
+              style={{ transition: "stroke-dashoffset 1.4s var(--ease-out)" }}
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -700,14 +711,17 @@ function AIAnalysisMockup({ t }: { t: Copy }) {
       </div>
 
       <div className="mt-7 space-y-4">
-        {a.assessments.map((item) => (
+        {a.assessments.map((item, i) => (
           <div key={item.label}>
             <div className="flex items-baseline justify-between">
               <span className="text-[15px] font-medium text-ink">{item.label}</span>
               <span className="text-[13px] text-ink-2">{item.level}</span>
             </div>
             <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[#e8e8ed]">
-              <div className="h-full rounded-full bg-blue" style={{ width: `${item.value}%` }} />
+              <div
+                className="h-full rounded-full bg-blue"
+                style={{ width: isVisible ? `${item.value}%` : "0%", transition: "width 1s var(--ease-out)", transitionDelay: `${i * 0.12}s` }}
+              />
             </div>
           </div>
         ))}
@@ -722,17 +736,17 @@ function TrendsTile({ t }: { t: Copy }) {
   const tr = t.trends;
   return (
     <Tile theme="dark" id="trends">
-      <div ref={ref} className={`reveal ${isVisible ? "is-visible" : ""}`}>
+      <div ref={ref} className={`reveal-group ${isVisible ? "is-visible" : ""}`}>
         <TileHeading theme="dark" eyebrow={tr.eyebrow} title={tr.title} tagline={tr.tagline} cta={tr.cta} ctaHref="#trends" />
-        <div className="mx-auto mt-12 max-w-[760px]">
-          <TrendsMockup t={t} />
+        <div className="reveal-item mx-auto mt-12 max-w-[760px]" style={{ transitionDelay: "0.12s" }}>
+          <TrendsMockup t={t} isVisible={isVisible} />
         </div>
       </div>
     </Tile>
   );
 }
 
-function TrendsMockup({ t }: { t: Copy }) {
+function TrendsMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
   const tr = t.trends;
   const bars = monthlyStress;
   const max = Math.max(...bars);
@@ -742,7 +756,7 @@ function TrendsMockup({ t }: { t: Copy }) {
   const bw = (w - pad * 2) / bars.length - 6;
 
   return (
-    <div className="product-shadow-dark mx-auto w-full max-w-[760px] rounded-[28px] border border-white/10 bg-black/40 p-8">
+    <div className="mockup-card product-shadow-dark mx-auto w-full max-w-[760px] rounded-[28px] border border-white/10 bg-black/40 p-8">
       <div className="flex items-center justify-between">
         <p className="text-[15px] font-semibold text-white/80">{tr.monthlyLabel}</p>
         <span className="text-[13px] text-white/50">
@@ -755,7 +769,20 @@ function TrendsMockup({ t }: { t: Copy }) {
           const bh = (b / max) * (h - 20);
           const x = pad + i * (bw + 6);
           const y = h - bh - 4;
-          return <rect key={i} x={x} y={y} width={bw} height={bh} rx={4} fill="#2997ff" opacity={0.55 + (b / max) * 0.45} />;
+          return (
+            <rect
+              key={i}
+              className={`bar-grow ${isVisible ? "is-on" : ""}`}
+              x={x}
+              y={y}
+              width={bw}
+              height={bh}
+              rx={4}
+              fill="#2997ff"
+              opacity={0.55 + (b / max) * 0.45}
+              style={{ transitionDelay: `${i * 45}ms` }}
+            />
+          );
         })}
       </svg>
 
@@ -765,8 +792,8 @@ function TrendsMockup({ t }: { t: Copy }) {
           {heatmapValues.map((val, i) => (
             <div
               key={i}
-              className="aspect-square rounded-[3px]"
-              style={{ background: `rgba(41,151,255,${0.12 + val * 0.8})` }}
+              className={`cell-pop aspect-square rounded-[3px] ${isVisible ? "is-on" : ""}`}
+              style={{ background: `rgba(41,151,255,${0.12 + val * 0.8})`, transitionDelay: `${i * 12}ms` }}
             />
           ))}
         </div>
@@ -781,22 +808,22 @@ function SleepTile({ t }: { t: Copy }) {
   const s = t.sleep;
   return (
     <Tile theme="light" id="sleep">
-      <div ref={ref} className={`reveal ${isVisible ? "is-visible" : ""}`}>
+      <div ref={ref} className={`reveal-group ${isVisible ? "is-visible" : ""}`}>
         <TileHeading theme="light" eyebrow={s.eyebrow} title={s.title} tagline={s.tagline} cta={s.cta} ctaHref="#sleep" />
-        <div className="mx-auto mt-12 max-w-[680px]">
-          <SleepMockup t={t} />
+        <div className="reveal-item mx-auto mt-12 max-w-[680px]" style={{ transitionDelay: "0.12s" }}>
+          <SleepMockup t={t} isVisible={isVisible} />
         </div>
       </div>
     </Tile>
   );
 }
 
-function SleepMockup({ t }: { t: Copy }) {
+function SleepMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
   const stages = t.sleep.stages;
   const total = stages.reduce((sum, x) => sum + x.minutes, 0);
 
   return (
-    <div className="product-shadow mx-auto w-full max-w-[680px] overflow-hidden rounded-[28px] border border-black/10 bg-white p-8">
+    <div className="mockup-card product-shadow mx-auto w-full max-w-[680px] overflow-hidden rounded-[28px] border border-black/10 bg-white p-8">
       <div className="flex items-center justify-between">
         <p className="text-[15px] font-semibold text-ink">{t.sleep.legendTitle}</p>
         <p className="text-[13px] text-ink-2">
@@ -806,7 +833,12 @@ function SleepMockup({ t }: { t: Copy }) {
 
       <div
         className="mt-5 grid h-10 w-full max-w-full overflow-hidden rounded-full"
-        style={{ gridTemplateColumns: stages.map((s) => `${s.minutes}fr`).join(" ") }}
+        style={{
+          gridTemplateColumns: stages.map((s) => `${s.minutes}fr`).join(" "),
+          transform: isVisible ? "scaleX(1)" : "scaleX(0)",
+          transformOrigin: "left",
+          transition: "transform 0.9s var(--ease-out)"
+        }}
       >
         {stages.map((s) => (
           <div key={s.key} className="h-full" style={{ background: sleepColors[s.key] }} title={s.label} />
@@ -836,24 +868,33 @@ function CheckInTile({ t }: { t: Copy }) {
   const c = t.checkIn;
   return (
     <Tile theme="dark" id="checkin">
-      <div ref={ref} className={`reveal ${isVisible ? "is-visible" : ""}`}>
+      <div ref={ref} className={`reveal-group ${isVisible ? "is-visible" : ""}`}>
         <TileHeading theme="dark" eyebrow={c.eyebrow} title={c.title} tagline={c.tagline} cta={c.cta} ctaHref="#checkin" />
-        <div className="mx-auto mt-12 max-w-[560px]">
-          <CheckInMockup t={t} />
+        <div className="reveal-item mx-auto mt-12 max-w-[560px]" style={{ transitionDelay: "0.12s" }}>
+          <CheckInMockup t={t} isVisible={isVisible} />
         </div>
       </div>
     </Tile>
   );
 }
 
-function CheckInMockup({ t }: { t: Copy }) {
+function CheckInMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
   const c = t.checkIn;
   return (
-    <div className="product-shadow-dark mx-auto w-full max-w-[560px] rounded-[28px] border border-white/10 bg-black/40 p-8">
+    <div className="mockup-card product-shadow-dark mx-auto w-full max-w-[560px] rounded-[28px] border border-white/10 bg-black/40 p-8">
       <p className="text-[15px] font-semibold text-white/80">{c.title}</p>
       <div className="mt-5 space-y-3">
-        {c.items.map((it) => (
-          <div key={it.title} className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3">
+        {c.items.map((it, i) => (
+          <div
+            key={it.title}
+            className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3"
+            style={{
+              opacity: isVisible ? 1 : 0,
+              transform: isVisible ? "translateX(0)" : "translateX(-16px)",
+              transition: "opacity .6s var(--ease-out), transform .6s var(--ease-out)",
+              transitionDelay: `${i * 0.1}s`
+            }}
+          >
             <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[#2997ff]">
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12l5 5L20 6" />
@@ -878,8 +919,8 @@ function PrivacyTile({ t }: { t: Copy }) {
 
   return (
     <Tile theme="parchment" id="privacy">
-      <div ref={ref} className={`reveal ${isVisible ? "is-visible" : ""}`}>
-        <div className="mx-auto max-w-[680px] text-center">
+      <div ref={ref} className={`reveal-group ${isVisible ? "is-visible" : ""}`}>
+        <div className="reveal-item mx-auto max-w-[680px] text-center">
           <span className="type-eyebrow text-blue">{p.eyebrow}</span>
           <h2 className="type-display mt-3 text-ink">{p.title}</h2>
           <p className="type-lead mt-4 text-ink-2">{p.subtitle}</p>
@@ -887,8 +928,8 @@ function PrivacyTile({ t }: { t: Copy }) {
 
         <div className="mx-auto mt-14 grid max-w-5xl items-center gap-10 lg:grid-cols-2">
           <div className="flex flex-col gap-4">
-            {p.items.map((it) => (
-              <div key={it.title} className="flex items-start gap-4 rounded-2xl border border-black/10 bg-white p-5 shadow-product">
+            {p.items.map((it, i) => (
+              <div key={it.title} className="reveal-item flex items-start gap-4 rounded-2xl border border-black/10 bg-white p-5 shadow-product" style={{ transitionDelay: `${i * 0.1}s` }}>
                 <ShieldIcon className="h-7 w-7 shrink-0 text-blue" />
                 <div>
                   <h3 className="text-[17px] font-semibold text-ink">{it.title}</h3>
@@ -898,7 +939,7 @@ function PrivacyTile({ t }: { t: Copy }) {
             ))}
           </div>
 
-          <div className="rounded-[28px] border border-black/10 bg-white p-8 text-center shadow-product">
+          <div className="reveal-item rounded-[28px] border border-black/10 bg-white p-8 text-center shadow-product" style={{ transitionDelay: "0.3s" }}>
             <div className="mx-auto grid h-20 w-20 place-items-center rounded-3xl bg-blue/10">
               <ShieldIcon className="h-10 w-10 text-blue" />
             </div>

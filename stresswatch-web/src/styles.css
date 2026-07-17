@@ -8,6 +8,10 @@
   text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Apple-flavoured easing — long, decelerating, never bouncy */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-soft: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 * {
@@ -25,15 +29,25 @@ body {
   background: #ffffff;
 }
 
-/* ── Scroll reveal (IntersectionObserver toggles .is-visible) ── */
-.reveal {
+/* ───────────────────────── Scroll reveal ─────────────────────────
+   A container carries `.reveal` / `.reveal-group` and toggles
+   `.is-visible` (driven by IntersectionObserver). Its children
+   marked `.reveal-item` stagger in with a deceleration curve.
+   Stagger timing is supplied per-element via inline transition-delay.   */
+.reveal-item {
   opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transform: translateY(26px);
+  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
   will-change: opacity, transform;
 }
 
-.reveal.is-visible {
+/* variant: enter from the left (used by list rows) */
+.reveal-item--left {
+  transform: translateX(-18px);
+}
+
+.reveal.is-visible .reveal-item,
+.reveal-group.is-visible .reveal-item {
   opacity: 1;
   transform: none;
 }
@@ -47,11 +61,29 @@ body {
   box-shadow: rgba(0, 0, 0, 0.55) 3px 5px 30px;
 }
 
+/* Subtle hover lift for the product cards — keeps the single-shadow language */
+.mockup-card {
+  transition: transform 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out);
+  will-change: transform;
+}
+
+.mockup-card:hover {
+  transform: translateY(-5px);
+}
+
 /* ── Global nav: black, 44px, Apple-style translucency ── */
 .apple-nav {
-  background: rgba(29, 29, 31, 0.92);
+  background: rgba(29, 29, 31, 0.72);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid transparent;
+  transition: background 0.4s ease, border-color 0.4s ease;
+}
+
+/* hairline + deeper tint once the user scrolls past the top */
+.apple-nav.scrolled {
+  background: rgba(29, 29, 31, 0.9);
+  border-bottom-color: rgba(255, 255, 255, 0.12);
 }
 
 /* ── CTAs: pill primary + text link (the signature Apple pair) ── */
@@ -65,7 +97,7 @@ body {
   font-weight: 600;
   font-size: 1.0625rem;
   padding: 0.72rem 1.5rem;
-  transition: background 0.2s ease, transform 0.1s ease;
+  transition: background 0.2s ease, transform 0.12s ease;
 }
 
 .apple-cta-primary:hover {
@@ -98,7 +130,7 @@ body {
   color: #1d1d1f;
 }
 
-/* ── Chart draw animation (subtle, single accent) ── */
+/* ── Hero line: draws itself on reveal ── */
 .chart-line-hidden {
   opacity: 0;
   stroke-dashoffset: 620;
@@ -108,6 +140,48 @@ body {
   to {
     stroke-dashoffset: 0;
   }
+}
+
+/* ── SVG bars: grow from the baseline when revealed ── */
+.bar-grow {
+  transform: scaleY(0);
+  transform-box: fill-box;
+  transform-origin: bottom;
+  transition: transform 0.9s var(--ease-out);
+  will-change: transform;
+}
+
+.bar-grow.is-on {
+  transform: scaleY(1);
+}
+
+/* ── Heatmap cells: pop in (opacity + scale) when revealed ── */
+.cell-pop {
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity 0.5s ease, transform 0.5s var(--ease-out);
+  will-change: opacity, transform;
+}
+
+.cell-pop.is-on {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── Live ring: a slow, calm breath — like the Watch ── */
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.025);
+  }
+}
+
+.ring-breathe {
+  animation: breathe 5s ease-in-out infinite;
+  transform-origin: center;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -120,8 +194,26 @@ body {
     transition-duration: 0.01ms !important;
   }
 
-  .reveal {
-    opacity: 1;
-    transform: none;
+  .reveal-item,
+  .reveal-item--left {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .chart-line-hidden {
+    opacity: 1 !important;
+  }
+
+  .bar-grow {
+    transform: scaleY(1) !important;
+  }
+
+  .cell-pop {
+    opacity: 1 !important;
+    transform: scale(1) !important;
+  }
+
+  .ring-breathe {
+    animation: none !important;
   }
 }
