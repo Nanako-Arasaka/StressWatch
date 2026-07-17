@@ -51,9 +51,10 @@ type Copy = {
     predictedState: string;
     confidence: string;
     assessments: { label: string; value: number; level: string }[];
+    ringNote: string;
   };
-  trends: { eyebrow: string; title: string; tagline: string; cta: string; monthlyLabel: string; daysLabel: string; heatmapLabel: string };
-  sleep: { eyebrow: string; title: string; tagline: string; cta: string; legendTitle: string; stages: { key: string; label: string; minutes: number }[] };
+  trends: { eyebrow: string; title: string; tagline: string; cta: string; monthlyLabel: string; daysLabel: string; heatmapLabel: string; monthlyNote: string; heatmapNote: string };
+  sleep: { eyebrow: string; title: string; tagline: string; cta: string; legendTitle: string; note: string; stages: { key: string; label: string; minutes: number }[] };
   checkIn: { eyebrow: string; title: string; tagline: string; cta: string; items: { title: string; detail: string }[]; addHint: string };
   privacy: {
     eyebrow: string;
@@ -113,7 +114,8 @@ const copy: Record<Lang, Copy> = {
         { label: "Sleep", value: 74, level: "Good" },
         { label: "Recovery", value: 71, level: "Good" },
         { label: "HRV", value: 52, level: "Steady" }
-      ]
+      ],
+      ringNote: "The ring shows how confident the on-device model is in its state prediction."
     },
     trends: {
       eyebrow: "Trends",
@@ -122,7 +124,9 @@ const copy: Record<Lang, Copy> = {
       cta: "View trends",
       monthlyLabel: "Monthly stress",
       daysLabel: "days",
-      heatmapLabel: "Recovery heatmap"
+      heatmapLabel: "Recovery heatmap",
+      monthlyNote: "Bar height shows that day's stress score — taller and deeper blue means higher stress.",
+      heatmapNote: "Each cell is one time block across the last 7 days; brighter blue means better recovery."
     },
     sleep: {
       eyebrow: "Sleep",
@@ -135,7 +139,8 @@ const copy: Record<Lang, Copy> = {
         { key: "rem", label: "REM", minutes: 102 },
         { key: "core", label: "Core", minutes: 268 },
         { key: "deep", label: "Deep", minutes: 84 }
-      ]
+      ],
+      note: "The bar is split into sleep stages; each color maps to a stage shown below."
     },
     checkIn: {
       eyebrow: "Daily Check-in",
@@ -219,7 +224,8 @@ const copy: Record<Lang, Copy> = {
         { label: "睡眠", value: 74, level: "良好" },
         { label: "恢复", value: 71, level: "良好" },
         { label: "HRV", value: 52, level: "平稳" }
-      ]
+      ],
+      ringNote: "圆环表示本机模型对当前状态判断的把握程度。"
     },
     trends: {
       eyebrow: "趋势",
@@ -228,7 +234,9 @@ const copy: Record<Lang, Copy> = {
       cta: "查看趋势",
       monthlyLabel: "月度压力",
       daysLabel: "天",
-      heatmapLabel: "恢复热力图"
+      heatmapLabel: "恢复热力图",
+      monthlyNote: "柱高表示当天的压力评分，越高、颜色越深代表压力越大。",
+      heatmapNote: "每个格子是过去 7 天里的一个时段，颜色越亮代表恢复水平越高。"
     },
     sleep: {
       eyebrow: "睡眠",
@@ -241,7 +249,8 @@ const copy: Record<Lang, Copy> = {
         { key: "rem", label: "REM", minutes: 102 },
         { key: "core", label: "核心", minutes: 268 },
         { key: "deep", label: "深睡", minutes: 84 }
-      ]
+      ],
+      note: "条带按睡眠阶段拆分，每一种颜色对应下方的一个阶段。"
     },
     checkIn: {
       eyebrow: "每日打卡",
@@ -290,21 +299,25 @@ function useRevealOnView<T extends Element>() {
 
   useEffect(() => {
     const element = ref.current;
-    if (!element || isVisible) return;
+    if (!element) return;
 
+    // Reduced motion: reveal everything statically, never toggle.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setIsVisible(true);
+      return;
+    }
+
+    // Directional reveal: the section is "on" while it intersects the
+    // viewport. Scroll down -> it enters and animates in; scroll back up
+    // so it leaves -> isVisible flips off and every child replays its
+    // reverse (retreat) transition. Adapts to wherever the user is.
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
+      ([entry]) => setIsVisible(!!entry?.isIntersecting),
       { rootMargin: "0px 0px -10% 0px", threshold: 0.15 }
     );
-
     observer.observe(element);
     return () => observer.disconnect();
-  }, [isVisible]);
+  }, []);
 
   return { isVisible, ref };
 }
@@ -325,17 +338,20 @@ function App() {
   const t = copy[language];
 
   return (
-    <main className="font-apple min-h-screen overflow-x-hidden bg-white text-ink antialiased" lang={language === "zh" ? "zh-CN" : "en"}>
-      <NavBar language={language} setLanguage={setLanguage} t={t} />
-      <HeroSection language={language} t={t} />
-      <LiveStressTile t={t} />
-      <AIAnalysisTile t={t} />
-      <TrendsTile t={t} />
-      <SleepTile t={t} />
-      <CheckInTile t={t} />
-      <PrivacyTile t={t} />
-      <Footer t={t} />
-    </main>
+    <>
+      <main className="font-apple min-h-screen overflow-x-hidden bg-white text-ink antialiased" lang={language === "zh" ? "zh-CN" : "en"}>
+        <NavBar language={language} setLanguage={setLanguage} t={t} />
+        <HeroSection language={language} t={t} />
+        <LiveStressTile t={t} />
+        <AIAnalysisTile t={t} />
+        <TrendsTile t={t} />
+        <SleepTile t={t} />
+        <CheckInTile t={t} />
+        <PrivacyTile t={t} />
+        <Footer t={t} />
+      </main>
+      <CursorParticles />
+    </>
   );
 }
 
@@ -710,6 +726,8 @@ function AIAnalysisMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
         </div>
       </div>
 
+      <p className="mt-4 text-[12px] leading-snug text-ink-2">{a.ringNote}</p>
+
       <div className="mt-7 space-y-4">
         {a.assessments.map((item, i) => (
           <div key={item.label}>
@@ -786,6 +804,8 @@ function TrendsMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
         })}
       </svg>
 
+      <p className="mt-3 text-[12px] leading-snug text-white/45">{tr.monthlyNote}</p>
+
       <div className="mt-6 border-t border-white/10 pt-5">
         <p className="text-[15px] font-semibold text-white/80">{tr.heatmapLabel}</p>
         <div className="mt-3 grid grid-cols-10 gap-1.5">
@@ -797,6 +817,7 @@ function TrendsMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
             />
           ))}
         </div>
+        <p className="mt-3 text-[12px] leading-snug text-white/45">{tr.heatmapNote}</p>
       </div>
     </div>
   );
@@ -844,6 +865,8 @@ function SleepMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
           <div key={s.key} className="h-full" style={{ background: sleepColors[s.key] }} title={s.label} />
         ))}
       </div>
+
+      <p className="mt-3 text-[12px] leading-snug text-ink-2">{t.sleep.note}</p>
 
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {stages.map((s) => (
@@ -1023,6 +1046,126 @@ function LogoMark({ className = "" }: { className?: string }) {
         />
       </svg>
     </span>
+  );
+}
+
+/* ───────────────────────── Cursor particles ─────────────────────────
+   A fixed, non-interactive canvas that trails the pointer with soft
+   Action-Blue particles plus a calm glow that eases toward the cursor.
+   Disabled for touch / reduced-motion users. */
+function CursorParticles() {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const finePointer = window.matchMedia("(pointer: fine)").matches;
+    if (reduced || !finePointer) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx) return;
+
+    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+
+    const resize = () => {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = width + "px";
+      canvas.style.height = height + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    const pointer = { x: -200, y: -200, active: false };
+    const glow = { x: -200, y: -200 };
+    type Particle = { x: number; y: number; vx: number; vy: number; life: number; max: number; r: number };
+    let particles: Particle[] = [];
+    let lastSpawn = 0;
+
+    const onMove = (e: MouseEvent) => {
+      pointer.x = e.clientX;
+      pointer.y = e.clientY;
+      pointer.active = true;
+      const now = performance.now();
+      if (now - lastSpawn < 16) return;
+      lastSpawn = now;
+      for (let i = 0; i < 2; i++) {
+        const ang = Math.random() * Math.PI * 2;
+        const sp = Math.random() * 0.6 + 0.2;
+        particles.push({
+          x: pointer.x + Math.cos(ang) * 4,
+          y: pointer.y + Math.sin(ang) * 4,
+          vx: Math.cos(ang) * sp,
+          vy: Math.sin(ang) * sp - 0.2,
+          life: 0,
+          max: 0.9,
+          r: Math.random() * 2 + 1.5
+        });
+      }
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
+
+    let raf = 0;
+    let prev = performance.now();
+    const loop = (now: number) => {
+      const dt = Math.min((now - prev) / 1000, 0.05);
+      prev = now;
+      ctx.clearRect(0, 0, width, height);
+
+      if (pointer.active) {
+        glow.x += (pointer.x - glow.x) * 0.18;
+        glow.y += (pointer.y - glow.y) * 0.18;
+        const grd = ctx.createRadialGradient(glow.x, glow.y, 0, glow.x, glow.y, 64);
+        grd.addColorStop(0, "rgba(41,151,255,0.10)");
+        grd.addColorStop(1, "rgba(41,151,255,0)");
+        ctx.fillStyle = grd;
+        ctx.beginPath();
+        ctx.arc(glow.x, glow.y, 64, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.life += dt;
+        if (p.life >= p.max) {
+          particles.splice(i, 1);
+          continue;
+        }
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.02;
+        p.vx *= 0.98;
+        p.vy *= 0.98;
+        const a = 1 - p.life / p.max;
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(41,151,255,${a * 0.7})`;
+        ctx.arc(p.x, p.y, p.r * a, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("mousemove", onMove);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      aria-hidden="true"
+      style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", pointerEvents: "none", zIndex: 45 }}
+    />
   );
 }
 
