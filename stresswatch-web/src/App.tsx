@@ -1,66 +1,296 @@
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
-type Language = "en" | "zh";
-type SectionId = "dashboard" | "trends" | "metrics" | "privacy" | "settings";
-type DetailKey = "stress" | "recovery" | "hrv" | "sleep" | "steps" | "trend";
+type Lang = "en" | "zh";
 
-const sectionIds: SectionId[] = ["dashboard", "trends", "metrics", "privacy", "settings"];
-const metricDetailKeys: DetailKey[] = ["stress", "recovery", "hrv", "sleep", "steps"];
-
+/* ───────────────────────── Data (universal, not copy) ───────────────────────── */
 const stressTrendData = [
-  { day: "Mon", date: "5/15", score: 42 },
-  { day: "Tue", date: "5/16", score: 58 },
-  { day: "Wed", date: "5/17", score: 51 },
-  { day: "Thu", date: "5/18", score: 64 },
-  { day: "Fri", date: "5/19", score: 72 },
-  { day: "Sat", date: "5/20", score: 60 },
-  { day: "Sun", date: "5/21", score: 68 }
+  { day: "Mon", date: "5/15", score: 42, label: "一" },
+  { day: "Tue", date: "5/16", score: 58, label: "二" },
+  { day: "Wed", date: "5/17", score: 51, label: "三" },
+  { day: "Thu", date: "5/18", score: 64, label: "四" },
+  { day: "Fri", date: "5/19", score: 72, label: "五" },
+  { day: "Sat", date: "5/20", score: 60, label: "六" },
+  { day: "Sun", date: "5/21", score: 68, label: "日" }
 ];
 
-const hrvTrendData = [48, 51, 47, 54, 52, 56, 52];
-const hrvTrendPoints = [
-  { date: "5/15", time: "07:12", value: 48 },
-  { date: "5/16", time: "07:04", value: 51 },
-  { date: "5/17", time: "06:58", value: 47 },
-  { date: "5/18", time: "07:20", value: 54 },
-  { date: "5/19", time: "06:49", value: 52 },
-  { date: "5/20", time: "07:08", value: 56 },
-  { date: "5/21", time: "07:16", value: 52 }
-];
-const stressSparkData = [38, 44, 51, 57, 62, 60, 68];
-const recoverySparkData = [62, 66, 64, 70, 72, 76, 74];
-const activityWeekData = [
-  { day: "M", date: "5/15", energy: 410, exercise: 28, stand: 10, energyGoal: 500, exerciseGoal: 30, standGoal: 12 },
-  { day: "T", date: "5/16", energy: 520, exercise: 36, stand: 12, energyGoal: 500, exerciseGoal: 30, standGoal: 12 },
-  { day: "W", date: "5/17", energy: 455, exercise: 24, stand: 11, energyGoal: 500, exerciseGoal: 30, standGoal: 12 },
-  { day: "T", date: "5/18", energy: 610, exercise: 42, stand: 13, energyGoal: 500, exerciseGoal: 30, standGoal: 12 },
-  { day: "F", date: "5/19", energy: 575, exercise: 34, stand: 12, energyGoal: 500, exerciseGoal: 30, standGoal: 12 },
-  { day: "S", date: "5/20", energy: 690, exercise: 48, stand: 14, energyGoal: 500, exerciseGoal: 30, standGoal: 12 },
-  { day: "S", date: "5/21", energy: 620, exercise: 39, stand: 13, energyGoal: 500, exerciseGoal: 30, standGoal: 12 }
-];
+const monthlyStress = [55, 62, 48, 70, 58, 44, 66, 52, 60, 49, 57, 63, 46, 54];
 
-function getStressStatus(score: number, language: Language) {
-  if (score <= 35) {
-    return language === "zh" ? "状态稳定" : "Stable";
-  }
-  if (score <= 60) {
-    return language === "zh" ? "轻微压力" : "Light stress";
-  }
-  if (score <= 80) {
-    return language === "zh" ? "注意压力" : "Watch stress";
-  }
-  return language === "zh" ? "压力较高" : "Higher stress";
-}
+const heatmapValues = Array.from({ length: 70 }, (_, i) => {
+  const r = Math.floor(i / 10);
+  const c = i % 10;
+  return (Math.sin((r + 1) * 0.7) * Math.cos((c + 1) * 0.5) + 1) / 2;
+});
 
+const sleepColors: Record<string, string> = {
+  awake: "#FF9F0A",
+  rem: "#BF5AF2",
+  core: "#5AC8FA",
+  deep: "#0A84FF"
+};
+
+const liveState = { value: 42, bpm: 72, confidence: 0.92 };
+
+/* ───────────────────────── Copy (bilingual) ───────────────────────── */
+type Copy = {
+  nav: { dashboard: string; features: string; how: string; privacy: string; download: string; languageLabel: string };
+  hero: { badge: string; title: string; subtitle: string; primaryCta: string; secondaryCta: string; trust: string };
+  dashboard: {
+    title: string;
+    subtitle: string;
+    connected: string;
+    metrics: { label: string; value: string; detail: string }[];
+    panelTitle: string;
+    panelStatus: string;
+  };
+  liveStress: { eyebrow: string; title: string; tagline: string; cta: string; live: string; bpmLabel: string; level: string };
+  aiAnalysis: {
+    eyebrow: string;
+    title: string;
+    tagline: string;
+    cta: string;
+    predictedState: string;
+    confidence: string;
+    assessments: { label: string; value: number; level: string }[];
+  };
+  trends: { eyebrow: string; title: string; tagline: string; cta: string; monthlyLabel: string; daysLabel: string; heatmapLabel: string };
+  sleep: { eyebrow: string; title: string; tagline: string; cta: string; legendTitle: string; stages: { key: string; label: string; minutes: number }[] };
+  checkIn: { eyebrow: string; title: string; tagline: string; cta: string; items: { title: string; detail: string }[]; addHint: string };
+  privacy: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    items: { title: string; desc: string }[];
+    cardTitle: string;
+    cardDesc: string;
+    chips: string[];
+    cta: string;
+  };
+  footer: { tagline: string; columns: { title: string; links: string[] }[]; copyright: string; disclaimer: string };
+};
+
+const copy: Record<Lang, Copy> = {
+  en: {
+    nav: { dashboard: "Dashboard", features: "Features", how: "How it works", privacy: "Privacy", download: "Download App", languageLabel: "Language" },
+    hero: {
+      badge: "Apple Health · Local-first",
+      title: "Read every signal your body sends",
+      subtitle:
+        "Track stress, recovery, HRV, sleep, and activity from your Apple Watch. Private by design — your data never leaves your device.",
+      primaryCta: "View dashboard",
+      secondaryCta: "Privacy first",
+      trust: "No account · No server upload · Native HealthKit"
+    },
+    dashboard: {
+      title: "Today",
+      subtitle: "Personal wellness trend reference",
+      connected: "Connected",
+      metrics: [
+        { label: "Stress", value: "68", detail: "Balanced" },
+        { label: "Recovery", value: "74", detail: "Good" },
+        { label: "HRV", value: "52 ms", detail: "+4%" }
+      ],
+      panelTitle: "7-day stress trend",
+      panelStatus: "Balanced"
+    },
+    liveStress: {
+      eyebrow: "Live Stress",
+      title: "Feel your stress, in real time",
+      tagline: "A live ring reads your heart rate and HRV the moment they change — so you notice tension before it builds.",
+      cta: "See live stress",
+      live: "LIVE",
+      bpmLabel: "BPM",
+      level: "Balanced"
+    },
+    aiAnalysis: {
+      eyebrow: "AI Analysis",
+      title: "Know your state, with confidence",
+      tagline: "On-device models predict your current state and score four dimensions — stress, sleep, recovery, and HRV.",
+      cta: "Explore analysis",
+      predictedState: "Balanced",
+      confidence: "confidence",
+      assessments: [
+        { label: "Stress", value: 68, level: "Balanced" },
+        { label: "Sleep", value: 74, level: "Good" },
+        { label: "Recovery", value: 71, level: "Good" },
+        { label: "HRV", value: 52, level: "Steady" }
+      ]
+    },
+    trends: {
+      eyebrow: "Trends",
+      title: "See the long arc of your wellbeing",
+      tagline: "Monthly stress, distribution, and recovery heatmaps turn daily numbers into patterns you can act on.",
+      cta: "View trends",
+      monthlyLabel: "Monthly stress",
+      daysLabel: "days",
+      heatmapLabel: "Recovery heatmap"
+    },
+    sleep: {
+      eyebrow: "Sleep",
+      title: "Understand every stage of rest",
+      tagline: "REM, Core, Deep, and Awake are broken out automatically — see what kind of night your body actually had.",
+      cta: "Sleep insights",
+      legendTitle: "Last night",
+      stages: [
+        { key: "awake", label: "Awake", minutes: 18 },
+        { key: "rem", label: "REM", minutes: 102 },
+        { key: "core", label: "Core", minutes: 268 },
+        { key: "deep", label: "Deep", minutes: 84 }
+      ]
+    },
+    checkIn: {
+      eyebrow: "Daily Check-in",
+      title: "A minute a day, for you",
+      tagline: "Log mood, rate energy, and note what shaped your day. Check-ins sharpen every prediction.",
+      cta: "Start check-in",
+      items: [
+        { title: "Mood logged", detail: "Calm · 4:20 PM" },
+        { title: "Energy rated", detail: "7 / 10" },
+        { title: "Factor added", detail: "Evening run · 5 km" }
+      ],
+      addHint: "Tap to add a note, a factor, or how you feel…"
+    },
+    privacy: {
+      eyebrow: "Privacy & Local-first",
+      title: "Your health data belongs to you only",
+      subtitle:
+        "StressWatch is designed local-first from day one: no account, no cloud upload, all analysis happens on your device.",
+      items: [
+        { title: "No account required", desc: "Open and use. No registration or login." },
+        { title: "No cloud upload", desc: "Health data never leaves your device. No remote server." },
+        { title: "On-device AI", desc: "Trend analysis is completed locally and works offline." }
+      ],
+      cardTitle: "Data stays on device",
+      cardDesc: "All health data is stored only on your iPhone / Apple Watch.",
+      chips: ["HealthKit", "Local storage", "Offline"],
+      cta: "Read the privacy note"
+    },
+    footer: {
+      tagline: "Read every signal your body sends.",
+      columns: [
+        { title: "Product", links: ["Dashboard", "Live Stress", "AI Analysis", "Trends", "Sleep"] },
+        { title: "Resources", links: ["Privacy whitepaper", "Support", "Changelog"] },
+        { title: "Company", links: ["About", "Contact"] },
+        { title: "Privacy", links: ["Local-first", "HealthKit", "Data security"] }
+      ],
+      copyright: "Copyright 2026 · StressWatch. All rights reserved.",
+      disclaimer: "This app is for personal wellness trend reference only and does not constitute medical advice."
+    }
+  },
+  zh: {
+    nav: { dashboard: "仪表盘", features: "功能", how: "工作原理", privacy: "隐私", download: "下载 App", languageLabel: "语言" },
+    hero: {
+      badge: "Apple Health 集成 · 本地优先",
+      title: "读懂身体发出的每一个信号",
+      subtitle: "基于 Apple Watch，追踪压力、恢复、HRV、睡眠与活动趋势。隐私优先——数据从不离开你的设备。",
+      primaryCta: "查看仪表盘",
+      secondaryCta: "了解隐私",
+      trust: "无需账号 · 不上传服务器 · HealthKit 原生集成"
+    },
+    dashboard: {
+      title: "今日状态",
+      subtitle: "个人健康趋势参考",
+      connected: "已连接",
+      metrics: [
+        { label: "压力", value: "68", detail: "较为平衡" },
+        { label: "恢复", value: "74", detail: "良好" },
+        { label: "HRV", value: "52 ms", detail: "+4%" }
+      ],
+      panelTitle: "7天压力趋势",
+      panelStatus: "较为平衡"
+    },
+    liveStress: {
+      eyebrow: "实时压力",
+      title: "实时感知你的压力",
+      tagline: "当心率与 HRV 变化的瞬间，实时环即刻读出——让你在紧张累积前就察觉。",
+      cta: "查看实时压力",
+      live: "实时",
+      bpmLabel: "心率",
+      level: "较为平衡"
+    },
+    aiAnalysis: {
+      eyebrow: "AI 分析",
+      title: "读懂状态，更有把握",
+      tagline: "本机模型预测你当前的状态，并为四个维度打分——压力、睡眠、恢复与 HRV。",
+      cta: "探索分析",
+      predictedState: "较为平衡",
+      confidence: "置信度",
+      assessments: [
+        { label: "压力", value: 68, level: "较为平衡" },
+        { label: "睡眠", value: 74, level: "良好" },
+        { label: "恢复", value: 71, level: "良好" },
+        { label: "HRV", value: 52, level: "平稳" }
+      ]
+    },
+    trends: {
+      eyebrow: "趋势",
+      title: "看见身心状态的长期走向",
+      tagline: "月度压力、分布与恢复热力图，把每日数字变成可执行的规律。",
+      cta: "查看趋势",
+      monthlyLabel: "月度压力",
+      daysLabel: "天",
+      heatmapLabel: "恢复热力图"
+    },
+    sleep: {
+      eyebrow: "睡眠",
+      title: "读懂每一段休息",
+      tagline: "REM、Core、Deep 与 Awake 自动拆分——看清你的身体究竟度过了怎样的夜晚。",
+      cta: "睡眠洞察",
+      legendTitle: "昨夜",
+      stages: [
+        { key: "awake", label: "清醒", minutes: 18 },
+        { key: "rem", label: "REM", minutes: 102 },
+        { key: "core", label: "核心", minutes: 268 },
+        { key: "deep", label: "深睡", minutes: 84 }
+      ]
+    },
+    checkIn: {
+      eyebrow: "每日打卡",
+      title: "每天一分钟，为你自己",
+      tagline: "记录心情、为精力打分、记下塑造这一天的关键。打卡让每一次预测更精准。",
+      cta: "开始打卡",
+      items: [
+        { title: "已记录心情", detail: "平静 · 16:20" },
+        { title: "精力评分", detail: "7 / 10" },
+        { title: "已添加因素", detail: "晚间跑步 · 5 公里" }
+      ],
+      addHint: "点击添加一条笔记、一个因素，或此刻的感受…"
+    },
+    privacy: {
+      eyebrow: "隐私 & 本地优先",
+      title: "你的健康数据，只属于你",
+      subtitle: "StressWatch 从设计之初就选择本地优先：不建账号、不上传云端，所有分析在本机完成。",
+      items: [
+        { title: "无账号设计", desc: "打开即用，无需注册或登录。" },
+        { title: "不上传云端", desc: "健康数据绝不出本机，没有远程服务器。" },
+        { title: "本机 AI 计算", desc: "趋势分析在设备本地完成，离线可用。" }
+      ],
+      cardTitle: "数据留在本机",
+      cardDesc: "所有健康数据仅存储于你的 iPhone / Apple Watch。",
+      chips: ["HealthKit", "本机存储", "离线可用"],
+      cta: "阅读隐私说明"
+    },
+    footer: {
+      tagline: "读懂身体的每一次信号。",
+      columns: [
+        { title: "产品", links: ["仪表盘", "实时压力", "AI 分析", "趋势", "睡眠"] },
+        { title: "资源", links: ["隐私白皮书", "支持中心", "更新日志"] },
+        { title: "公司", links: ["关于我们", "联系我们"] },
+        { title: "隐私", links: ["本地优先", "HealthKit", "数据安全"] }
+      ],
+      copyright: "Copyright 2026 · StressWatch. 保留所有权利。",
+      disclaimer: "本应用仅提供健康趋势参考，不构成医疗建议。"
+    }
+  }
+};
+
+/* ───────────────────────── Hooks & helpers ───────────────────────── */
 function useRevealOnView<T extends Element>() {
   const ref = useRef<T | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const element = ref.current;
-    if (!element || isVisible) {
-      return;
-    }
+    if (!element || isVisible) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -69,7 +299,7 @@ function useRevealOnView<T extends Element>() {
           observer.disconnect();
         }
       },
-      { rootMargin: "0px 0px -12% 0px", threshold: 0.22 }
+      { rootMargin: "0px 0px -10% 0px", threshold: 0.15 }
     );
 
     observer.observe(element);
@@ -79,1415 +309,679 @@ function useRevealOnView<T extends Element>() {
   return { isVisible, ref };
 }
 
-const copy = {
-  en: {
-    languageLabel: "Language",
-    heroTitle: "StressWatch",
-    heroLead: "Understand your wellness trends from Apple Watch data.",
-    heroSub:
-      "Track stress, recovery, HRV, sleep, and activity trends with a privacy-first HealthKit experience.",
-    primaryCta: "View dashboard",
-    secondaryCta: "Privacy first",
-    healthKit: "HealthKit",
-    search: "Search wellness trends",
-    connected: "Apple Health Connected",
-    localFirst: "Demo / Local-first",
-    nav: ["Dashboard", "Trends", "Metrics", "Privacy", "Settings"],
-    metrics: [
-      { label: "Stress Score", value: "68", detail: "steady", tone: "bg-sun/25 text-ink" },
-      { label: "Recovery", value: "74", detail: "good", tone: "bg-mint/35 text-ink" },
-      { label: "HRV", value: "52 ms", detail: "+4%", tone: "bg-aqua/30 text-ink" },
-      { label: "Sleep", value: "7h 32m", detail: "restful", tone: "bg-white/70 text-ink" },
-      { label: "Steps", value: "8,420", detail: "active", tone: "bg-teal/10 text-ink" }
-    ],
-    panels: {
-      stressTrend: "7-day Stress Trend",
-      balanced: "balanced",
-      hrv: "HRV",
-      sleepTimeline: "Sleep Timeline",
-      activityContext: "Activity context",
-      stepsValue: "8,420 steps"
-    },
-    appleHealthBody: "Heart rate, HRV, resting heart rate, sleep, and step trends.",
-    insightTitle: "Today's insight",
-    insightBody:
-      "Your wellness trend looks balanced. Use this as personal reference, not medical advice.",
-    insightRows: [
-      ["Stress", "68"],
-      ["Recovery", "74"],
-      ["Sleep", "7h 32m"]
-    ],
-    localTitle: "Local-first",
-    localBody: "No backend, no login, and no account-based data collection.",
-    features: [
-      [
-        "Apple Health integration",
-        "Read Apple Watch wellness signals through a HealthKit-first experience."
-      ],
-      ["HRV trend insights", "See HRV movement in context without turning it into clinical guidance."],
-      ["Recovery score", "A simple daily reference for rest, balance, and recent activity load."],
-      ["Sleep context", "Connect sleep duration with stress and recovery trend changes."],
-      ["Local-first privacy", "Designed around on-device data and no server-side collection."],
-      ["No account required", "Open the app, connect HealthKit, and keep your data personal."]
-    ],
-    disclaimer:
-      "This app is for personal wellness trend reference only. It does not provide medical diagnosis, treatment advice, or emergency services. Please consult a qualified professional for health concerns."
-  },
-  zh: {
-    languageLabel: "语言",
-    heroTitle: "StressWatch",
-    heroLead: "从 Apple Watch 数据理解你的身心趋势。",
-    heroSub: "以隐私优先的 HealthKit 体验追踪压力、恢复、HRV、睡眠和活动趋势。",
-    primaryCta: "查看仪表盘",
-    secondaryCta: "隐私优先",
-    healthKit: "HealthKit",
-    search: "搜索健康趋势",
-    connected: "Apple Health 已连接",
-    localFirst: "演示数据 / 本地优先",
-    nav: ["仪表盘", "趋势", "指标", "隐私", "设置"],
-    metrics: [
-      { label: "压力分数", value: "68", detail: "平稳", tone: "bg-sun/25 text-ink" },
-      { label: "恢复", value: "74", detail: "良好", tone: "bg-mint/35 text-ink" },
-      { label: "HRV", value: "52 ms", detail: "+4%", tone: "bg-aqua/30 text-ink" },
-      { label: "睡眠", value: "7h 32m", detail: "充分", tone: "bg-white/70 text-ink" },
-      { label: "步数", value: "8,420", detail: "活跃", tone: "bg-teal/10 text-ink" }
-    ],
-    panels: {
-      stressTrend: "7 天压力趋势",
-      balanced: "较为平衡",
-      hrv: "HRV",
-      sleepTimeline: "睡眠时间线",
-      activityContext: "活动参考",
-      stepsValue: "8,420 步"
-    },
-    appleHealthBody: "心率、HRV、静息心率、睡眠和步数趋势参考。",
-    insightTitle: "今日解读",
-    insightBody: "你的健康趋势看起来较为平衡。请将它作为个人参考，而不是医疗建议。",
-    insightRows: [
-      ["压力", "68"],
-      ["恢复", "74"],
-      ["睡眠", "7h 32m"]
-    ],
-    localTitle: "本地优先",
-    localBody: "不接后端、不需要登录，也不做账号级数据收集。",
-    features: [
-      ["Apple Health 集成", "通过 HealthKit 优先的体验读取 Apple Watch 健康趋势信号。"],
-      ["HRV 趋势洞察", "把 HRV 变化放在上下文里观察，不输出临床建议。"],
-      ["恢复分数", "为休息、平衡和近期活动负荷提供简单的每日参考。"],
-      ["睡眠背景", "把睡眠时长与压力、恢复趋势变化联系起来观察。"],
-      ["本地优先隐私", "围绕本机数据设计，不进行服务器端收集。"],
-      ["无需账号", "打开 App、连接 HealthKit，并把数据留在自己手里。"]
-    ],
-    disclaimer:
-      "本应用仅用于个人健康趋势参考，不提供医疗诊断、治疗建议或紧急服务。如有健康问题，请咨询具备资质的专业人士。"
-  }
-} satisfies Record<
-  Language,
-  {
-    languageLabel: string;
-    heroTitle: string;
-    heroLead: string;
-    heroSub: string;
-    primaryCta: string;
-    secondaryCta: string;
-    healthKit: string;
-    search: string;
-    connected: string;
-    localFirst: string;
-    nav: string[];
-    metrics: Array<{ label: string; value: string; detail: string; tone: string }>;
-    panels: {
-      stressTrend: string;
-      balanced: string;
-      hrv: string;
-      sleepTimeline: string;
-      activityContext: string;
-      stepsValue: string;
-    };
-    appleHealthBody: string;
-    insightTitle: string;
-    insightBody: string;
-    insightRows: string[][];
-    localTitle: string;
-    localBody: string;
-    features: string[][];
-    disclaimer: string;
-  }
->;
-
-function App() {
-  const [language, setLanguage] = useState<Language>("en");
-  const [activeSection, setActiveSection] = useState<SectionId>("dashboard");
-  const [activeDetail, setActiveDetail] = useState<DetailKey | null>(null);
-  const t = copy[language];
-
-  useEffect(() => {
-    const updateActiveSection = () => {
-      const activationLine = window.scrollY + window.innerHeight * 0.22;
-      const sections = sectionIds
-        .map((id) => {
-          const element = document.getElementById(id);
-          if (!element) {
-            return null;
-          }
-
-          return {
-            id,
-            top: element.getBoundingClientRect().top + window.scrollY
-          };
-        })
-        .filter((section): section is { id: SectionId; top: number } => section !== null)
-        .sort((a, b) => a.top - b.top);
-
-      const active = sections.reduce<SectionId>((current, section) => {
-        return section.top <= activationLine ? section.id : current;
-      }, "dashboard");
-
-      setActiveSection(active);
-    };
-
-    updateActiveSection();
-    window.addEventListener("scroll", updateActiveSection, { passive: true });
-    window.addEventListener("resize", updateActiveSection);
-
-    return () => {
-      window.removeEventListener("scroll", updateActiveSection);
-      window.removeEventListener("resize", updateActiveSection);
-    };
-  }, []);
-
-  return (
-    <main
-      className="site-shell font-apple-body min-h-screen overflow-x-hidden text-ink"
-      lang={language === "zh" ? "zh-CN" : "en"}
-    >
-      <section className="relative mx-auto flex min-h-screen w-full max-w-[1680px] flex-col px-5 py-8 sm:px-8 lg:px-12">
-        <div className="pointer-events-none absolute -left-28 top-24 h-[28rem] w-[28rem] rounded-full bg-mint/55 blur-3xl" />
-        <div className="pointer-events-none absolute right-[-9rem] top-10 h-[34rem] w-[34rem] rounded-full bg-sun/50 blur-3xl" />
-        <div className="pointer-events-none absolute bottom-16 left-[36%] h-80 w-80 rounded-full bg-teal/30 blur-3xl" />
-
-        <LanguageSwitch language={language} setLanguage={setLanguage} label={t.languageLabel} />
-
-        <div className="hero-stage relative z-10 grid flex-1 items-center gap-10 min-[1360px]:grid-cols-[minmax(230px,280px)_minmax(0,1fr)] min-[1360px]:gap-8 min-[1500px]:grid-cols-[minmax(340px,430px)_minmax(0,1fr)] min-[1500px]:gap-10">
-          <HeroCopy t={t} />
-          <DashboardMockup
-            activeDetail={activeDetail}
-            activeSection={activeSection}
-            language={language}
-            openDetail={setActiveDetail}
-            setActiveSection={setActiveSection}
-            t={t}
-          />
-        </div>
-
-        <LowerContent disclaimer={t.disclaimer} features={t.features} language={language} />
-      </section>
-    </main>
-  );
-}
-
-function LanguageSwitch({
-  language,
-  setLanguage,
-  label
-}: {
-  language: Language;
-  setLanguage: (language: Language) => void;
-  label: string;
-}) {
-  return (
-    <div className="relative z-20 mb-6 flex select-none justify-end">
-      <div
-        aria-label={label}
-        className="liquid-glass liquid-glass-soft relative flex items-center rounded-full border border-pine/10 bg-white/54 p-1 text-xs font-black text-pine shadow-soft"
-      >
-        <span
-          className={`absolute bottom-1 top-1 w-[52px] rounded-full bg-pine shadow-soft transition-transform duration-300 ease-out ${
-            language === "zh" ? "translate-x-[52px]" : "translate-x-0"
-          }`}
-        />
-        {(["en", "zh"] as const).map((item) => (
-          <button
-            key={item}
-            aria-pressed={language === item}
-            className={`relative z-10 w-[52px] rounded-full py-2 transition duration-300 ease-out hover:scale-105 ${
-              language === item ? "text-white" : "text-pine/58 hover:text-pine"
-            }`}
-            onClick={() => setLanguage(item)}
-            type="button"
-          >
-            {item === "en" ? "EN" : "中文"}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function HeroCopy({ t }: { t: (typeof copy)[Language] }) {
-  return (
-    <div className="select-none max-w-xl animate-rise min-[1360px]:max-w-[280px] min-[1500px]:max-w-xl">
-      <LogoMark className="mb-7 h-16 w-16 shadow-soft" />
-      <h1 className="type-hero-title max-w-[10ch] text-6xl leading-[0.92] text-ink sm:text-7xl min-[1360px]:text-5xl min-[1500px]:text-8xl">
-        {t.heroTitle}
-      </h1>
-      <p className="type-section-title mt-7 max-w-xl text-2xl leading-tight text-pine min-[1500px]:text-3xl">
-        {t.heroLead}
-      </p>
-      <p className="type-body mt-5 max-w-lg text-base leading-8 text-ink/68 min-[1500px]:text-lg">{t.heroSub}</p>
-      <div className="mt-9 flex flex-wrap gap-3">
-        <a
-          className="select-none rounded-full bg-pine px-6 py-3 text-sm font-bold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-ink"
-          href="#dashboard"
-        >
-          {t.primaryCta}
-        </a>
-        <a
-          className="select-none rounded-full border border-pine/15 bg-white/55 px-6 py-3 text-sm font-bold text-pine backdrop-blur transition hover:-translate-y-0.5 hover:bg-white"
-          href="#privacy"
-        >
-          {t.secondaryCta}
-        </a>
-      </div>
-    </div>
-  );
-}
-
-function DashboardMockup({
-  activeDetail,
-  activeSection,
-  language,
-  openDetail,
-  setActiveSection,
-  t
-}: {
-  activeDetail: DetailKey | null;
-  activeSection: SectionId;
-  language: Language;
-  openDetail: (detail: DetailKey | null) => void;
-  setActiveSection: (section: SectionId) => void;
-  t: (typeof copy)[Language];
-}) {
-  return (
-    <section
-      id="dashboard"
-      className="dashboard-shell liquid-glass liquid-glass-strong relative z-10 w-full max-w-[1080px] justify-self-center animate-float select-none rounded-[2.35rem] border border-white/75 bg-white/58 p-3 shadow-glass sm:p-4 min-[1360px]:justify-self-end"
-      aria-label="StressWatch dashboard mockup"
-    >
-      <div className="relative grid min-h-[620px] overflow-hidden rounded-[1.8rem] bg-white/72 shadow-[inset_0_1px_0_rgba(255,255,255,0.82)] min-[1360px]:grid-cols-[190px_minmax(0,1fr)_220px] min-[1500px]:grid-cols-[220px_minmax(0,1fr)_250px]">
-        <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} t={t} />
-        <DashboardCenter language={language} openDetail={openDetail} t={t} />
-        <InsightPanel t={t} />
-        {activeDetail ? (
-          <DetailPanel detail={activeDetail} language={language} onClose={() => openDetail(null)} />
-        ) : null}
-      </div>
-    </section>
-  );
-}
-
-function Sidebar({
-  activeSection,
-  setActiveSection,
-  t
-}: {
-  activeSection: SectionId;
-  setActiveSection: (section: SectionId) => void;
-  t: (typeof copy)[Language];
-}) {
-  const handleNavClick = (section: SectionId) => {
-    setActiveSection(section);
-    document.getElementById(section)?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
-  return (
-    <aside className="flex flex-col rounded-t-[1.8rem] bg-pine px-5 py-6 text-white min-[1360px]:rounded-l-[1.8rem] min-[1360px]:rounded-tr-none">
-      <div className="flex min-w-0 items-center gap-3">
-        <LogoMark className="h-12 w-12 shrink-0" />
-        <div className="min-w-0">
-          <p className="truncate text-sm font-black">StressWatch</p>
-          <p className="text-xs text-white/50">{t.healthKit}</p>
-        </div>
-      </div>
-
-      <nav className="mt-6 grid grid-cols-2 gap-2 min-[640px]:grid-cols-5 min-[1360px]:mt-10 min-[1360px]:grid-cols-1">
-        {t.nav.map((item, index) => {
-          const section = sectionIds[index];
-          const isActive = activeSection === section;
-
-          return (
-          <button
-            className={`group flex w-full items-center justify-center gap-2 rounded-2xl px-3 py-3 text-center text-xs font-bold transition duration-300 hover:scale-[1.02] hover:bg-white/12 min-[640px]:justify-start min-[640px]:text-left ${
-              isActive ? "bg-white text-pine shadow-soft" : "text-white/72"
-            }`}
-            key={item}
-            onClick={() => handleNavClick(section)}
-            type="button"
-          >
-            <span
-              className={`h-2.5 w-2.5 rounded-full transition duration-300 ${
-                isActive
-                  ? "bg-sun shadow-[0_0_18px_rgba(252,197,197,0.75)]"
-                  : "bg-white/28 group-hover:bg-mint/70"
-              }`}
-            />
-            {item}
-          </button>
-          );
-        })}
-      </nav>
-
-      <div className="mt-auto hidden rounded-3xl bg-white/10 p-4 text-xs leading-5 text-white/62 min-[1360px]:block">
-        {t.localFirst}
-        <div className="mt-4 h-20 rounded-2xl bg-[radial-gradient(circle_at_50%_35%,rgba(252,197,197,0.45),transparent_34%),linear-gradient(140deg,rgba(128,191,212,0.32),rgba(128,191,212,0.18))]" />
-      </div>
-    </aside>
-  );
-}
-
-function LogoMark({ className = "" }: { className?: string }) {
-  return (
-    <span
-      aria-label="StressWatch logo"
-      className={`grid place-items-center rounded-[1.15rem] bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.86),transparent_34%),linear-gradient(135deg,#80BFD4,#27A6CC_58%,#FCC5C5)] shadow-[inset_0_1px_0_rgba(255,255,255,0.82),0_14px_32px_rgba(39,166,204,0.28)] ${className}`}
-      role="img"
-    >
-      <svg className="h-[62%] w-[62%]" viewBox="0 0 48 48" aria-hidden="true">
-        <path d="M5 25h8l4-12 7 24 6-18 4 8h9" fill="none" stroke="white" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" />
-        <path d="M5 25h8l4-12 7 24 6-18 4 8h9" fill="none" stroke="#EAF8FC" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
-      </svg>
-    </span>
-  );
-}
-
-function DashboardCenter({
-  language,
-  openDetail,
-  t
-}: {
-  language: Language;
-  openDetail: (detail: DetailKey | null) => void;
-  t: (typeof copy)[Language];
-}) {
-  return (
-    <div className="min-w-0 px-4 py-5 sm:px-6 min-[1180px]:px-5 min-[1180px]:py-4">
-      <div className="flex flex-col gap-3 min-[1320px]:flex-row min-[1320px]:items-center min-[1320px]:justify-between">
-        <div className="liquid-glass liquid-glass-soft min-w-0 rounded-full border border-pine/10 bg-white/70 px-4 py-2.5 text-sm font-semibold text-ink/55 shadow-[0_10px_30px_rgba(17,31,42,0.07)]">
-          <span className="block truncate">
-          {t.search}
-          </span>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <StatusPill label={t.connected} />
-          <StatusPill label={t.localFirst} muted />
-        </div>
-      </div>
-
-      <div id="metrics" className="scroll-mt-24 mt-4 grid gap-3 sm:grid-cols-2 min-[1180px]:grid-cols-3 min-[1360px]:grid-cols-5">
-        {t.metrics.map((metric, index) => (
-          <MetricCard
-            key={metric.label}
-            language={language}
-            metric={metric}
-            index={index}
-            onOpen={() => openDetail(metricDetailKeys[index] ?? "stress")}
-          />
-        ))}
-      </div>
-
-      <div id="trends" className="scroll-mt-24 mt-4 grid gap-4 min-[1360px]:grid-cols-[1.35fr_0.85fr]">
-        <GlassPanel className="min-h-[218px] min-[1360px]:min-h-[210px]" onClick={() => openDetail("trend")}>
-          <PanelHeader title={t.panels.stressTrend} value={t.panels.balanced} />
-          <StressLineChart language={language} />
-        </GlassPanel>
-
-        <GlassPanel className="min-h-[218px] min-[1360px]:min-h-[210px]" onClick={() => openDetail("hrv")}>
-          <PanelHeader title={t.panels.hrv} value="52 ms · +4%" />
-          <HRVTrendCard language={language} />
-        </GlassPanel>
-      </div>
-
-      <div className="mt-4 grid gap-4 min-[1180px]:grid-cols-2">
-        <GlassPanel className="min-h-[190px]" onClick={() => openDetail("sleep")}>
-          <PanelHeader title={t.panels.sleepTimeline} value="7h 32m" />
-          <SleepPanel language={language} />
-        </GlassPanel>
-
-        <GlassPanel className="min-h-[190px]" onClick={() => openDetail("steps")}>
-          <PanelHeader title={t.panels.activityContext} value={t.panels.stepsValue} />
-          <ActivitySummaryPanel language={language} />
-        </GlassPanel>
-      </div>
-    </div>
-  );
-}
-
-function InsightPanel({ t }: { t: (typeof copy)[Language] }) {
-  return (
-    <aside className="border-t border-pine/8 bg-white/52 p-5">
-      <div className="rounded-[1.7rem] bg-pine p-5 text-white shadow-soft">
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-black">Apple Health</p>
-          <span className="h-3 w-3 rounded-full bg-mint shadow-[0_0_0_6px_rgba(128,191,212,0.16)]" />
-        </div>
-        <p className="mt-2 text-xs leading-5 text-white/58">{t.appleHealthBody}</p>
-      </div>
-
-      <div className="liquid-glass liquid-glass-soft mt-4 rounded-[1.7rem] border border-white/70 bg-white/72 p-5 shadow-soft">
-        <p className="text-sm font-black text-pine">{t.insightTitle}</p>
-        <p className="mt-3 text-sm leading-6 text-ink/62">{t.insightBody}</p>
-        <div className="mt-5 space-y-3">
-          {t.insightRows.map(([label, value]) => (
-            <InsightRow key={label} label={label} value={value} />
-          ))}
-        </div>
-      </div>
-
-      <div id="settings" className="liquid-glass liquid-glass-soft mt-4 scroll-mt-24 rounded-[1.7rem] bg-mint/26 p-5">
-        <p className="text-sm font-black text-pine">{t.localTitle}</p>
-        <p className="mt-2 text-xs leading-5 text-ink/55">{t.localBody}</p>
-      </div>
-    </aside>
-  );
-}
-
-function StatusPill({ label, muted = false }: { label: string; muted?: boolean }) {
-  return (
-    <span
-      className={`max-w-full truncate rounded-full px-4 py-2 text-xs font-black ${
-        muted ? "bg-pine/8 text-pine/60" : "bg-mint/45 text-pine"
-      }`}
-    >
-      {label}
-    </span>
-  );
-}
-
-function MetricCard({
-  language,
-  metric,
-  index,
-  onOpen
-}: {
-  language: Language;
-  metric: { label: string; value: string; tone: string; detail: string };
-  index: number;
-  onOpen: () => void;
-}) {
-  const variant = ["stress", "recovery", "hrv", "sleep", "steps"][index] ?? "default";
-  const helper =
-    language === "zh"
-      ? ["趋势上行", "恢复良好", "高于基线", "Sleep Score 84", "活动稳定"][index]
-      : ["Trending up", "Good recovery", "Above baseline", "Sleep Score 84", "Steady activity"][index];
-
-  return (
-    <button
-      className={`liquid-glass liquid-glass-soft group rounded-[1.35rem] border border-white/75 p-4 text-left shadow-soft transition duration-300 hover:-translate-y-1.5 hover:scale-[1.015] min-[1180px]:rounded-[1.05rem] min-[1180px]:p-3 ${metric.tone}`}
-      onClick={onOpen}
-      style={{ animation: `rise 620ms ease-out ${index * 80}ms both` }}
-      type="button"
-    >
-      <p className="type-caption text-[11px] uppercase text-ink/45">{metric.label}</p>
-      <p className="type-metric-number metric-value-pulse mt-3 text-2xl leading-none transition duration-300 group-hover:text-teal min-[1180px]:text-xl">
-        {metric.value}
-      </p>
-      <div className="mt-2 flex items-center justify-between gap-3">
-        <p className="type-caption text-xs text-ink/48">{metric.detail}</p>
-        <span className="rounded-full bg-white/55 px-2 py-1 text-[10px] font-black text-pine/58 min-[1180px]:hidden min-[1500px]:inline-flex">
-          {helper}
-        </span>
-      </div>
-      {variant === "stress" ? <MiniSparkline className="mt-3 h-8" values={stressSparkData} color="#27A6CC" /> : null}
-      {variant === "recovery" ? <MiniSparkline className="mt-3 h-8" values={recoverySparkData} color="#80BFD4" /> : null}
-      {variant === "hrv" ? <MiniSparkline className="mt-3 h-8" values={hrvTrendData} color="#27A6CC" /> : null}
-      {variant === "sleep" ? <SleepMiniRings /> : null}
-    </button>
-  );
-}
-
-function GlassPanel({
-  children,
-  className = "",
-  onClick
-}: {
-  children: ReactNode;
-  className?: string;
-  onClick?: () => void;
-}) {
-  const Component = onClick ? "button" : "article";
-
-  return (
-    <Component
-      className={`liquid-glass liquid-glass-soft w-full rounded-[1.6rem] border border-white/75 bg-white/70 p-5 text-left shadow-soft transition hover:-translate-y-1 min-[1180px]:p-4 ${onClick ? "cursor-pointer" : ""} ${className}`}
-      onClick={onClick}
-      type={onClick ? "button" : undefined}
-    >
-      {children}
-    </Component>
-  );
-}
-
-function PanelHeader({ title, value }: { title: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between gap-4">
-      <h2 className="type-card-title text-sm text-pine">{title}</h2>
-      <span className="type-caption rounded-full bg-pine/7 px-3 py-1 text-xs text-pine/62">{value}</span>
-    </div>
-  );
-}
-
-function StressLineChart({ language }: { language: Language }) {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
-  const points = stressTrendData.map((item, index) => ({
-    ...item,
-    x: 18 + index * 80,
-    y: 152 - ((item.score - 30) / 55) * 112
-  }));
-  const linePath = buildSmoothPath(points);
-  const areaPath = `${linePath} L ${points[points.length - 1].x} 170 L ${points[0].x} 170 Z`;
-  const hovered = hoveredIndex === null ? null : points[hoveredIndex];
-  const tooltip = hovered
-    ? {
-        x: Math.min(Math.max(hovered.x - 72, 8), 372),
-        y: Math.max(hovered.y - 78, 8),
-        status: getStressStatus(hovered.score, language),
-        date: language === "zh" ? hovered.date : `${hovered.day} ${hovered.date}`
-      }
-    : null;
-
-  return (
-    <div className="relative mt-4 h-40 w-full min-[1180px]:h-36" ref={ref}>
-      <svg className="h-full w-full" viewBox="0 0 520 180" role="img" aria-label="7-day stress trend line chart">
-        <defs>
-          <linearGradient id="stressLine" x1="0" x2="1" y1="0" y2="0">
-            <stop offset="0%" stopColor="#80BFD4" />
-            <stop offset="45%" stopColor="#27A6CC" />
-            <stop offset="100%" stopColor="#FCC5C5" />
-          </linearGradient>
-          <linearGradient id="stressFill" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="#80BFD4" stopOpacity="0.5" />
-            <stop offset="100%" stopColor="#80BFD4" stopOpacity="0" />
-          </linearGradient>
-          <filter id="tooltipShadow" x="-20%" y="-20%" width="140%" height="150%">
-            <feDropShadow dx="0" dy="8" floodColor="#111F2A" floodOpacity="0.16" stdDeviation="8" />
-          </filter>
-        </defs>
-        {[34, 68, 102, 136].map((y) => (
-          <line key={y} x1="0" x2="520" y1={y} y2={y} stroke="#111F2A" strokeOpacity="0.08" />
-        ))}
-        <path d={areaPath} fill="url(#stressFill)" />
-        <path
-          className={isVisible ? "animate-draw" : "chart-line-hidden"}
-          d={linePath}
-          fill="none"
-          stroke="url(#stressLine)"
-          strokeDasharray="620"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="5"
-        />
-        {points.map((point, index) => {
-          const isHovered = hoveredIndex === index;
-
-          return (
-            <g
-              className="cursor-pointer transition-transform duration-300"
-              key={point.date}
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
-            >
-              <circle cx={point.x} cy={point.y} r="16" fill="transparent" />
-              <circle
-                className="transition-all duration-300"
-                cx={point.x}
-                cy={point.y}
-                fill={isHovered ? "#27A6CC" : "#FCC5C5"}
-                r={isHovered ? "9" : "6"}
-                stroke="#fff"
-                strokeWidth="4"
-              />
-            </g>
-          );
-        })}
-        {hovered && tooltip ? (
-          <g className="animate-tooltip-svg pointer-events-none" filter="url(#tooltipShadow)">
-            <rect
-              fill="rgba(255,255,255,0.82)"
-              height="58"
-              rx="14"
-              stroke="rgba(255,255,255,0.78)"
-              strokeWidth="1"
-              width="140"
-              x={tooltip.x}
-              y={tooltip.y}
-            />
-            <text fill="#111F2A" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="11" fontWeight="800" x={tooltip.x + 14} y={tooltip.y + 18}>
-              {tooltip.date}
-            </text>
-            <text fill="#27A6CC" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="20" fontWeight="900" x={tooltip.x + 14} y={tooltip.y + 41}>
-              {hovered.score}
-            </text>
-            <text fill="#27A6CC" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="11" fontWeight="800" x={tooltip.x + 52} y={tooltip.y + 39}>
-              {tooltip.status}
-            </text>
-          </g>
-        ) : null}
-      </svg>
-    </div>
-  );
-}
-
-function HRVTrendCard({ language }: { language: Language }) {
-  return (
-    <div className="mt-4">
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <p className="type-metric-number text-4xl text-pine min-[1180px]:text-3xl">52</p>
-          <p className="type-caption text-xs text-ink/45">
-            ms · {language === "zh" ? "今日 07:16" : "today 07:16"}
-          </p>
-        </div>
-        <div className="rounded-2xl bg-mint/35 px-3 py-2 text-right">
-          <p className="type-caption text-xs text-pine">+4%</p>
-          <p className="text-[11px] font-bold text-ink/45">
-            {language === "zh" ? "高于基线" : "above baseline"}
-          </p>
-        </div>
-      </div>
-      <HRVTrendChart language={language} />
-    </div>
-  );
-}
-
-function HRVTrendChart({ language }: { language: Language }) {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
-  const baseline = 50;
-  const min = 42;
-  const max = 58;
-  const points = hrvTrendPoints.map((point, index) => ({
-    ...point,
-    x: 18 + index * 38,
-    y: 96 - ((point.value - min) / (max - min)) * 76
-  }));
-  const path = buildSmoothPath(points);
-  const baselineY = 96 - ((baseline - min) / (max - min)) * 76;
-  const hovered = hoveredIndex === null ? null : points[hoveredIndex];
-  const tooltip = hovered
-    ? {
-        x: Math.min(Math.max(hovered.x - 68, 8), 374),
-        y: Math.max(hovered.y - 76, 6),
-        status:
-          hovered.value >= baseline
-            ? language === "zh"
-              ? "高于基线"
-              : "above baseline"
-            : language === "zh"
-              ? "低于基线"
-              : "below baseline"
-      }
-    : null;
-
-  return (
-    <div className="mt-4" ref={ref}>
-      <svg className="h-32 w-full overflow-visible min-[1180px]:h-28" viewBox="0 0 280 132" aria-label="HRV seven day trend with baseline">
-        <defs>
-          <linearGradient id="hrvLine" x1="0" x2="1" y1="0" y2="0">
-            <stop offset="0%" stopColor="#80BFD4" />
-            <stop offset="100%" stopColor="#27A6CC" />
-          </linearGradient>
-          <linearGradient id="hrvGlow" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="#80BFD4" stopOpacity="0.32" />
-            <stop offset="100%" stopColor="#80BFD4" stopOpacity="0" />
-          </linearGradient>
-          <filter id="hrvTooltipShadow" x="-20%" y="-20%" width="140%" height="150%">
-            <feDropShadow dx="0" dy="8" floodColor="#111F2A" floodOpacity="0.16" stdDeviation="8" />
-          </filter>
-        </defs>
-        <line
-          className="baseline-dash"
-          stroke="#27A6CC"
-          strokeDasharray="6 7"
-          strokeLinecap="round"
-          strokeOpacity="0.28"
-          strokeWidth="2"
-          x1="10"
-          x2="270"
-          y1={baselineY}
-          y2={baselineY}
-        />
-        <g className="pointer-events-none">
-          <rect
-            fill="rgba(255,255,255,0.74)"
-            height="20"
-            rx="10"
-            stroke="rgba(255,255,255,0.78)"
-            strokeWidth="1"
-            width={language === "zh" ? "76" : "94"}
-            x={language === "zh" ? "190" : "172"}
-            y={baselineY - 28}
-          />
-          <text
-            fill="#27A6CC"
-            fontFamily="Nunito Sans, Noto Sans SC, sans-serif"
-            fontSize="10"
-            fontWeight="900"
-            opacity="0.68"
-            x={language === "zh" ? "202" : "184"}
-            y={baselineY - 14}
-          >
-            {language === "zh" ? "基线 50 ms" : "baseline 50 ms"}
-          </text>
-        </g>
-        <path d={`${path} L ${points[points.length - 1].x} 120 L ${points[0].x} 120 Z`} fill="url(#hrvGlow)" />
-        <path
-          className={isVisible ? "hrv-line-draw" : "chart-line-hidden"}
-          d={path}
-          fill="none"
-          stroke="url(#hrvLine)"
-          strokeDasharray="280"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="5"
-        />
-        {points.map((point, index) => {
-          const isHovered = hoveredIndex === index;
-
-          return (
-            <g
-              className="cursor-pointer"
-              key={point.date}
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
-            >
-              <circle cx={point.x} cy={point.y} fill="transparent" r="15" />
-              <circle
-                className={`${isVisible ? "hrv-point-pop" : "chart-point-hidden"} transition-all duration-300`}
-                cx={point.x}
-                cy={point.y}
-                fill={point.value >= baseline ? "#80BFD4" : "#FCC5C5"}
-                r={isHovered ? "7.5" : "4.8"}
-                stroke="#fff"
-                strokeWidth="3"
-                style={{ animationDelay: `${240 + index * 55}ms` }}
-              />
-            </g>
-          );
-        })}
-        {hovered && tooltip ? (
-          <g className="animate-tooltip-svg pointer-events-none" filter="url(#hrvTooltipShadow)">
-            <rect
-              fill="rgba(255,255,255,0.84)"
-              height="58"
-              rx="14"
-              stroke="rgba(255,255,255,0.78)"
-              strokeWidth="1"
-              width="132"
-              x={tooltip.x}
-              y={tooltip.y}
-            />
-            <text fill="#111F2A" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="11" fontWeight="800" x={tooltip.x + 12} y={tooltip.y + 18}>
-              {hovered.date} · {hovered.time}
-            </text>
-            <text fill="#27A6CC" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="20" fontWeight="900" x={tooltip.x + 12} y={tooltip.y + 42}>
-              {hovered.value}
-            </text>
-            <text fill="#27A6CC" fontFamily="Nunito Sans, Noto Sans SC, sans-serif" fontSize="11" fontWeight="800" x={tooltip.x + 48} y={tooltip.y + 40}>
-              {tooltip.status}
-            </text>
-          </g>
-        ) : null}
-      </svg>
-    </div>
-  );
-}
-
-function SleepPanel({ language }: { language: Language }) {
-  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
-
-  return (
-    <div className="mt-4 grid gap-3" ref={ref}>
-      <div className="flex items-center gap-3">
-        <MultiRing compact score={84} />
-        <div>
-          <p className="type-metric-number text-2xl text-pine">84</p>
-          <p className="type-caption text-[11px] text-ink/48">Sleep Score</p>
-        </div>
-      </div>
-      <div className="space-y-1.5">
-        <SleepStage color="bg-sun" delay={0} isVisible={isVisible} label={language === "zh" ? "清醒" : "Awake"} percent={18} value="18m" />
-        <SleepStage color="bg-aqua" delay={80} isVisible={isVisible} label="REM" percent={58} value="1h 32m" />
-        <SleepStage color="bg-teal" delay={160} isVisible={isVisible} label="Core" percent={86} value="4h 44m" />
-        <SleepStage color="bg-pine" delay={240} isVisible={isVisible} label="Deep" percent={42} value="58m" compact />
-      </div>
-    </div>
-  );
-}
-
-function MiniSparkline({
-  className = "mt-4 h-10",
-  color,
-  values
-}: {
-  className?: string;
-  color: string;
-  values: number[];
-}) {
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const points = values.map((value, index) => ({
-    x: 8 + index * (104 / Math.max(values.length - 1, 1)),
-    y: 38 - ((value - min) / Math.max(max - min, 1)) * 28
-  }));
-  const path = buildSmoothPath(points);
-
-  return (
-    <svg className={`w-full ${className}`} viewBox="0 0 120 46" aria-hidden="true">
-      <path
-        className="animate-draw-fast"
-        d={path}
-        fill="none"
-        stroke={color}
-        strokeDasharray="160"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="4"
-      />
-      <circle cx={points[points.length - 1].x} cy={points[points.length - 1].y} r="4.5" fill={color} />
-    </svg>
-  );
-}
-
-function SleepMiniRings() {
-  return (
-    <div className="mt-4 flex items-center gap-3">
-      <MultiRing compact score={84} />
-      <div className="type-caption text-[11px] leading-5 text-ink/50">
-        <p>REM 1h 32m</p>
-        <p>Deep 58m</p>
-      </div>
-    </div>
-  );
-}
-
-function MultiRing({ compact = false, score }: { compact?: boolean; score: number }) {
-  const size = compact ? 62 : 118;
-  const center = size / 2;
-  const rings = [
-    { color: "#80BFD4", radius: compact ? 27 : 52, value: 0.78 },
-    { color: "#27A6CC", radius: compact ? 21 : 42, value: 0.72 },
-    { color: "#27A6CC", radius: compact ? 15 : 32, value: 0.56 }
-  ];
-
-  return (
-    <div
-      className="group relative shrink-0 transition duration-300 hover:-translate-y-1 hover:scale-[1.03]"
-      style={{ height: size, width: size }}
-    >
-      <svg className="block" height={size} viewBox={`0 0 ${size} ${size}`} width={size}>
-        {rings.map((ring, index) => {
-          const circumference = 2 * Math.PI * ring.radius;
-
-          return (
-            <g key={ring.color} style={{ animationDelay: `${index * 80}ms` }}>
-              <circle
-                cx={center}
-                cy={center}
-                fill="none"
-                r={ring.radius}
-                stroke="rgba(17,31,42,0.08)"
-                strokeWidth={compact ? 4 : 7}
-              />
-              <circle
-                className="ring-progress"
-                cx={center}
-                cy={center}
-                fill="none"
-                r={ring.radius}
-                stroke={ring.color}
-                strokeDasharray={circumference}
-                strokeDashoffset={circumference * (1 - ring.value)}
-                strokeLinecap="round"
-                strokeWidth={compact ? 4 : 7}
-                transform={`rotate(-90 ${center} ${center})`}
-              />
-            </g>
-          );
-        })}
-      </svg>
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <div className="max-w-[54px] text-center leading-none">
-          <p className={`type-metric-number text-pine ${compact ? "text-sm" : "text-3xl"}`}>{score}</p>
-        </div>
-      </div>
-      {!compact ? (
-        <p className="type-caption absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap text-[10px] text-ink/42">
-          Sleep Score
-        </p>
-      ) : null}
-    </div>
-  );
-}
-
-function SleepStage({
-  compact = false,
-  color,
-  delay,
-  isVisible,
-  label,
-  percent,
-  value
-}: {
-  compact?: boolean;
-  color: string;
-  delay: number;
-  isVisible: boolean;
-  label: string;
-  percent: number;
-  value: string;
-}) {
-  return (
-    <div
-      className={`${isVisible ? "sleep-stage-cell" : "sleep-stage-hidden"} group rounded-2xl bg-pine/5 px-3 transition duration-300 hover:-translate-y-0.5 hover:bg-white/58 hover:shadow-soft ${compact ? "py-1.5" : "py-2"}`}
-      style={{ animationDelay: `${delay}ms` }}
-    >
-      <div className="flex items-center justify-between">
-        <span className="flex items-center gap-2 text-xs font-bold text-ink/55">
-          <span className={`h-2.5 w-2.5 rounded-full ${color} transition duration-300 group-hover:scale-125`} />
-          {label}
-        </span>
-        <span className="type-metric-number text-sm text-pine">{value}</span>
-      </div>
-      <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-pine/8">
-        <div
-          className={`${isVisible ? "sleep-stage-fill" : "sleep-stage-fill-hidden"} h-full rounded-full ${color}`}
-          style={{ "--stage-width": `${percent}%`, animationDelay: `${delay + 120}ms` } as CSSProperties}
-        />
-      </div>
-    </div>
-  );
-}
-
-function ActivityPanel({ language }: { language: Language }) {
-  const [selectedIndex, setSelectedIndex] = useState(activityWeekData.length - 1);
-  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
-  const selectedDay = activityWeekData[selectedIndex];
-  const averages = activityWeekData.reduce(
-    (total, day) => ({
-      energy: total.energy + day.energy,
-      exercise: total.exercise + day.exercise,
-      stand: total.stand + day.stand
-    }),
-    { energy: 0, exercise: 0, stand: 0 }
-  );
-  const weeklyAverage = {
-    energy: Math.round(averages.energy / activityWeekData.length),
-    exercise: Math.round(averages.exercise / activityWeekData.length),
-    stand: Math.round(averages.stand / activityWeekData.length)
-  };
-
-  return (
-    <div className="mt-5 grid gap-5 min-[700px]:grid-cols-[1.15fr_0.85fr]" ref={ref}>
-      <ActivityBars selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} />
-
-      <div className="grid gap-3">
-        <div
-          className={`liquid-glass liquid-glass-soft rounded-[1.2rem] bg-white/58 p-4 ${
-            isVisible ? "scroll-reveal" : "opacity-0"
-          }`}
-        >
-          <p className="type-caption text-[11px] uppercase text-ink/42">
-            {language === "zh" ? "本周平均" : "Weekly average"}
-          </p>
-          <div className="mt-3 grid grid-cols-3 gap-2">
-            <ActivityStat label={language === "zh" ? "活动千焦" : "kJ"} value={`${weeklyAverage.energy}`} />
-            <ActivityStat label={language === "zh" ? "锻炼" : "Exercise"} value={`${weeklyAverage.exercise}m`} />
-            <ActivityStat label={language === "zh" ? "站立" : "Stand"} value={`${weeklyAverage.stand}`} />
-          </div>
-        </div>
-
-        <div
-          className={`rounded-[1.2rem] bg-pine/5 p-4 ${isVisible ? "scroll-reveal" : "opacity-0"}`}
-          style={{ animationDelay: "120ms" }}
-        >
-          <div className="flex items-center justify-between gap-3">
-            <p className="type-card-title text-sm text-pine">
-              {language === "zh" ? `${selectedDay.date} 活动` : `${selectedDay.date} activity`}
-            </p>
-            <span className="rounded-full bg-mint/45 px-3 py-1 text-[11px] font-black text-pine">
-              {selectedDay.day}
-            </span>
-          </div>
-          <div className="mt-3 space-y-2">
-            <GoalRow label={language === "zh" ? "活动千焦" : "Active energy"} value={`${selectedDay.energy} kJ`} goal={`${selectedDay.energyGoal} kJ`} ratio={selectedDay.energy / selectedDay.energyGoal} />
-            <GoalRow label={language === "zh" ? "锻炼时长" : "Exercise"} value={`${selectedDay.exercise} min`} goal={`${selectedDay.exerciseGoal} min`} ratio={selectedDay.exercise / selectedDay.exerciseGoal} />
-            <GoalRow label={language === "zh" ? "站立次数" : "Stand"} value={`${selectedDay.stand} h`} goal={`${selectedDay.standGoal} h`} ratio={selectedDay.stand / selectedDay.standGoal} />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ActivityStat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-2xl bg-pine/5 px-3 py-3 text-center">
-      <p className="type-metric-number text-lg text-pine">{value}</p>
-      <p className="type-caption mt-1 text-[10px] text-ink/42">{label}</p>
-    </div>
-  );
-}
-
-function GoalRow({ goal, label, ratio, value }: { goal: string; label: string; ratio: number; value: string }) {
-  return (
-    <div>
-      <div className="flex items-center justify-between gap-3 text-xs">
-        <span className="font-bold text-ink/52">{label}</span>
-        <span className="type-metric-number text-pine">
-          {value}
-          <span className="ml-1 text-[10px] font-bold text-ink/38">/ {goal}</span>
-        </span>
-      </div>
-      <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-pine/8">
-        <div className="h-full rounded-full bg-gradient-to-r from-teal to-mint" style={{ width: `${Math.min(ratio, 1) * 100}%` }} />
-      </div>
-    </div>
-  );
-}
-
-function ActivityBars({
-  selectedIndex,
-  setSelectedIndex
-}: {
-  selectedIndex: number;
-  setSelectedIndex: (index: number) => void;
-}) {
-  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
-
-  return (
-    <div ref={ref}>
-      <div className="grid grid-cols-7 gap-2">
-        {activityWeekData.map((day, index) => {
-          const height = (day.energy / 720) * 100;
-          const isSelected = selectedIndex === index;
-
-          return (
-            <button
-              aria-label={`${day.date} activity ${day.energy} kJ`}
-              className={`group flex h-32 items-end rounded-full p-1 transition duration-300 hover:-translate-y-1 hover:bg-white/55 ${
-                isSelected ? "bg-mint/35 shadow-soft" : "bg-pine/5"
-              }`}
-              key={`${day.date}-${index}`}
-              onClick={() => setSelectedIndex(index)}
-              type="button"
-            >
-              <div
-                className={`${isVisible ? "activity-bar" : "activity-bar-hidden"} w-full rounded-full bg-gradient-to-t from-teal to-mint transition duration-300 group-hover:scale-x-110`}
-                style={{ "--bar-height": `${height}%`, animationDelay: `${index * 70}ms` } as CSSProperties}
-              />
-            </button>
-          );
-        })}
-      </div>
-      <div className="mt-2 grid grid-cols-7 gap-2 text-center">
-        {activityWeekData.map((day, index) => (
-          <button
-            className={`type-caption rounded-full py-1 text-[10px] transition duration-300 ${
-              selectedIndex === index ? "bg-pine text-white" : "text-ink/42 hover:bg-pine/7"
-            }`}
-            key={`${day.date}-label`}
-            onClick={() => setSelectedIndex(index)}
-            type="button"
-          >
-            {day.day}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 function buildSmoothPath(points: Array<{ x: number; y: number }>) {
-  if (points.length === 0) {
-    return "";
-  }
-
+  if (points.length === 0) return "";
   return points.reduce((path, point, index) => {
-    if (index === 0) {
-      return `M ${point.x} ${point.y}`;
-    }
-
+    if (index === 0) return `M ${point.x} ${point.y}`;
     const previous = points[index - 1];
     const controlX = (previous.x + point.x) / 2;
     return `${path} C ${controlX} ${previous.y}, ${controlX} ${point.y}, ${point.x} ${point.y}`;
   }, "");
 }
 
-function BarChart() {
-  const bars = [48, 64, 42, 76, 58, 84, 68];
+/* ───────────────────────── App shell ───────────────────────── */
+function App() {
+  const [language, setLanguage] = useState<Lang>("zh");
+  const t = copy[language];
+
   return (
-    <div className="mt-6 flex h-40 items-end justify-between gap-3">
-      {bars.map((height, index) => (
-        <div className="flex flex-1 flex-col items-center gap-3" key={index}>
-          <div className="flex h-32 w-full items-end rounded-full bg-pine/6 p-1.5">
-            <div
-              className="w-full rounded-full bg-gradient-to-t from-pine via-teal to-aqua"
-              style={{ height: `${height}%` }}
-            />
-          </div>
-          <span className="text-[10px] font-bold text-ink/38">{["M", "T", "W", "T", "F", "S", "S"][index]}</span>
+    <main className="font-apple min-h-screen overflow-x-hidden bg-white text-ink antialiased" lang={language === "zh" ? "zh-CN" : "en"}>
+      <NavBar language={language} setLanguage={setLanguage} t={t} />
+      <HeroSection language={language} t={t} />
+      <LiveStressTile t={t} />
+      <AIAnalysisTile t={t} />
+      <TrendsTile t={t} />
+      <SleepTile t={t} />
+      <CheckInTile t={t} />
+      <PrivacyTile t={t} />
+      <Footer t={t} />
+    </main>
+  );
+}
+
+/* ───────────────────────── Nav ───────────────────────── */
+function NavBar({ language, setLanguage, t }: { language: Lang; setLanguage: (l: Lang) => void; t: Copy }) {
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const navItems = [
+    { label: t.nav.dashboard, id: "hero" },
+    { label: t.nav.features, id: "live" },
+    { label: t.nav.how, id: "trends" },
+    { label: t.nav.privacy, id: "privacy" }
+  ];
+
+  return (
+    <header className="apple-nav fixed inset-x-0 top-0 z-50 h-11">
+      <nav className="mx-auto flex h-11 max-w-[1024px] items-center justify-between px-5">
+        <a
+          className="flex items-center gap-2 transition hover:opacity-80"
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+        >
+          <LogoMark className="h-5 w-5" />
+          <span className="text-[14px] font-semibold tracking-tight text-white">StressWatch</span>
+        </a>
+
+        <div className="hidden items-center gap-8 md:flex">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              className="text-[12px] font-normal text-white/80 transition hover:text-white"
+              onClick={() => scrollTo(item.id)}
+              type="button"
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
+
+        <div className="flex items-center gap-3">
+          <LangToggle language={language} setLanguage={setLanguage} />
+          <button
+            className="hidden rounded-full bg-[#2997ff] px-3.5 py-1 text-[12px] font-semibold text-white transition hover:brightness-110 active:scale-95 sm:block"
+            type="button"
+          >
+            {t.nav.download}
+          </button>
+        </div>
+      </nav>
+    </header>
+  );
+}
+
+function LangToggle({ language, setLanguage }: { language: Lang; setLanguage: (l: Lang) => void }) {
+  return (
+    <div className="flex items-center rounded-full bg-white/10 p-0.5 text-[12px] font-semibold" aria-label="Language">
+      {(["en", "zh"] as const).map((l) => (
+        <button
+          key={l}
+          onClick={() => setLanguage(l)}
+          type="button"
+          aria-pressed={language === l}
+          className={`rounded-full px-2.5 py-1 transition ${
+            language === l ? "bg-white text-ink" : "text-white/70 hover:text-white"
+          }`}
+        >
+          {l === "en" ? "EN" : "中"}
+        </button>
       ))}
     </div>
   );
 }
 
-function SleepTimeline() {
-  return (
-    <div className="mt-7 space-y-4">
-      <div className="h-6 overflow-hidden rounded-full bg-pine/8">
-        <div className="h-full w-[23%] rounded-full bg-aqua" />
-      </div>
-      <div className="h-6 overflow-hidden rounded-full bg-pine/8">
-        <div className="h-full w-[71%] rounded-full bg-pine" />
-      </div>
-      <div className="flex justify-between text-[11px] font-bold text-ink/40">
-        <span>23:10</span>
-        <span>06:42</span>
-      </div>
-    </div>
-  );
-}
-
-function InsightRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between rounded-2xl bg-pine/5 px-3 py-3">
-      <span className="text-xs font-bold text-ink/48">{label}</span>
-      <span className="text-sm font-black text-pine">{value}</span>
-    </div>
-  );
-}
-
-function ActivitySummaryPanel({ language }: { language: Language }) {
-  const bars = activityWeekData.map((day) => Math.round((day.energy / 720) * 100));
+/* ───────────────────────── Hero ───────────────────────── */
+function HeroSection({ language, t }: { language: Lang; t: Copy }) {
+  const { isVisible, ref } = useRevealOnView<HTMLElement>();
+  const h = t.hero;
 
   return (
-    <div className="mt-5">
-      <div className="flex items-end justify-between gap-2">
-        {bars.map((height, index) => (
-          <div className="flex flex-1 flex-col items-center gap-2" key={`${activityWeekData[index].date}-summary`}>
-            <div className="flex h-20 w-full items-end rounded-full bg-pine/7 p-1">
-              <div
-                className="w-full rounded-full bg-gradient-to-t from-[#27A6CC] to-[#FCC5C5] shadow-[0_8px_18px_rgba(39,166,204,0.18)]"
-                style={{ height: `${height}%` }}
-              />
-            </div>
-            <span className="type-caption text-[10px] text-ink/42">{activityWeekData[index].day}</span>
-          </div>
-        ))}
-      </div>
-      <div className="mt-4 grid grid-cols-3 gap-2">
-        <ActivityStat label={language === "zh" ? "活动" : "Move"} value="620" />
-        <ActivityStat label={language === "zh" ? "锻炼" : "Exercise"} value="39m" />
-        <ActivityStat label={language === "zh" ? "站立" : "Stand"} value="13" />
-      </div>
-    </div>
-  );
-}
-
-function DetailPanel({
-  detail,
-  language,
-  onClose
-}: {
-  detail: DetailKey;
-  language: Language;
-  onClose: () => void;
-}) {
-  const content = getDetailContent(detail, language);
-
-  return (
-    <div className="absolute inset-0 z-30 flex items-center justify-center bg-[#111F2A]/24 p-4 backdrop-blur-[2px]" onClick={onClose}>
-      <section
-        className="detail-panel liquid-glass liquid-glass-strong w-full max-w-[420px] rounded-[2rem] border border-white/72 bg-white/76 p-6 shadow-[0_30px_90px_rgba(17,31,42,0.22)]"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="type-caption text-xs uppercase tracking-[0.18em] text-pine/70">
-              {language === "zh" ? "详情" : "Detail"}
-            </p>
-            <h3 className="type-section-title mt-2 text-2xl text-ink">{content.title}</h3>
-          </div>
-          <button
-            className="grid h-10 w-10 place-items-center rounded-full bg-[#111F2A]/8 text-lg font-black text-ink transition hover:bg-[#111F2A]/14"
-            onClick={onClose}
-            type="button"
-          >
-            x
-          </button>
+    <section
+      id="hero"
+      ref={ref}
+      className={`bg-white px-5 pb-24 pt-32 reveal sm:pb-28 sm:pt-40 ${isVisible ? "is-visible" : ""}`}
+    >
+      <div className="mx-auto max-w-[820px] text-center">
+        <span className="type-eyebrow text-blue">{h.badge}</span>
+        <h1 className="type-hero mt-3 text-ink">{h.title}</h1>
+        <p className="type-lead mx-auto mt-5 max-w-[640px] text-ink-2">{h.subtitle}</p>
+        <div className="mt-7 flex items-center justify-center gap-6">
+          <a href="#live" className="apple-cta-primary">
+            {h.primaryCta}
+          </a>
+          <a href="#privacy" className="apple-cta-link text-blue">
+            {h.secondaryCta} ›
+          </a>
         </div>
-
-        <div className="mt-6 rounded-[1.4rem] bg-[linear-gradient(135deg,rgba(39,166,204,0.14),rgba(252,197,197,0.18))] p-5">
-          <p className="type-metric-number text-5xl text-pine">{content.value}</p>
-          <p className="mt-2 text-sm font-bold text-ink/58">{content.status}</p>
-          <MiniSparkline className="mt-5 h-16" color="#27A6CC" values={content.values} />
-        </div>
-
-        <div className="mt-5 grid grid-cols-7 gap-2">
-          {content.values.map((value, index) => (
-            <div className="rounded-2xl bg-white/62 px-2 py-3 text-center" key={`${detail}-${index}`}>
-              <p className="text-[10px] font-black text-ink/42">{content.days[index]}</p>
-              <p className="mt-1 text-xs font-black text-pine">{value}</p>
-            </div>
-          ))}
-        </div>
-
-        <p className="mt-5 text-sm leading-6 text-ink/66">{content.explanation}</p>
-        <p className="mt-4 rounded-full bg-white/58 px-4 py-2 text-xs font-black text-ink/48">
-          {language === "zh" ? "仅用于健康趋势参考" : "For wellness trend reference only"}
-        </p>
-      </section>
-    </div>
-  );
-}
-
-function getDetailContent(detail: DetailKey, language: Language) {
-  const days = language === "zh" ? ["一", "二", "三", "四", "五", "六", "日"] : ["M", "T", "W", "T", "F", "S", "S"];
-  const content = {
-    stress: {
-      title: language === "zh" ? "压力分数" : "Stress Score",
-      value: "68",
-      status: language === "zh" ? "较为平衡" : "Balanced trend",
-      values: [42, 58, 51, 64, 72, 60, 68],
-      explanation:
-        language === "zh"
-          ? "近期压力趋势略有上行，但仍处于可观察范围。结合睡眠、HRV 和主观感受一起判断。"
-          : "Recent stress is slightly elevated but still in an observable range. Compare it with sleep, HRV, and how you feel."
-    },
-    recovery: {
-      title: language === "zh" ? "恢复" : "Recovery",
-      value: "74",
-      status: language === "zh" ? "恢复良好" : "Good recovery",
-      values: recoverySparkData,
-      explanation:
-        language === "zh"
-          ? "恢复分数保持良好，睡眠和 HRV 对今天的状态有正向支持。"
-          : "Recovery remains solid, supported by sleep duration and a stable HRV trend."
-    },
-    hrv: {
-      title: "HRV",
-      value: "52 ms",
-      status: language === "zh" ? "高于基线" : "Above baseline",
-      values: hrvTrendData,
-      explanation:
-        language === "zh"
-          ? "HRV 较基线略高，通常可以作为恢复状态的趋势参考。"
-          : "HRV is slightly above baseline, useful as a directional recovery reference."
-    },
-    sleep: {
-      title: language === "zh" ? "睡眠" : "Sleep",
-      value: "7h 32m",
-      status: language === "zh" ? "恢复性睡眠" : "Restorative sleep",
-      values: [6.7, 7.1, 6.5, 7.4, 7.0, 7.8, 7.5],
-      explanation:
-        language === "zh"
-          ? "睡眠时长稳定，深睡和 REM 共同支撑今日恢复趋势。"
-          : "Sleep duration is steady, with deep and REM context supporting today's recovery trend."
-    },
-    steps: {
-      title: language === "zh" ? "步数" : "Steps",
-      value: "8,420",
-      status: language === "zh" ? "活动稳定" : "Steady activity",
-      values: [6100, 7420, 6900, 8120, 7780, 9340, 8420],
-      explanation:
-        language === "zh"
-          ? "活动量接近近期水平，没有明显偏离，可作为压力趋势的背景参考。"
-          : "Activity is close to recent levels and gives useful context for stress trend changes."
-    },
-    trend: {
-      title: language === "zh" ? "7 天压力趋势" : "7-day Stress Trend",
-      value: "68",
-      status: language === "zh" ? "周内波动" : "Weekly movement",
-      values: [42, 58, 51, 64, 72, 60, 68],
-      explanation:
-        language === "zh"
-          ? "本周压力趋势有轻微波动。建议结合恢复和睡眠一起观察，不单看单日分数。"
-          : "This week shows mild movement. Read it together with recovery and sleep rather than a single daily score."
-    }
-  } satisfies Record<DetailKey, { title: string; value: string; status: string; values: number[]; explanation: string }>;
-
-  return { ...content[detail], days };
-}
-
-function LowerContent({
-  disclaimer,
-  features,
-  language
-}: {
-  disclaimer: string;
-  features: string[][];
-  language: Language;
-}) {
-  return (
-    <section className="lower-section scroll-reveal relative z-10 mt-14 scroll-mt-24 rounded-[2.25rem] border border-white/12 p-5 text-white shadow-[0_34px_110px_rgba(17,31,42,0.26)] sm:p-7 lg:p-9" id="privacy">
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6" aria-label="StressWatch features">
-        {features.map(([title, body], index) => (
-          <article
-            className="feature-card liquid-glass liquid-glass-soft rounded-[1.5rem] border border-white/16 bg-white/10 p-5 transition hover:-translate-y-1.5"
-            key={title}
-            style={{ animation: `rise 640ms ease-out ${220 + index * 80}ms both` }}
-          >
-            <FeatureIcon index={index} />
-            <h3 className="mt-5 text-sm font-black text-white">{title}</h3>
-            <p className="mt-3 text-xs leading-5 text-white/70">{body}</p>
-          </article>
-        ))}
+        <p className="type-caption mx-auto mt-6 max-w-[520px] text-ink-2">{h.trust}</p>
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
-        <article className="liquid-glass liquid-glass-soft rounded-[1.6rem] border border-white/14 bg-white/10 p-6">
-          <p className="text-sm font-black text-white">{language === "zh" ? "隐私与本地优先" : "Privacy and local-first"}</p>
-          <p className="mt-3 text-sm leading-7 text-white/72">
-            {language === "zh"
-              ? "StressWatch 不接后端、不需要账号，也不做服务器端数据收集。健康趋势体验围绕 HealthKit 和本机数据设计。"
-              : "StressWatch does not require a backend, account, or server-side data collection. The experience is designed around HealthKit and local device data."}
-          </p>
-        </article>
-
-        <article className="liquid-glass liquid-glass-soft rounded-[1.6rem] border border-white/14 bg-white/10 p-6">
-          <p className="text-sm font-black text-white">{language === "zh" ? "免责声明" : "Medical disclaimer"}</p>
-          <p className="mt-3 text-sm leading-7 text-white/72">{disclaimer}</p>
-        </article>
+      <div className="mx-auto mt-16 max-w-[720px]">
+        <DashboardMockup language={language} t={t} isVisible={isVisible} />
       </div>
-
-      <footer className="mt-7 flex flex-col gap-3 border-t border-white/12 pt-5 text-xs font-bold text-white/54 sm:flex-row sm:items-center sm:justify-between">
-        <span>StressWatch</span>
-        <span>{language === "zh" ? "个人健康趋势参考 · 本地优先" : "Personal wellness trend reference · Local-first"}</span>
-      </footer>
     </section>
   );
 }
 
-function FeatureIcon({ index }: { index: number }) {
-  const icons = [
-    <path d="M9 24h7l3-9 6 18 5-13 3 6h6" key="health" />,
-    <path d="M10 30c7-12 15 6 22-6 3-5 5-8 8-9" key="hrv" />,
-    <path d="M24 9l10 6v8c0 7-4 12-10 16-6-4-10-9-10-16v-8l10-6z" key="recovery" />,
-    <path d="M14 30c5 5 15 5 20 0M14 24c4-5 16-5 20 0M18 18c3-3 9-3 12 0" key="sleep" />,
-    <path d="M13 24h22M24 13v22M17 17l14 14M31 17 17 31" key="privacy" />,
-    <path d="M14 18h20v16H14zM18 18v-3h12v3" key="account" />
-  ];
+function DashboardMockup({ language, t, isVisible }: { language: Lang; t: Copy; isVisible: boolean }) {
+  const d = t.dashboard;
+  return (
+    <div className="product-shadow mx-auto w-full max-w-[640px] rounded-[28px] border border-black/10 bg-white p-6">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="type-tagline text-ink">{d.title}</h2>
+          <p className="type-caption text-ink-2">{d.subtitle}</p>
+        </div>
+        <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#e8f7ec] px-3 py-1.5 text-[12px] font-semibold text-[#1d8a3f]">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#34c759]" />
+          {d.connected}
+        </span>
+      </div>
+
+      <div className="mt-6 grid grid-cols-3 gap-3">
+        {d.metrics.map((m) => (
+          <div key={m.label} className="rounded-2xl bg-parchment p-4">
+            <p className="type-caption text-ink-2">{m.label}</p>
+            <p className="type-metric mt-2 text-3xl font-semibold text-ink">{m.value}</p>
+            <p className="type-caption mt-1 text-[11px] font-semibold text-blue">{m.detail}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-5 rounded-2xl bg-parchment p-5">
+        <div className="flex items-center justify-between gap-4">
+          <h3 className="text-[14px] font-semibold text-ink">{d.panelTitle}</h3>
+          <span className="rounded-full bg-blue/10 px-3 py-1 text-[11px] font-semibold text-blue">{d.panelStatus}</span>
+        </div>
+        <div className="relative mt-4 h-36 w-full">
+          <StressLineChart isVisible={isVisible} language={language} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StressLineChart({ isVisible, language }: { isVisible: boolean; language: Lang }) {
+  const points = stressTrendData.map((item, index) => ({
+    ...item,
+    x: 30 + index * 80,
+    y: 120 - ((item.score - 35) / 45) * 80
+  }));
+  const linePath = buildSmoothPath(points);
+  const areaPath = `${linePath} L ${points[points.length - 1].x} 130 L ${points[0].x} 130 Z`;
+  const labels = language === "zh" ? stressTrendData.map((d) => d.label) : stressTrendData.map((d) => d.day);
 
   return (
-    <div className="feature-icon grid h-12 w-12 place-items-center rounded-2xl bg-[linear-gradient(135deg,#80BFD4,#27A6CC_55%,#FCC5C5)] shadow-[0_14px_36px_rgba(39,166,204,0.28)]">
-      <svg className="h-7 w-7" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-        <g stroke="white" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3">
-          {icons[index] ?? icons[0]}
-        </g>
-      </svg>
+    <svg className="h-full w-full" viewBox="0 0 580 140" role="img" aria-label="7-day stress trend line chart">
+      <defs>
+        <linearGradient id="stressFill" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stopColor="#0066cc" stopOpacity="0.14" />
+          <stop offset="100%" stopColor="#0066cc" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      {[30, 60, 90, 120].map((y) => (
+        <line key={y} x1="0" x2="580" y1={y} y2={y} stroke="#1d1d1f" strokeOpacity="0.06" />
+      ))}
+      <path d={areaPath} fill="url(#stressFill)" />
+      <path
+        className={isVisible ? "animate-[draw_1.4s_ease-out_both]" : "chart-line-hidden"}
+        d={linePath}
+        fill="none"
+        stroke="#0066cc"
+        strokeDasharray="620"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="4"
+      />
+      {points.map((point, index) => (
+        <circle
+          key={point.date}
+          cx={point.x}
+          cy={point.y}
+          fill={index === 0 || index === points.length - 1 ? "#0066cc" : "#2997ff"}
+          r={index === 4 ? "6" : "5"}
+          stroke="white"
+          strokeWidth="3"
+        />
+      ))}
+      {points.map((point, index) => (
+        <text key={`label-${point.date}`} fill="#86868b" fontFamily="var(--font-apple)" fontSize="10" textAnchor="middle" x={point.x} y="135">
+          {labels[index]}
+        </text>
+      ))}
+    </svg>
+  );
+}
+
+/* ───────────────────────── Tile primitives ───────────────────────── */
+type Theme = "light" | "parchment" | "dark";
+
+function Tile({ theme, id, children }: { theme: Theme; id?: string; children: ReactNode }) {
+  const bg =
+    theme === "dark"
+      ? "bg-[#272729] text-white"
+      : theme === "parchment"
+        ? "bg-parchment text-ink"
+        : "bg-white text-ink";
+  return (
+    <section id={id} className={`px-5 py-20 sm:py-28 ${bg}`}>
+      {children}
+    </section>
+  );
+}
+
+function TileHeading({
+  theme,
+  eyebrow,
+  title,
+  tagline,
+  cta,
+  ctaHref
+}: {
+  theme: Theme;
+  eyebrow: string;
+  title: string;
+  tagline: string;
+  cta?: string;
+  ctaHref?: string;
+}) {
+  const isDark = theme === "dark";
+  return (
+    <div className="mx-auto max-w-[680px] text-center">
+      <span className={`type-eyebrow ${isDark ? "text-blue-sky" : "text-blue"}`}>{eyebrow}</span>
+      <h2 className="type-display mt-3">{title}</h2>
+      <p className={`type-lead mt-4 ${isDark ? "text-white/70" : "text-ink-2"}`}>{tagline}</p>
+      {cta && (
+        <div className="mt-6">
+          <a href={ctaHref ?? "#"} className={`apple-cta-link ${isDark ? "text-blue-sky" : "text-blue"}`}>
+            {cta} ›
+          </a>
+        </div>
+      )}
     </div>
+  );
+}
+
+/* ───────────────────────── Tile 1 — Live Stress (dark) ───────────────────────── */
+function LiveStressTile({ t }: { t: Copy }) {
+  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
+  const s = t.liveStress;
+  return (
+    <Tile theme="dark" id="live">
+      <div ref={ref} className={`reveal ${isVisible ? "is-visible" : ""}`}>
+        <TileHeading theme="dark" eyebrow={s.eyebrow} title={s.title} tagline={s.tagline} cta={s.cta} ctaHref="#live" />
+        <div className="mx-auto mt-12 max-w-[520px]">
+          <LiveStressMockup t={t} />
+        </div>
+      </div>
+    </Tile>
+  );
+}
+
+function LiveStressMockup({ t }: { t: Copy }) {
+  const v = liveState.value;
+  const C = 2 * Math.PI * 80;
+  const offset = C * (1 - v / 100);
+  const s = t.liveStress;
+
+  return (
+    <div className="product-shadow-dark mx-auto w-full max-w-[520px] rounded-[28px] border border-white/10 bg-black/40 p-8">
+      <div className="flex items-center justify-between">
+        <span className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-wider text-white/60">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#2997ff] opacity-75" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#2997ff]" />
+          </span>
+          {s.live}
+        </span>
+        <span className="text-[13px] font-medium text-white/60">
+          {liveState.bpm} {s.bpmLabel}
+        </span>
+      </div>
+
+      <div className="mt-6 flex flex-col items-center">
+        <div className="relative h-[200px] w-[200px]">
+          <svg viewBox="0 0 200 200" className="h-full w-full -rotate-90">
+            <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="14" />
+            <circle
+              cx="100"
+              cy="100"
+              r="80"
+              fill="none"
+              stroke="#2997ff"
+              strokeWidth="14"
+              strokeLinecap="round"
+              strokeDasharray={C}
+              strokeDashoffset={offset}
+              style={{ transition: "stroke-dashoffset 1.2s ease" }}
+            />
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="type-metric text-5xl font-semibold text-white">{v}</span>
+            <span className="mt-1 text-[15px] font-medium text-white/70">{s.level}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────── Tile 2 — AI Analysis (parchment) ───────────────────────── */
+function AIAnalysisTile({ t }: { t: Copy }) {
+  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
+  const a = t.aiAnalysis;
+  return (
+    <Tile theme="parchment" id="analysis">
+      <div ref={ref} className={`reveal ${isVisible ? "is-visible" : ""}`}>
+        <TileHeading theme="parchment" eyebrow={a.eyebrow} title={a.title} tagline={a.tagline} cta={a.cta} ctaHref="#analysis" />
+        <div className="mx-auto mt-12 max-w-[680px]">
+          <AIAnalysisMockup t={t} />
+        </div>
+      </div>
+    </Tile>
+  );
+}
+
+function AIAnalysisMockup({ t }: { t: Copy }) {
+  const a = t.aiAnalysis;
+  return (
+    <div className="product-shadow mx-auto w-full max-w-[680px] rounded-[28px] border border-black/10 bg-white p-8">
+      <div className="flex items-center gap-6">
+        <div className="relative h-[110px] w-[110px] shrink-0">
+          <svg viewBox="0 0 120 120" className="-rotate-90">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#e8e8ed" strokeWidth="10" />
+            <circle
+              cx="60"
+              cy="60"
+              r="50"
+              fill="none"
+              stroke="#0066cc"
+              strokeWidth="10"
+              strokeLinecap="round"
+              strokeDasharray={2 * Math.PI * 50}
+              strokeDashoffset={2 * Math.PI * 50 * (1 - liveState.confidence)}
+            />
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="type-metric text-2xl font-semibold text-ink">{Math.round(liveState.confidence * 100)}%</span>
+          </div>
+        </div>
+        <div>
+          <p className="text-[13px] font-semibold uppercase tracking-wider text-blue">{a.eyebrow}</p>
+          <p className="type-display mt-1 text-[28px] text-ink">{a.predictedState}</p>
+          <p className="text-[15px] text-ink-2">
+            {a.confidence} · {Math.round(liveState.confidence * 100)}%
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-7 space-y-4">
+        {a.assessments.map((item) => (
+          <div key={item.label}>
+            <div className="flex items-baseline justify-between">
+              <span className="text-[15px] font-medium text-ink">{item.label}</span>
+              <span className="text-[13px] text-ink-2">{item.level}</span>
+            </div>
+            <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[#e8e8ed]">
+              <div className="h-full rounded-full bg-blue" style={{ width: `${item.value}%` }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────── Tile 3 — Trends (dark) ───────────────────────── */
+function TrendsTile({ t }: { t: Copy }) {
+  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
+  const tr = t.trends;
+  return (
+    <Tile theme="dark" id="trends">
+      <div ref={ref} className={`reveal ${isVisible ? "is-visible" : ""}`}>
+        <TileHeading theme="dark" eyebrow={tr.eyebrow} title={tr.title} tagline={tr.tagline} cta={tr.cta} ctaHref="#trends" />
+        <div className="mx-auto mt-12 max-w-[760px]">
+          <TrendsMockup t={t} />
+        </div>
+      </div>
+    </Tile>
+  );
+}
+
+function TrendsMockup({ t }: { t: Copy }) {
+  const tr = t.trends;
+  const bars = monthlyStress;
+  const max = Math.max(...bars);
+  const w = 600;
+  const h = 200;
+  const pad = 10;
+  const bw = (w - pad * 2) / bars.length - 6;
+
+  return (
+    <div className="product-shadow-dark mx-auto w-full max-w-[760px] rounded-[28px] border border-white/10 bg-black/40 p-8">
+      <div className="flex items-center justify-between">
+        <p className="text-[15px] font-semibold text-white/80">{tr.monthlyLabel}</p>
+        <span className="text-[13px] text-white/50">
+          {bars.length} {tr.daysLabel}
+        </span>
+      </div>
+
+      <svg viewBox={`0 0 ${w} ${h}`} className="mt-5 w-full" role="img" aria-label="Monthly stress bar chart">
+        {bars.map((b, i) => {
+          const bh = (b / max) * (h - 20);
+          const x = pad + i * (bw + 6);
+          const y = h - bh - 4;
+          return <rect key={i} x={x} y={y} width={bw} height={bh} rx={4} fill="#2997ff" opacity={0.55 + (b / max) * 0.45} />;
+        })}
+      </svg>
+
+      <div className="mt-6 border-t border-white/10 pt-5">
+        <p className="text-[15px] font-semibold text-white/80">{tr.heatmapLabel}</p>
+        <div className="mt-3 grid grid-cols-10 gap-1.5">
+          {heatmapValues.map((val, i) => (
+            <div
+              key={i}
+              className="aspect-square rounded-[3px]"
+              style={{ background: `rgba(41,151,255,${0.12 + val * 0.8})` }}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────── Tile 4 — Sleep (light) ───────────────────────── */
+function SleepTile({ t }: { t: Copy }) {
+  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
+  const s = t.sleep;
+  return (
+    <Tile theme="light" id="sleep">
+      <div ref={ref} className={`reveal ${isVisible ? "is-visible" : ""}`}>
+        <TileHeading theme="light" eyebrow={s.eyebrow} title={s.title} tagline={s.tagline} cta={s.cta} ctaHref="#sleep" />
+        <div className="mx-auto mt-12 max-w-[680px]">
+          <SleepMockup t={t} />
+        </div>
+      </div>
+    </Tile>
+  );
+}
+
+function SleepMockup({ t }: { t: Copy }) {
+  const stages = t.sleep.stages;
+  const total = stages.reduce((sum, x) => sum + x.minutes, 0);
+
+  return (
+    <div className="product-shadow mx-auto w-full max-w-[680px] overflow-hidden rounded-[28px] border border-black/10 bg-white p-8">
+      <div className="flex items-center justify-between">
+        <p className="text-[15px] font-semibold text-ink">{t.sleep.legendTitle}</p>
+        <p className="text-[13px] text-ink-2">
+          {Math.floor(total / 60)}h {total % 60}m
+        </p>
+      </div>
+
+      <div
+        className="mt-5 grid h-10 w-full max-w-full overflow-hidden rounded-full"
+        style={{ gridTemplateColumns: stages.map((s) => `${s.minutes}fr`).join(" ") }}
+      >
+        {stages.map((s) => (
+          <div key={s.key} className="h-full" style={{ background: sleepColors[s.key] }} title={s.label} />
+        ))}
+      </div>
+
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {stages.map((s) => (
+          <div key={s.key} className="rounded-2xl bg-parchment p-4">
+            <div className="flex items-center gap-2">
+              <span className="h-2.5 w-2.5 rounded-full" style={{ background: sleepColors[s.key] }} />
+              <span className="text-[13px] font-medium text-ink">{s.label}</span>
+            </div>
+            <p className="type-metric mt-2 text-xl font-semibold text-ink">
+              {Math.floor(s.minutes / 60)}h {s.minutes % 60}m
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────── Tile 5 — Daily Check-in (dark) ───────────────────────── */
+function CheckInTile({ t }: { t: Copy }) {
+  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
+  const c = t.checkIn;
+  return (
+    <Tile theme="dark" id="checkin">
+      <div ref={ref} className={`reveal ${isVisible ? "is-visible" : ""}`}>
+        <TileHeading theme="dark" eyebrow={c.eyebrow} title={c.title} tagline={c.tagline} cta={c.cta} ctaHref="#checkin" />
+        <div className="mx-auto mt-12 max-w-[560px]">
+          <CheckInMockup t={t} />
+        </div>
+      </div>
+    </Tile>
+  );
+}
+
+function CheckInMockup({ t }: { t: Copy }) {
+  const c = t.checkIn;
+  return (
+    <div className="product-shadow-dark mx-auto w-full max-w-[560px] rounded-[28px] border border-white/10 bg-black/40 p-8">
+      <p className="text-[15px] font-semibold text-white/80">{c.title}</p>
+      <div className="mt-5 space-y-3">
+        {c.items.map((it) => (
+          <div key={it.title} className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3">
+            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[#2997ff]">
+              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12l5 5L20 6" />
+              </svg>
+            </span>
+            <div className="flex-1">
+              <p className="text-[14px] font-medium text-white">{it.title}</p>
+              <p className="text-[12px] text-white/55">{it.detail}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-4 rounded-2xl border border-dashed border-white/20 px-4 py-3 text-[13px] text-white/45">{c.addHint}</div>
+    </div>
+  );
+}
+
+/* ───────────────────────── Tile 6 — Privacy (parchment) ───────────────────────── */
+function PrivacyTile({ t }: { t: Copy }) {
+  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
+  const p = t.privacy;
+
+  return (
+    <Tile theme="parchment" id="privacy">
+      <div ref={ref} className={`reveal ${isVisible ? "is-visible" : ""}`}>
+        <div className="mx-auto max-w-[680px] text-center">
+          <span className="type-eyebrow text-blue">{p.eyebrow}</span>
+          <h2 className="type-display mt-3 text-ink">{p.title}</h2>
+          <p className="type-lead mt-4 text-ink-2">{p.subtitle}</p>
+        </div>
+
+        <div className="mx-auto mt-14 grid max-w-5xl items-center gap-10 lg:grid-cols-2">
+          <div className="flex flex-col gap-4">
+            {p.items.map((it) => (
+              <div key={it.title} className="flex items-start gap-4 rounded-2xl border border-black/10 bg-white p-5 shadow-product">
+                <ShieldIcon className="h-7 w-7 shrink-0 text-blue" />
+                <div>
+                  <h3 className="text-[17px] font-semibold text-ink">{it.title}</h3>
+                  <p className="type-body mt-1 text-[14px] text-ink-2">{it.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="rounded-[28px] border border-black/10 bg-white p-8 text-center shadow-product">
+            <div className="mx-auto grid h-20 w-20 place-items-center rounded-3xl bg-blue/10">
+              <ShieldIcon className="h-10 w-10 text-blue" />
+            </div>
+            <h3 className="type-tagline mt-6 text-ink">{p.cardTitle}</h3>
+            <p className="type-body mt-3 text-ink-2">{p.cardDesc}</p>
+            <div className="mt-6 flex flex-wrap justify-center gap-2">
+              {p.chips.map((chip) => (
+                <span key={chip} className="rounded-full bg-blue/10 px-3.5 py-1.5 text-[12px] font-semibold text-blue">
+                  {chip}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-10 text-center">
+          <a href="#" className="apple-cta-link text-blue">
+            {p.cta} ›
+          </a>
+        </div>
+      </div>
+    </Tile>
+  );
+}
+
+function ShieldIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />
+      <path d="M9 12l2 2 4-4" />
+    </svg>
+  );
+}
+
+/* ───────────────────────── Footer (parchment) ───────────────────────── */
+function Footer({ t }: { t: Copy }) {
+  const f = t.footer;
+  return (
+    <footer className="bg-parchment px-5 py-14 text-ink">
+      <div className="mx-auto max-w-5xl">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-4">
+          {f.columns.map((col) => (
+            <div key={col.title}>
+              <h4 className="text-[12px] font-semibold uppercase tracking-wider text-ink">{col.title}</h4>
+              <ul className="mt-3">
+                {col.links.map((link) => (
+                  <li key={link}>
+                    <a className="footer-link" href="#">
+                      {link}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-12 border-t border-black/10 pt-6">
+          <div className="flex flex-col gap-2 text-[12px] text-ink-2 sm:flex-row sm:items-center sm:justify-between">
+            <span>{f.copyright}</span>
+            <span className="sm:text-right">{f.disclaimer}</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* ───────────────────────── Logo ───────────────────────── */
+function LogoMark({ className = "" }: { className?: string }) {
+  return (
+    <span className={`grid place-items-center rounded-[7px] bg-blue ${className}`} role="img" aria-label="StressWatch logo">
+      <svg viewBox="0 0 48 48" className="h-[58%] w-[58%]" aria-hidden="true">
+        <path
+          d="M5 25h8l4-12 7 24 6-18 4 8h9"
+          fill="none"
+          stroke="white"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="4"
+        />
+      </svg>
+    </span>
   );
 }
 

@@ -5,47 +5,30 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: "#111F2A",
-        pine: "#27A6CC",
-        teal: "#27A6CC",
-        mint: "#80BFD4",
-        aqua: "#80BFD4",
-        cream: "#F7FBFD",
-        sun: "#FCC5C5"
+        ink: "#1d1d1f",
+        "ink-2": "#6e6e73",
+        blue: "#0066cc",
+        "blue-focus": "#0071e3",
+        "blue-sky": "#2997ff",
+        parchment: "#f5f5f7",
+        tile: "#272729",
+        "tile-alt": "#2a2a2c",
+        "tile-deep": "#252527",
+        green: "#34c759",
+        "sleep-deep": "#0A84FF",
+        "sleep-core": "#5AC8FA",
+        "sleep-rem": "#BF5AF2",
+        "sleep-awake": "#FF9F0A"
       },
       boxShadow: {
-        glass: "0 26px 80px rgba(39, 166, 204, 0.14)",
-        soft: "0 18px 48px rgba(39, 166, 204, 0.10)"
+        product: "rgba(0,0,0,0.22) 3px 5px 30px",
+        "product-dark": "rgba(0,0,0,0.55) 3px 5px 30px"
       },
       fontFamily: {
-        sans: [
-          "Inter",
-          "ui-sans-serif",
-          "system-ui",
-          "-apple-system",
-          "BlinkMacSystemFont",
-          "Segoe UI",
-          "sans-serif"
-        ]
+        sans: ['"Noto Sans SC"', "-apple-system", "BlinkMacSystemFont", '"SF Pro Display"', '"Segoe UI"', "sans-serif"]
       },
-      keyframes: {
-        float: {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-2px)" }
-        },
-        rise: {
-          "0%": { opacity: "0", transform: "translateY(22px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" }
-        },
-        draw: {
-          "0%": { strokeDashoffset: "440" },
-          "100%": { strokeDashoffset: "0" }
-        }
-      },
-      animation: {
-        float: "float 14s ease-in-out infinite",
-        rise: "rise 700ms ease-out both",
-        draw: "draw 1.4s ease-out both"
+      maxWidth: {
+        apple: "980px"
       }
     }
   },

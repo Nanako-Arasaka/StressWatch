@@ -3,7 +3,7 @@ name: Deploy StressWatch Web
 on:
   push:
     branches:
-      - main
+      - master
   workflow_dispatch:
 
 permissions:
