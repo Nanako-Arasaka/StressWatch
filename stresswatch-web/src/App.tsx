@@ -293,33 +293,50 @@ const copy: Record<Lang, Copy> = {
 };
 
 /* ───────────────────────── Hooks & helpers ───────────────────────── */
+/* Position-adaptive activation. A section is "active" once its top rises
+   above 82% of the viewport height:
+   - scroll DOWN into it  -> top crosses the line -> activates (load in)
+   - keep scrolling DOWN  -> top goes negative (above viewport) -> STAYS
+     active, never disappears (already-loaded upper parts persist)
+   - scroll back UP       -> top drops below the line again -> deactivates
+     (reverse / retreat), so it re-animates next time you pass it.
+   Reduced-motion users get a static, always-active state. */
 function useRevealOnView<T extends Element>() {
   const ref = useRef<T | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
+  const [active, setActive] = useState(false);
 
   useEffect(() => {
     const element = ref.current;
     if (!element) return;
 
-    // Reduced motion: reveal everything statically, never toggle.
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setIsVisible(true);
+      setActive(true);
       return;
     }
 
-    // Directional reveal: the section is "on" while it intersects the
-    // viewport. Scroll down -> it enters and animates in; scroll back up
-    // so it leaves -> isVisible flips off and every child replays its
-    // reverse (retreat) transition. Adapts to wherever the user is.
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsVisible(!!entry?.isIntersecting),
-      { rootMargin: "0px 0px -10% 0px", threshold: 0.15 }
-    );
-    observer.observe(element);
-    return () => observer.disconnect();
+    let ticking = false;
+    const compute = () => {
+      ticking = false;
+      const rect = element.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      setActive(rect.top < vh * 0.82);
+    };
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(compute);
+    };
+
+    compute();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, []);
 
-  return { isVisible, ref };
+  return { active, ref };
 }
 
 function buildSmoothPath(points: Array<{ x: number; y: number }>) {
@@ -440,14 +457,14 @@ function LangToggle({ language, setLanguage }: { language: Lang; setLanguage: (l
 
 /* ───────────────────────── Hero ───────────────────────── */
 function HeroSection({ language, t }: { language: Lang; t: Copy }) {
-  const { isVisible, ref } = useRevealOnView<HTMLElement>();
+  const { active, ref } = useRevealOnView<HTMLElement>();
   const h = t.hero;
 
   return (
     <section
       id="hero"
       ref={ref}
-      className={`bg-white px-5 pb-24 pt-32 reveal-group sm:pb-28 sm:pt-40 ${isVisible ? "is-visible" : ""}`}
+      className={`bg-white px-5 pb-24 pt-32 reveal-group sm:pb-28 sm:pt-40 ${active ? "is-active" : ""}`}
     >
       <div className="reveal-item mx-auto max-w-[820px] text-center">
         <span className="type-eyebrow text-blue">{h.badge}</span>
@@ -465,13 +482,13 @@ function HeroSection({ language, t }: { language: Lang; t: Copy }) {
       </div>
 
       <div className="reveal-item mx-auto mt-16 max-w-[720px]" style={{ transitionDelay: "0.15s" }}>
-        <DashboardMockup language={language} t={t} isVisible={isVisible} />
+        <DashboardMockup language={language} t={t} active={active} />
       </div>
     </section>
   );
 }
 
-function DashboardMockup({ language, t, isVisible }: { language: Lang; t: Copy; isVisible: boolean }) {
+function DashboardMockup({ language, t, active }: { language: Lang; t: Copy; active: boolean }) {
   const d = t.dashboard;
   return (
     <div className="product-shadow mx-auto w-full max-w-[640px] rounded-[28px] border border-black/10 bg-white p-6">
@@ -502,14 +519,14 @@ function DashboardMockup({ language, t, isVisible }: { language: Lang; t: Copy; 
           <span className="rounded-full bg-blue/10 px-3 py-1 text-[11px] font-semibold text-blue">{d.panelStatus}</span>
         </div>
         <div className="relative mt-4 h-36 w-full">
-          <StressLineChart isVisible={isVisible} language={language} />
+          <StressLineChart active={active} language={language} />
         </div>
       </div>
     </div>
   );
 }
 
-function StressLineChart({ isVisible, language }: { isVisible: boolean; language: Lang }) {
+function StressLineChart({ active, language }: { active: boolean; language: Lang }) {
   const points = stressTrendData.map((item, index) => ({
     ...item,
     x: 30 + index * 80,
@@ -532,7 +549,7 @@ function StressLineChart({ isVisible, language }: { isVisible: boolean; language
       ))}
       <path d={areaPath} fill="url(#stressFill)" />
       <path
-        className={isVisible ? "animate-[draw_1.4s_ease-out_both]" : "chart-line-hidden"}
+        className={active ? "animate-[draw_1.4s_ease-out_both]" : "chart-line-hidden"}
         d={linePath}
         fill="none"
         stroke="#0066cc"
@@ -612,21 +629,21 @@ function TileHeading({
 
 /* ───────────────────────── Tile 1 — Live Stress (dark) ───────────────────────── */
 function LiveStressTile({ t }: { t: Copy }) {
-  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
+  const { active, ref } = useRevealOnView<HTMLDivElement>();
   const s = t.liveStress;
   return (
     <Tile theme="dark" id="live">
-      <div ref={ref} className={`reveal-group ${isVisible ? "is-visible" : ""}`}>
+      <div ref={ref} className={`reveal-group ${active ? "is-active" : ""}`}>
         <TileHeading theme="dark" eyebrow={s.eyebrow} title={s.title} tagline={s.tagline} cta={s.cta} ctaHref="#live" />
         <div className="reveal-item mx-auto mt-12 max-w-[520px]" style={{ transitionDelay: "0.12s" }}>
-          <LiveStressMockup t={t} isVisible={isVisible} />
+          <LiveStressMockup t={t} active={active} />
         </div>
       </div>
     </Tile>
   );
 }
 
-function LiveStressMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
+function LiveStressMockup({ t, active }: { t: Copy; active: boolean }) {
   const v = liveState.value;
   const C = 2 * Math.PI * 80;
   const offset = C * (1 - v / 100);
@@ -661,7 +678,7 @@ function LiveStressMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
               strokeWidth="14"
               strokeLinecap="round"
               strokeDasharray={C}
-              strokeDashoffset={isVisible ? offset : C}
+              strokeDashoffset={active ? offset : C}
               style={{ transition: "stroke-dashoffset 1.4s var(--ease-out)" }}
             />
           </svg>
@@ -678,21 +695,21 @@ function LiveStressMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
 
 /* ───────────────────────── Tile 2 — AI Analysis (parchment) ───────────────────────── */
 function AIAnalysisTile({ t }: { t: Copy }) {
-  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
+  const { active, ref } = useRevealOnView<HTMLDivElement>();
   const a = t.aiAnalysis;
   return (
     <Tile theme="parchment" id="analysis">
-      <div ref={ref} className={`reveal-group ${isVisible ? "is-visible" : ""}`}>
+      <div ref={ref} className={`reveal-group ${active ? "is-active" : ""}`}>
         <TileHeading theme="parchment" eyebrow={a.eyebrow} title={a.title} tagline={a.tagline} cta={a.cta} ctaHref="#analysis" />
         <div className="reveal-item mx-auto mt-12 max-w-[680px]" style={{ transitionDelay: "0.12s" }}>
-          <AIAnalysisMockup t={t} isVisible={isVisible} />
+          <AIAnalysisMockup t={t} active={active} />
         </div>
       </div>
     </Tile>
   );
 }
 
-function AIAnalysisMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
+function AIAnalysisMockup({ t, active }: { t: Copy; active: boolean }) {
   const a = t.aiAnalysis;
   return (
     <div className="mockup-card product-shadow mx-auto w-full max-w-[680px] rounded-[28px] border border-black/10 bg-white p-8">
@@ -709,7 +726,7 @@ function AIAnalysisMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
               strokeWidth="10"
               strokeLinecap="round"
               strokeDasharray={2 * Math.PI * 50}
-              strokeDashoffset={isVisible ? 2 * Math.PI * 50 * (1 - liveState.confidence) : 2 * Math.PI * 50}
+              strokeDashoffset={active ? 2 * Math.PI * 50 * (1 - liveState.confidence) : 2 * Math.PI * 50}
               style={{ transition: "stroke-dashoffset 1.4s var(--ease-out)" }}
             />
           </svg>
@@ -738,7 +755,7 @@ function AIAnalysisMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
             <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[#e8e8ed]">
               <div
                 className="h-full rounded-full bg-blue"
-                style={{ width: isVisible ? `${item.value}%` : "0%", transition: "width 1s var(--ease-out)", transitionDelay: `${i * 0.12}s` }}
+                style={{ width: active ? `${item.value}%` : "0%", transition: "width 1s var(--ease-out)", transitionDelay: `${i * 0.12}s` }}
               />
             </div>
           </div>
@@ -750,21 +767,21 @@ function AIAnalysisMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
 
 /* ───────────────────────── Tile 3 — Trends (dark) ───────────────────────── */
 function TrendsTile({ t }: { t: Copy }) {
-  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
+  const { active, ref } = useRevealOnView<HTMLDivElement>();
   const tr = t.trends;
   return (
     <Tile theme="dark" id="trends">
-      <div ref={ref} className={`reveal-group ${isVisible ? "is-visible" : ""}`}>
+      <div ref={ref} className={`reveal-group ${active ? "is-active" : ""}`}>
         <TileHeading theme="dark" eyebrow={tr.eyebrow} title={tr.title} tagline={tr.tagline} cta={tr.cta} ctaHref="#trends" />
         <div className="reveal-item mx-auto mt-12 max-w-[760px]" style={{ transitionDelay: "0.12s" }}>
-          <TrendsMockup t={t} isVisible={isVisible} />
+          <TrendsMockup t={t} active={active} />
         </div>
       </div>
     </Tile>
   );
 }
 
-function TrendsMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
+function TrendsMockup({ t, active }: { t: Copy; active: boolean }) {
   const tr = t.trends;
   const bars = monthlyStress;
   const max = Math.max(...bars);
@@ -790,7 +807,7 @@ function TrendsMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
           return (
             <rect
               key={i}
-              className={`bar-grow ${isVisible ? "is-on" : ""}`}
+              className={`bar-grow ${active ? "is-on" : ""}`}
               x={x}
               y={y}
               width={bw}
@@ -812,7 +829,7 @@ function TrendsMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
           {heatmapValues.map((val, i) => (
             <div
               key={i}
-              className={`cell-pop aspect-square rounded-[3px] ${isVisible ? "is-on" : ""}`}
+              className={`cell-pop aspect-square rounded-[3px] ${active ? "is-on" : ""}`}
               style={{ background: `rgba(41,151,255,${0.12 + val * 0.8})`, transitionDelay: `${i * 12}ms` }}
             />
           ))}
@@ -825,21 +842,21 @@ function TrendsMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
 
 /* ───────────────────────── Tile 4 — Sleep (light) ───────────────────────── */
 function SleepTile({ t }: { t: Copy }) {
-  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
+  const { active, ref } = useRevealOnView<HTMLDivElement>();
   const s = t.sleep;
   return (
     <Tile theme="light" id="sleep">
-      <div ref={ref} className={`reveal-group ${isVisible ? "is-visible" : ""}`}>
+      <div ref={ref} className={`reveal-group ${active ? "is-active" : ""}`}>
         <TileHeading theme="light" eyebrow={s.eyebrow} title={s.title} tagline={s.tagline} cta={s.cta} ctaHref="#sleep" />
         <div className="reveal-item mx-auto mt-12 max-w-[680px]" style={{ transitionDelay: "0.12s" }}>
-          <SleepMockup t={t} isVisible={isVisible} />
+          <SleepMockup t={t} active={active} />
         </div>
       </div>
     </Tile>
   );
 }
 
-function SleepMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
+function SleepMockup({ t, active }: { t: Copy; active: boolean }) {
   const stages = t.sleep.stages;
   const total = stages.reduce((sum, x) => sum + x.minutes, 0);
 
@@ -856,7 +873,7 @@ function SleepMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
         className="mt-5 grid h-10 w-full max-w-full overflow-hidden rounded-full"
         style={{
           gridTemplateColumns: stages.map((s) => `${s.minutes}fr`).join(" "),
-          transform: isVisible ? "scaleX(1)" : "scaleX(0)",
+          transform: active ? "scaleX(1)" : "scaleX(0)",
           transformOrigin: "left",
           transition: "transform 0.9s var(--ease-out)"
         }}
@@ -887,21 +904,21 @@ function SleepMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
 
 /* ───────────────────────── Tile 5 — Daily Check-in (dark) ───────────────────────── */
 function CheckInTile({ t }: { t: Copy }) {
-  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
+  const { active, ref } = useRevealOnView<HTMLDivElement>();
   const c = t.checkIn;
   return (
     <Tile theme="dark" id="checkin">
-      <div ref={ref} className={`reveal-group ${isVisible ? "is-visible" : ""}`}>
+      <div ref={ref} className={`reveal-group ${active ? "is-active" : ""}`}>
         <TileHeading theme="dark" eyebrow={c.eyebrow} title={c.title} tagline={c.tagline} cta={c.cta} ctaHref="#checkin" />
         <div className="reveal-item mx-auto mt-12 max-w-[560px]" style={{ transitionDelay: "0.12s" }}>
-          <CheckInMockup t={t} isVisible={isVisible} />
+          <CheckInMockup t={t} active={active} />
         </div>
       </div>
     </Tile>
   );
 }
 
-function CheckInMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
+function CheckInMockup({ t, active }: { t: Copy; active: boolean }) {
   const c = t.checkIn;
   return (
     <div className="mockup-card product-shadow-dark mx-auto w-full max-w-[560px] rounded-[28px] border border-white/10 bg-black/40 p-8">
@@ -912,8 +929,8 @@ function CheckInMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
             key={it.title}
             className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3"
             style={{
-              opacity: isVisible ? 1 : 0,
-              transform: isVisible ? "translateX(0)" : "translateX(-16px)",
+              opacity: active ? 1 : 0,
+              transform: active ? "translateX(0)" : "translateX(-16px)",
               transition: "opacity .6s var(--ease-out), transform .6s var(--ease-out)",
               transitionDelay: `${i * 0.1}s`
             }}
@@ -937,12 +954,12 @@ function CheckInMockup({ t, isVisible }: { t: Copy; isVisible: boolean }) {
 
 /* ───────────────────────── Tile 6 — Privacy (parchment) ───────────────────────── */
 function PrivacyTile({ t }: { t: Copy }) {
-  const { isVisible, ref } = useRevealOnView<HTMLDivElement>();
+  const { active, ref } = useRevealOnView<HTMLDivElement>();
   const p = t.privacy;
 
   return (
     <Tile theme="parchment" id="privacy">
-      <div ref={ref} className={`reveal-group ${isVisible ? "is-visible" : ""}`}>
+      <div ref={ref} className={`reveal-group ${active ? "is-active" : ""}`}>
         <div className="reveal-item mx-auto max-w-[680px] text-center">
           <span className="type-eyebrow text-blue">{p.eyebrow}</span>
           <h2 className="type-display mt-3 text-ink">{p.title}</h2>
@@ -1082,34 +1099,28 @@ function CursorParticles() {
     resize();
     window.addEventListener("resize", resize);
 
-    const pointer = { x: -200, y: -200, active: false };
-    const glow = { x: -200, y: -200 };
+    const pointer = { x: -200, y: -200, active: false, vx: 0, vy: 0 };
+    const follow = { x: -200, y: -200 };
     type Particle = { x: number; y: number; vx: number; vy: number; life: number; max: number; r: number };
     let particles: Particle[] = [];
-    let lastSpawn = 0;
+    let lastX = -200;
+    let lastY = -200;
 
     const onMove = (e: MouseEvent) => {
+      pointer.vx = e.clientX - lastX;
+      pointer.vy = e.clientY - lastY;
+      lastX = e.clientX;
+      lastY = e.clientY;
       pointer.x = e.clientX;
       pointer.y = e.clientY;
       pointer.active = true;
-      const now = performance.now();
-      if (now - lastSpawn < 16) return;
-      lastSpawn = now;
-      for (let i = 0; i < 2; i++) {
-        const ang = Math.random() * Math.PI * 2;
-        const sp = Math.random() * 0.6 + 0.2;
-        particles.push({
-          x: pointer.x + Math.cos(ang) * 4,
-          y: pointer.y + Math.sin(ang) * 4,
-          vx: Math.cos(ang) * sp,
-          vy: Math.sin(ang) * sp - 0.2,
-          life: 0,
-          max: 0.9,
-          r: Math.random() * 2 + 1.5
-        });
-      }
+    };
+    const onLeave = () => {
+      pointer.active = false;
     };
     window.addEventListener("mousemove", onMove, { passive: true });
+    window.addEventListener("mouseleave", onLeave);
+    document.addEventListener("mouseleave", onLeave);
 
     let raf = 0;
     let prev = performance.now();
@@ -1119,17 +1130,36 @@ function CursorParticles() {
       ctx.clearRect(0, 0, width, height);
 
       if (pointer.active) {
-        glow.x += (pointer.x - glow.x) * 0.18;
-        glow.y += (pointer.y - glow.y) * 0.18;
-        const grd = ctx.createRadialGradient(glow.x, glow.y, 0, glow.x, glow.y, 64);
-        grd.addColorStop(0, "rgba(41,151,255,0.10)");
+        // eased glow trailing slightly behind the cursor
+        follow.x += (pointer.x - follow.x) * 0.2;
+        follow.y += (pointer.y - follow.y) * 0.2;
+
+        // spawn a comet trail of particles along the movement direction
+        const speed = Math.hypot(pointer.vx, pointer.vy);
+        const spawn = Math.min(4, 1 + Math.floor(speed / 5));
+        for (let i = 0; i < spawn; i++) {
+          particles.push({
+            x: pointer.x - pointer.vx * 0.12,
+            y: pointer.y - pointer.vy * 0.12,
+            vx: (Math.random() - 0.5) * 0.7 - pointer.vx * 0.02,
+            vy: (Math.random() - 0.5) * 0.7 - pointer.vy * 0.02,
+            life: 0,
+            max: 0.8 + Math.random() * 0.5,
+            r: Math.random() * 2.2 + 1.6
+          });
+        }
+
+        // soft glow halo
+        const grd = ctx.createRadialGradient(follow.x, follow.y, 0, follow.x, follow.y, 90);
+        grd.addColorStop(0, "rgba(41,151,255,0.16)");
         grd.addColorStop(1, "rgba(41,151,255,0)");
         ctx.fillStyle = grd;
         ctx.beginPath();
-        ctx.arc(glow.x, glow.y, 64, 0, Math.PI * 2);
+        ctx.arc(follow.x, follow.y, 90, 0, Math.PI * 2);
         ctx.fill();
       }
 
+      // trailing particles
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.life += dt;
@@ -1139,13 +1169,24 @@ function CursorParticles() {
         }
         p.x += p.vx;
         p.y += p.vy;
-        p.vy += 0.02;
-        p.vx *= 0.98;
-        p.vy *= 0.98;
+        p.vx *= 0.97;
+        p.vy *= 0.97;
         const a = 1 - p.life / p.max;
         ctx.beginPath();
-        ctx.fillStyle = `rgba(41,151,255,${a * 0.7})`;
+        ctx.fillStyle = `rgba(41,151,255,${a * 0.85})`;
         ctx.arc(p.x, p.y, p.r * a, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // crisp core dot locked exactly to the pointer so it clearly "follows"
+      if (pointer.active) {
+        ctx.beginPath();
+        ctx.fillStyle = "rgba(41,151,255,0.95)";
+        ctx.arc(pointer.x, pointer.y, 4.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.fillStyle = "rgba(255,255,255,0.95)";
+        ctx.arc(pointer.x, pointer.y, 1.8, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -1157,6 +1198,8 @@ function CursorParticles() {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseleave", onLeave);
+      document.removeEventListener("mouseleave", onLeave);
     };
   }, []);
 

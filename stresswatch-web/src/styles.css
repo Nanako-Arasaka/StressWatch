@@ -31,7 +31,9 @@ body {
 
 /* ───────────────────────── Scroll reveal ─────────────────────────
    A container carries `.reveal` / `.reveal-group` and toggles
-   `.is-visible` (driven by IntersectionObserver). Its children
+   `.is-active` (driven by scroll position: active once the section's top
+   rises above 82% of the viewport, so it stays shown once scrolled past
+   and reverses only when scrolled back up). Its children
    marked `.reveal-item` stagger in with a deceleration curve.
    Stagger timing is supplied per-element via inline transition-delay.   */
 .reveal-item {
@@ -46,8 +48,8 @@ body {
   transform: translateX(-18px);
 }
 
-.reveal.is-visible .reveal-item,
-.reveal-group.is-visible .reveal-item {
+.reveal.is-active .reveal-item,
+.reveal-group.is-active .reveal-item {
   opacity: 1;
   transform: none;
 }
