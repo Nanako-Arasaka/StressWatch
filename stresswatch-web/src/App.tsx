@@ -388,10 +388,26 @@ function App() {
   const [language, setLanguage] = useState<Lang>("zh");
   const t = copy[language];
 
+  // Light cross-fade when switching language: bump a key so the main
+  // element remounts with the lang-fade-in animation (CSS, ~250ms).
+  // Keeps scroll position intact (window scrollY isn't reset by a
+  // key change on the same node tree) and avoids resetting the chart
+  // animations because the user is at the same spot.
+  const [langTick, setLangTick] = useState(0);
+  const switchLanguage = (l: Lang) => {
+    if (l === language) return;
+    setLangTick((n) => n + 1);
+    setLanguage(l);
+  };
+
   return (
     <>
-      <main className="font-apple min-h-screen overflow-x-hidden bg-white text-ink antialiased" lang={language === "zh" ? "zh-CN" : "en"}>
-        <NavBar language={language} setLanguage={setLanguage} t={t} />
+      <main
+        key={langTick}
+        className="lang-fade font-apple min-h-screen overflow-x-hidden bg-white text-ink antialiased"
+        lang={language === "zh" ? "zh-CN" : "en"}
+      >
+        <NavBar language={language} setLanguage={switchLanguage} t={t} />
         <HeroSection language={language} t={t} />
         <LiveStressTile t={t} />
         <AIAnalysisTile t={t} />
@@ -409,6 +425,7 @@ function App() {
 /* ───────────────────────── Nav ───────────────────────── */
 function NavBar({ language, setLanguage, t }: { language: Lang; setLanguage: (l: Lang) => void; t: Copy }) {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
     onScroll();
@@ -416,8 +433,18 @@ function NavBar({ language, setLanguage, t }: { language: Lang; setLanguage: (l:
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Lock body scroll while the mobile sheet is open so the page can't
+  // drift behind the menu.
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
+
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setMobileOpen(false);
   };
 
   const navItems = [
@@ -429,9 +456,9 @@ function NavBar({ language, setLanguage, t }: { language: Lang; setLanguage: (l:
 
   return (
     <header className={`apple-nav fixed inset-x-0 top-0 z-50 h-11 ${scrolled ? "scrolled" : ""}`}>
-      <nav className="mx-auto flex h-11 max-w-[1024px] items-center justify-between px-5">
+      <nav className="mx-auto flex h-11 max-w-[1024px] items-center justify-between px-4 sm:px-5">
         <a
-          className="flex items-center gap-2 transition hover:opacity-80"
+          className="focus-ring flex items-center gap-2 rounded-md transition hover:opacity-80"
           href="#"
           onClick={(e) => {
             e.preventDefault();
@@ -446,7 +473,7 @@ function NavBar({ language, setLanguage, t }: { language: Lang; setLanguage: (l:
           {navItems.map((item) => (
             <button
               key={item.id}
-              className="text-[12px] font-normal text-white/80 transition hover:text-white"
+              className="focus-ring rounded-md text-[12px] font-normal text-white/80 transition hover:text-white"
               onClick={() => scrollTo(item.id)}
               type="button"
             >
@@ -455,16 +482,70 @@ function NavBar({ language, setLanguage, t }: { language: Lang; setLanguage: (l:
           ))}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <LangToggle language={language} setLanguage={setLanguage} />
           <button
-            className="hidden rounded-full bg-[#2997ff] px-3.5 py-1 text-[12px] font-semibold text-white transition hover:brightness-110 active:scale-95 sm:block"
+            className="focus-ring hidden rounded-full bg-[#2997ff] px-3.5 py-1 text-[12px] font-semibold text-white transition hover:brightness-110 active:scale-95 motion-safe:hover:-translate-y-px sm:block"
             type="button"
           >
             {t.nav.download}
           </button>
+          {/* Hamburger — only on < md where the inline menu is hidden */}
+          <button
+            type="button"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-nav"
+            onClick={() => setMobileOpen((v) => !v)}
+            className="focus-ring flex h-8 w-8 items-center justify-center rounded-md text-white/90 transition hover:text-white md:hidden"
+          >
+            {mobileOpen ? (
+              <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
+                <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+            )}
+          </button>
         </div>
       </nav>
+
+      {/* Mobile sheet — full-bleed, scrim + drawer, scroll-locked body */}
+      <div
+        id="mobile-nav"
+        className={`fixed inset-x-0 top-11 z-40 origin-top transition-[transform,opacity] duration-300 md:hidden ${
+          mobileOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        }`}
+        aria-hidden={!mobileOpen}
+      >
+        <div className="bg-black/85 backdrop-blur-xl">
+          <ul className="mx-auto flex max-w-[640px] flex-col px-6 py-3">
+            {navItems.map((item) => (
+              <li key={item.id}>
+                <button
+                  type="button"
+                  onClick={() => scrollTo(item.id)}
+                  className="focus-ring flex w-full items-center justify-between border-b border-white/10 py-4 text-left text-[15px] font-medium text-white/90 transition hover:text-white"
+                >
+                  {item.label}
+                  <span className="text-white/40" aria-hidden="true">›</span>
+                </button>
+              </li>
+            ))}
+            <li className="pt-4">
+              <button
+                type="button"
+                onClick={() => setMobileOpen(false)}
+                className="focus-ring w-full rounded-full bg-[#2997ff] py-2.5 text-[14px] font-semibold text-white active:scale-95"
+              >
+                {t.nav.download}
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
     </header>
   );
 }
@@ -478,7 +559,7 @@ function LangToggle({ language, setLanguage }: { language: Lang; setLanguage: (l
           onClick={() => setLanguage(l)}
           type="button"
           aria-pressed={language === l}
-          className={`rounded-full px-2.5 py-1 transition ${
+          className={`focus-ring rounded-full px-2.5 py-1 transition ${
             language === l ? "bg-white text-ink" : "text-white/70 hover:text-white"
           }`}
         >
@@ -504,15 +585,17 @@ function HeroSection({ language, t }: { language: Lang; t: Copy }) {
         <span className="type-eyebrow text-blue">{h.badge}</span>
         <h1 className="type-hero mt-3 text-ink">{h.title}</h1>
         <p className="type-lead mx-auto mt-5 max-w-[640px] text-ink-2">{h.subtitle}</p>
-        <div className="mt-7 flex items-center justify-center gap-6">
-          <a href="#live" className="apple-cta-primary">
+        <div className="mt-7 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
+          <a href="#live" className="reveal-item apple-cta-primary" style={{ transitionDelay: "0.3s" }}>
             {h.primaryCta}
           </a>
-          <a href="#privacy" className="apple-cta-link text-blue">
+          <a href="#privacy" className="reveal-item apple-cta-link text-blue" style={{ transitionDelay: "0.45s" }}>
             {h.secondaryCta} ›
           </a>
         </div>
-        <p className="type-caption mx-auto mt-6 max-w-[520px] text-ink-2">{h.trust}</p>
+        <p className="reveal-item type-caption mx-auto mt-6 max-w-[520px] text-ink-2" style={{ transitionDelay: "0.6s" }}>
+          {h.trust}
+        </p>
       </div>
 
       <div className="reveal-item mx-auto mt-16 max-w-[720px]" style={{ transitionDelay: "0.15s" }}>
@@ -684,7 +767,7 @@ function LiveStressMockup({ t, active }: { t: Copy; active: boolean }) {
   const s = t.liveStress;
 
   return (
-    <div className="mockup-card product-shadow-dark mx-auto w-full max-w-[520px] rounded-[28px] border border-white/10 bg-black/40 p-8">
+    <div className="mockup-card product-shadow-dark mx-auto w-full max-w-[520px] rounded-[28px] border border-white/10 bg-black/40 p-6 sm:p-8">
       <div className="flex items-center justify-between">
         <span className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-wider text-white/60">
           <span className="relative flex h-2 w-2">
@@ -699,7 +782,7 @@ function LiveStressMockup({ t, active }: { t: Copy; active: boolean }) {
       </div>
 
       <div className="mt-6 flex flex-col items-center">
-        <div className="relative h-[200px] w-[200px]">
+        <div className="relative aspect-square w-[180px] sm:w-[200px]">
           <div className="ring-breathe h-full w-full">
           <svg viewBox="0 0 200 200" className="h-full w-full -rotate-90">
             <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="14" />
@@ -746,9 +829,9 @@ function AIAnalysisTile({ t }: { t: Copy }) {
 function AIAnalysisMockup({ t, active }: { t: Copy; active: boolean }) {
   const a = t.aiAnalysis;
   return (
-    <div className="mockup-card product-shadow mx-auto w-full max-w-[680px] rounded-[28px] border border-black/10 bg-white p-8">
-      <div className="flex items-center gap-6">
-        <div className="relative h-[110px] w-[110px] shrink-0">
+    <div className="mockup-card product-shadow mx-auto w-full max-w-[680px] rounded-[28px] border border-black/10 bg-white p-6 sm:p-8">
+      <div className="flex items-center gap-4 sm:gap-6">
+        <div className="relative h-[96px] w-[96px] shrink-0 sm:h-[110px] sm:w-[110px]">
           <svg viewBox="0 0 120 120" className="-rotate-90">
             <circle cx="60" cy="60" r="50" fill="none" stroke="#e8e8ed" strokeWidth="10" />
             <circle
@@ -825,7 +908,7 @@ function TrendsMockup({ t, active }: { t: Copy; active: boolean }) {
   const bw = (w - pad * 2) / bars.length - 6;
 
   return (
-    <div className="mockup-card product-shadow-dark mx-auto w-full max-w-[760px] rounded-[28px] border border-white/10 bg-black/40 p-8">
+    <div className="mockup-card product-shadow-dark mx-auto w-full max-w-[760px] rounded-[28px] border border-white/10 bg-black/40 p-6 sm:p-8">
       <div className="flex items-center justify-between">
         <p className="text-[15px] font-semibold text-white/80">{tr.monthlyLabel}</p>
         <span className="text-[13px] text-white/50">
@@ -859,7 +942,7 @@ function TrendsMockup({ t, active }: { t: Copy; active: boolean }) {
 
       <div className="mt-6 border-t border-white/10 pt-5">
         <p className="text-[15px] font-semibold text-white/80">{tr.heatmapLabel}</p>
-        <div className="mt-3 grid grid-cols-10 gap-1.5">
+        <div className="mt-3 grid grid-cols-10 gap-1 sm:gap-1.5">
           {heatmapValues.map((val, i) => (
             <div
               key={i}
@@ -901,7 +984,7 @@ function SleepMockup({ t, active }: { t: Copy; active: boolean }) {
   const total = stages.reduce((sum, x) => sum + x.minutes, 0);
 
   return (
-    <div className="mockup-card product-shadow mx-auto w-full max-w-[680px] overflow-hidden rounded-[28px] border border-black/10 bg-white p-8">
+    <div className="mockup-card product-shadow mx-auto w-full max-w-[680px] overflow-hidden rounded-[28px] border border-black/10 bg-white p-6 sm:p-8">
       <div className="flex items-center justify-between">
         <p className="text-[15px] font-semibold text-ink">{t.sleep.legendTitle}</p>
         <p className="text-[13px] text-ink-2">
@@ -961,7 +1044,7 @@ function CheckInTile({ t }: { t: Copy }) {
 function CheckInMockup({ t, active }: { t: Copy; active: boolean }) {
   const c = t.checkIn;
   return (
-    <div className="mockup-card product-shadow-dark mx-auto w-full max-w-[560px] rounded-[28px] border border-white/10 bg-black/40 p-8">
+    <div className="mockup-card product-shadow-dark mx-auto w-full max-w-[560px] rounded-[28px] border border-white/10 bg-black/40 p-6 sm:p-8">
       <p className="text-[15px] font-semibold text-white/80">{c.title}</p>
       <div className="mt-5 space-y-3">
         {c.items.map((it, i) => (

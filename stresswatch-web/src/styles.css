@@ -99,15 +99,24 @@ body {
   font-weight: 600;
   font-size: 1.0625rem;
   padding: 0.72rem 1.5rem;
-  transition: background 0.2s ease, transform 0.12s ease;
+  transition: background 0.2s ease, transform 0.18s var(--ease-out), box-shadow 0.2s ease;
 }
 
-.apple-cta-primary:hover {
-  background: #0071e3;
+@media (hover: hover) {
+  .apple-cta-primary:hover {
+    background: #0071e3;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0, 102, 204, 0.28);
+  }
 }
 
 .apple-cta-primary:active {
   transform: scale(0.96);
+}
+
+.apple-cta-primary:focus-visible {
+  outline: 2px solid #2997ff;
+  outline-offset: 3px;
 }
 
 .apple-cta-link {
@@ -120,12 +129,24 @@ body {
   opacity: 0.62;
 }
 
+.apple-cta-link:focus-visible {
+  outline: 2px solid #2997ff;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
 /* ── Footer link rhythm ── */
 .footer-link {
   color: #6e6e73;
   line-height: 2.41;
   font-size: 12px;
-  transition: color 0.2s ease;
+  transition: color 0.18s ease;
+  border-radius: 3px;
+}
+
+.footer-link:focus-visible {
+  outline: 2px solid #2997ff;
+  outline-offset: 2px;
 }
 
 .footer-link:hover {
@@ -184,6 +205,40 @@ body {
 .ring-breathe {
   animation: breathe 5s ease-in-out infinite;
   transform-origin: center;
+}
+
+/* ── Language switch cross-fade (mounted by key bump in App) ── */
+@keyframes langFade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.lang-fade {
+  animation: langFade 0.32s var(--ease-out);
+}
+
+/* ── Focus ring: Apple-style Action Blue, visible on keyboard nav only ── */
+.focus-ring:focus-visible {
+  outline: 2px solid #2997ff;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ── On touch-only devices we drop hover affordances but keep focus ── */
+@media (hover: none) {
+  .mockup-card:hover {
+    transform: none !important;
+  }
+  .product-shadow,
+  .product-shadow-dark {
+    box-shadow: rgba(0, 0, 0, 0.22) 3px 5px 30px !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
