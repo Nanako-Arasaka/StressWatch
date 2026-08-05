@@ -484,12 +484,14 @@ function NavBar({ language, setLanguage, t }: { language: Lang; setLanguage: (l:
 
         <div className="flex items-center gap-2 sm:gap-3">
           <LangToggle language={language} setLanguage={setLanguage} />
-          <button
-            className="focus-ring hidden rounded-full bg-[#2997ff] px-3.5 py-1 text-[12px] font-semibold text-white transition hover:brightness-110 active:scale-95 motion-safe:hover:-translate-y-px sm:block"
-            type="button"
+          <a
+            className="focus-ring hidden rounded-full bg-[#2997ff] px-3.5 py-1 text-[12px] font-semibold text-white transition hover:brightness-110 active:scale-95 motion-safe:hover:-translate-y-px sm:inline-flex sm:items-center"
+            href="https://github.com/Nanako-Arasaka/StressWatch"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             {t.nav.download}
-          </button>
+          </a>
           {/* Hamburger — only on < md where the inline menu is hidden */}
           <button
             type="button"
@@ -535,13 +537,15 @@ function NavBar({ language, setLanguage, t }: { language: Lang; setLanguage: (l:
               </li>
             ))}
             <li className="pt-4">
-              <button
-                type="button"
+              <a
+                href="https://github.com/Nanako-Arasaka/StressWatch"
+                target="_blank"
+                rel="noopener noreferrer"
                 onClick={() => setMobileOpen(false)}
-                className="focus-ring w-full rounded-full bg-[#2997ff] py-2.5 text-[14px] font-semibold text-white active:scale-95"
+                className="focus-ring inline-block w-full rounded-full bg-[#2997ff] py-2.5 text-center text-[14px] font-semibold text-white active:scale-95"
               >
                 {t.nav.download}
-              </button>
+              </a>
             </li>
           </ul>
         </div>
