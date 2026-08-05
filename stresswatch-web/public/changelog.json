@@ -1,0 +1,438 @@
+{
+  "syncedAt": "2026-08-05T14:00:33.534Z",
+  "repo": "Nanako-Arasaka/StressWatch",
+  "commitsTotal": 40,
+  "releasesCount": 0,
+  "releases": [],
+  "commitsByMonth": [
+    {
+      "label": "August 2026",
+      "summary": "5 commits",
+      "entries": [
+        {
+          "date": "Aug 5",
+          "sha": "cc354f1",
+          "title": "Fix subpage -> home navigation (relative paths)",
+          "tags": [
+            "Fix"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/cc354f100b7894eba8d2f9e44e55ba6ce3857283",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 5",
+          "sha": "21aa499",
+          "title": "Add Changelog subpage wired to GitHub master commits",
+          "tags": [
+            "Feature"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/21aa499d85e4fcfd7333bea21ea950f6d6d1df00",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 5",
+          "sha": "6400220",
+          "title": "Add How-it-works subpage and wire navigation across pages",
+          "tags": [
+            "CI",
+            "Feature"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/6400220879556ead60378aaf2935f52eef823023",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 5",
+          "sha": "0487104",
+          "title": "Point Download CTAs to GitHub repo (open in new tab)",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/04871048d94f2531a1b2d661a11b1d8452c5598f",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 5",
+          "sha": "3cc41a3",
+          "title": "Boost responsive design and micro-interactions",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/3cc41a3971160217d1fa76cb95efad33fa8cdb03",
+          "author": "Nanako-Arasaka"
+        }
+      ]
+    },
+    {
+      "label": "July 2026",
+      "summary": "6 commits",
+      "entries": [
+        {
+          "date": "Jul 17",
+          "sha": "068d20a",
+          "title": "Improve recovery heatmap: multi-hue scale + legend",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/068d20a38f368b1a4f9ee324663b9bd95c59b660",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Jul 17",
+          "sha": "ab1bb26",
+          "title": "Track web dependency lockfile for reproducible builds",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/ab1bb267874bc1b1e73fe4ed193d037e068f4606",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Jul 17",
+          "sha": "625ce57",
+          "title": "Fix scroll-driven reveal + strengthen cursor particles",
+          "tags": [
+            "Fix",
+            "Motion"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/625ce574e6e8bda60af27e3232aa35f887fb6bdb",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Jul 17",
+          "sha": "4c7ba60",
+          "title": "Add directional reveal, cursor particles, and chart annotations",
+          "tags": [
+            "Motion",
+            "Feature"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/4c7ba6012e1e44fd1ed3c3a3940721ed2dd65a55",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Jul 17",
+          "sha": "28d9594",
+          "title": "Enhance landing-page motion (Apple-style reveal & data animations)",
+          "tags": [
+            "Motion",
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/28d9594b72f4ebdad5aabd9a8a709ab7a908a4a7",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Jul 17",
+          "sha": "83c0d88",
+          "title": "Redesign landing page in Apple design language (overwrite original site)",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/83c0d88e6269495127216b7be84162df6463bc39",
+          "author": "Nanako-Arasaka"
+        }
+      ]
+    },
+    {
+      "label": "June 2026",
+      "summary": "6 commits",
+      "entries": [
+        {
+          "date": "Jun 26",
+          "sha": "d0a75f7",
+          "title": "Add project handoff README",
+          "tags": [
+            "Docs",
+            "Feature"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/d0a75f7e224010e5c675e5c9745a1bcf33dab97a",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Jun 16",
+          "sha": "7519bd1",
+          "title": "修复已知问题",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/7519bd1fcdd62468036abb4f81749f457ffd8aad",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Jun 15",
+          "sha": "cc2a10f",
+          "title": "前端页面和app内容优化",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/cc2a10f9d355bd29935f3520a49ca889c7124dc4",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Jun 15",
+          "sha": "1e3b9cb",
+          "title": "编译错误修改",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/1e3b9cb7ba182fa780abaf65a117fb2e0a30703d",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Jun 11",
+          "sha": "0f20bc3",
+          "title": "修复编译错误问题",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/0f20bc3c7648531a2c450dbbae11d7cf9755da82",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Jun 9",
+          "sha": "51e91e2",
+          "title": "widget add in.",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/51e91e2782c44f439c9170df014d7d5fa5d9445e",
+          "author": "Nanako-Arasaka"
+        }
+      ]
+    },
+    {
+      "label": "May 2026",
+      "summary": "23 commits",
+      "entries": [
+        {
+          "date": "May 31",
+          "sha": "3cf09d4",
+          "title": "widget add in.",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/3cf09d43bb9019931d7abf1fe71a823c39f99c16",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 30",
+          "sha": "f5a9ab1",
+          "title": "加入基于个人数据训练模型",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/f5a9ab12394efbb9e6ccb6b9e308a1db5bab5861",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 30",
+          "sha": "0e403c4",
+          "title": "coreml 架构预埋",
+          "tags": [
+            "AI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/0e403c451a618a5c808b245ada3aec451b19b5e3",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 30",
+          "sha": "d195002",
+          "title": "结合机器学习内容，加入个人训练模型",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/d195002ba0d62fb89cfa06737c3b519685a3c0b1",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 30",
+          "sha": "1e856f8",
+          "title": "Live Stress Estimate Upgrade",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/1e856f88d9f30608c3dafaba6f91e0d1afbdb607",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 30",
+          "sha": "b0d48b4",
+          "title": "前端页面debug",
+          "tags": [
+            "Fix"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/b0d48b4a72b5586990faa3a3899b460e2e6fe579",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 30",
+          "sha": "56fbac0",
+          "title": "前端页面更改颜色主题",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/56fbac05a3c9bdeb252014874628f66f1a598c3c",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 28",
+          "sha": "d37090b",
+          "title": "数据图标大改，视觉效果优化",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/d37090b9dad1c988c28de4a11dbcab609d2faada",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 26",
+          "sha": "698a216",
+          "title": "修改视觉优化性能",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/698a2163614e5e7c0033ea3e4d4ab1bbd12568a5",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 25",
+          "sha": "d21dbb9",
+          "title": "尝试编译1",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/d21dbb962d22b0273a1e2d2cf2e0083d597af5b2",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 24",
+          "sha": "5fb091e",
+          "title": "修改readme文件",
+          "tags": [
+            "Docs"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/5fb091e1581a22f9841157cc042378388dd76b56",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 24",
+          "sha": "4b8a01a",
+          "title": "加入基于用户数据学习的demo功能，其次是架构大改，基于先前架构功能做出大幅优化",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/4b8a01a32968de3ffc1f9728f4864d6b6ffbcb92",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 24",
+          "sha": "8c88803",
+          "title": "依旧polish",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/8c88803f8a6178fd361a478b6ef1c741c4e54c93",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 23",
+          "sha": "afddf60",
+          "title": "app视觉结构与前端统一",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/afddf60e60f440484a03644b59bb76991431a0c8",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 23",
+          "sha": "14ddd8d",
+          "title": "修改bug：设置页面按钮点击无效",
+          "tags": [
+            "Fix"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/14ddd8deb0ee5c56215ea82fc9064abde5501995",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 23",
+          "sha": "55ad9c4",
+          "title": "优化",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/55ad9c4c7b84a76e862ff60059b28c378c4fae55",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 23",
+          "sha": "d1f7001",
+          "title": "更改app端整体视觉逻辑",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/d1f700195da2da16cf4488174546eca6214a4bc1",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 23",
+          "sha": "25b7b11",
+          "title": "xcode真机编译通过，现在加入healthkit接入功能，再加之部分app界面美化",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/25b7b11bcce4031d08d339e7433aac1143442ac8",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 21",
+          "sha": "1a49fe5",
+          "title": "前端界面美化，以及加入logo部分",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/1a49fe5f1a038687eae3a3e843e3ec962506f978",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 21",
+          "sha": "05854ee",
+          "title": "优化修改前端页面",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/05854ee37ebd1db945d55a2211beb7bc5a71c724",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 21",
+          "sha": "38a5450",
+          "title": "修改 TypeScript报错问题",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/38a54507a850bec500dddb0132779b1b99eea574",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 20",
+          "sha": "7901d48",
+          "title": "加入自动化github pages部署文件",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/7901d4886a61c09c712e55e6d5f6551fdfd08e1b",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "May 20",
+          "sha": "4b326a0",
+          "title": "initial import with privacy-safe gitignore",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/4b326a09e64de149669905cfe6aea5dd8019cabc",
+          "author": "Nanako-Arasaka"
+        }
+      ]
+    }
+  ]
+}

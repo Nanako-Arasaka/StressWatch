@@ -145,6 +145,17 @@ type Copy = {
   };
 };
 
+// Shape of stresswatch-web/public/changelog.json (produced by
+// scripts/snapshot-commits.mjs on a schedule). Loose shape — extras
+// ignored — so older snapshots still parse.
+type ChangelogSnapshot = {
+  syncedAt?: string;
+  repo?: string;
+  commitsTotal?: number;
+  releases?: { tag: string; name: string; date: string; body: string; sha: string; assetCount: number; url: string }[];
+  commitsByMonth?: { label: string; summary: string; entries: { date: string; sha: string; title: string; tags: string[]; url?: string; author?: string }[] }[];
+};
+
 const copy: Record<Lang, Copy> = {
   en: {
     nav: { dashboard: "Dashboard", features: "Features", how: "How it works", privacy: "Privacy", download: "Download App", languageLabel: "Language", changelog: "Changelog" },
@@ -1860,7 +1871,89 @@ function ChangelogPage() {
     setLangTick((n) => n + 1);
     setLanguage(l);
   };
+
+  // Snapshot from GitHub (refreshed by Actions every 6h, committed
+  // back to master, served at /changelog.json). If the fetch fails
+  // (offline preview, blocked, missing file), we fall back to the
+  // curated bilingual static copy so the page is never blank.
+  const fallbackGroups = t.changelog.groups;
+  const fallbackRepo = t.changelog.repo;
+  const fallbackCountLabel = t.changelog.countLabel;
+  const [snapshot, setSnapshot] = useState<{
+    syncedAt: string | null;
+    repo: string;
+    countLabel: string;
+    groups: typeof t.changelog.groups;
+    releaseCount: number;
+    loading: boolean;
+    error: string | null;
+  }>({
+    syncedAt: null,
+    repo: fallbackRepo,
+    countLabel: fallbackCountLabel,
+    groups: fallbackGroups,
+    releaseCount: 0,
+    loading: true,
+    error: null,
+  });
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = () =>
+      fetch("./changelog.json", { cache: "no-store" })
+        .then((r) => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.json();
+        })
+        .then((data: ChangelogSnapshot) => {
+          if (cancelled) return;
+          setSnapshot({
+            syncedAt: data.syncedAt ?? null,
+            repo: data.repo ?? fallbackRepo,
+            countLabel:
+              typeof data.commitsTotal === "number"
+                ? `${data.commitsTotal} ${language === "zh" ? "次提交" : "commits"}`
+                : fallbackCountLabel,
+            groups: (data.commitsByMonth ?? []).map((g) => ({
+              label: g.label,
+              summary: g.summary,
+              entries: g.entries.map((e) => ({
+                date: e.date,
+                sha: e.sha,
+                title: e.title,
+                tags: e.tags,
+              })),
+            })),
+            releaseCount: Array.isArray(data.releases) ? data.releases.length : 0,
+            loading: false,
+            error: null,
+          });
+        })
+        .catch((e: Error) => {
+          if (cancelled) return;
+          setSnapshot((s) => ({ ...s, loading: false, error: e.message }));
+        });
+    load();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const c = t.changelog;
+  const syncTime = snapshot.syncedAt
+    ? new Date(snapshot.syncedAt).toLocaleString(
+        language === "zh" ? "zh-CN" : "en-US",
+        {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        },
+      )
+    : null;
 
   return (
     <>
@@ -1884,14 +1977,30 @@ function ChangelogPage() {
             <div className="mt-7 flex flex-col items-center justify-center gap-3 text-[13px] sm:flex-row sm:gap-5">
               <a
                 className="text-blue"
-                href={`https://${c.repo}`}
+                href={`https://${snapshot.repo}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {c.repo}
+                {snapshot.repo}
               </a>
               <span className="text-ink-3">·</span>
-              <span className="text-ink-2">{c.countLabel}</span>
+              <span className="text-ink-2">{snapshot.countLabel}</span>
+              {snapshot.loading ? (
+                <span className="inline-flex items-center gap-1.5 text-[12px] text-ink-2">
+                  <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-blue" />
+                  {language === "zh" ? "从 GitHub 同步中…" : "Syncing from GitHub…"}
+                </span>
+              ) : syncTime ? (
+                <span className="text-[12px] text-ink-2">
+                  {language === "zh" ? "同步于 " : "Synced "}
+                  {syncTime}
+                </span>
+              ) : null}
+              {snapshot.error ? (
+                <span className="text-[12px] text-[#A32D2D]">
+                  {language === "zh" ? "已显示静态快照" : "Showing static snapshot"}
+                </span>
+              ) : null}
             </div>
           </div>
         </section>
@@ -1901,7 +2010,7 @@ function ChangelogPage() {
           <div className="mx-auto flex max-w-[1040px] gap-8 sm:gap-12">
             <div className="hidden w-1 shrink-0 self-stretch bg-[#D2D2D7] sm:block" aria-hidden="true" />
             <div className="flex flex-1 flex-col gap-10">
-              {c.groups.map((g) => (
+              {snapshot.groups.map((g) => (
                 <div key={g.label} className="flex flex-col gap-4">
                   <div className="flex flex-col gap-1">
                     <span className="type-eyebrow text-blue">{g.label}</span>
