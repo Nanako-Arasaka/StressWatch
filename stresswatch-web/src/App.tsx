@@ -1795,21 +1795,45 @@ function ShieldIcon({ className = "" }: { className?: string }) {
 /* ───────────────────────── Footer (parchment) ───────────────────────── */
 function Footer({ t, variant = "home" }: { t: Copy; variant?: "home" | "subpage" | "changelog" }) {
   const f = t.footer;
-  // Map specific footer link labels to real targets. Anything not listed
-  // here still falls back to a harmless "#" so the layout stays consistent.
-  // On subpages we are one directory deeper, so paths go up a level first.
+  // On subpages we are one directory deeper, so paths go up a level
+  // first. On home, the link can stay relative to the page root.
   const prefix = variant === "home" ? "./" : "../";
+
+  // Map footer link labels to real targets. Anything not listed here
+  // falls back to a harmless "#" so the layout stays consistent.
+  // Product column -> home anchors; Resources column (Changelog) and
+  // Privacy column -> subpages. About/Contact/Support are placeholders
+  // until those pages exist, so they intentionally stay "#" rather
+  // than pretending to navigate.
+  const PRODUCT_ANCHORS: Record<string, string> = {
+    Dashboard: "hero",
+    仪表盘: "hero",
+    "Live Stress": "live",
+    实时压力: "live",
+    "AI Analysis": "analysis",
+    "AI 分析": "analysis",
+    Trends: "trends",
+    趋势: "trends",
+    Sleep: "sleep",
+    睡眠: "sleep"
+  };
+
   const linkHref = (label: string): string => {
-    if (label === "Changelog") return `${prefix}changelog/`;
+    if (label === "Changelog" || label === "更新日志") return `${prefix}changelog/`;
     if (
       label === "Privacy" ||
       label === "Privacy whitepaper" ||
+      label === "隐私白皮书" ||
       label === "Local-first" ||
+      label === "本地优先" ||
       label === "HealthKit" ||
-      label === "Data security"
+      label === "Data security" ||
+      label === "数据安全"
     ) {
       return `${prefix}privacy/`;
     }
+    const anchor = PRODUCT_ANCHORS[label];
+    if (anchor) return `${prefix}#${anchor}`;
     return "#";
   };
   return (
