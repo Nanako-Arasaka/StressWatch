@@ -10,7 +10,8 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, "index.html"),
         how: resolve(__dirname, "how/index.html"),
-        changelog: resolve(__dirname, "changelog/index.html")
+        changelog: resolve(__dirname, "changelog/index.html"),
+        privacy: resolve(__dirname, "privacy/index.html")
       }
     }
   }

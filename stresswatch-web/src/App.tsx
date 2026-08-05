@@ -96,6 +96,38 @@ type Copy = {
     chips: string[];
     cta: string;
   };
+  privacyPage: {
+    eyebrow: string;
+    title1: string;
+    title2: string;
+    subtitle: string;
+    introEyebrow: string;
+    introTitle: string;
+    introBody: string;
+    introChips: string[];
+    pillars: { title: string; desc: string; tag: string }[];
+    pillarsHeading: string;
+    pillarsSub: string;
+    hkBadge: string;
+    hkHeading: string;
+    hkSub: string;
+    hkNote: string;
+    hkReads: string[];
+    hkWritesLabel: string;
+    hkWritesValue: string;
+    analyticsBadge: string;
+    analyticsTitle: string;
+    analyticsBody: string;
+    analyticsRows: { label: string; value: string; tone: "ok" | "warn" | "info" }[];
+    sourceBadge: string;
+    sourceTitle: string;
+    sourceBody: string;
+    ctaTitle: string;
+    ctaSub: string;
+    ctaPrimary: string;
+    ctaSecondary: string;
+    backHome: string;
+  };
   how: {
     badge: string;
     eyebrow: string;
@@ -257,6 +289,58 @@ const copy: Record<Lang, Copy> = {
       cardDesc: "All health data is stored only on your iPhone / Apple Watch.",
       chips: ["HealthKit", "Local storage", "Offline"],
       cta: "Read the privacy note"
+    },
+    privacyPage: {
+      eyebrow: "Privacy",
+      title1: "Your health data",
+      title2: "belongs to you only.",
+      subtitle: "StressWatch is local-first by design — no account, no cloud upload, no analytics SDK, no opt-in switch hidden in Settings. Every byte that leaves your device is one you sent on purpose.",
+      introEyebrow: "Local-first",
+      introTitle: "Read on the device. Decide on the device. Stay on the device.",
+      introBody: "Install, grant HealthKit, use it. There is no server-side identity, no signup, no sync, and no opt-in upload. The app does not contain any analytics SDK and never makes a network request for telemetry.",
+      introChips: ["No account", "No cloud upload", "No analytics SDK", "Works offline"],
+      pillarsHeading: "Four pillars",
+      pillarsSub: "Every feature is reviewed against these four commitments. If any of them is violated, it's a bug.",
+      pillars: [
+        { tag: "01", title: "No account, no login", desc: "There is no server-side identity. Installation + HealthKit permission is the entire onboarding. The Settings screen has no email or sign-in field because there is nothing to sign into." },
+        { tag: "02", title: "HealthKit read-only", desc: "The app requests read-only HealthKit scopes. It never writes back to Apple Health and never asks for write authorisation. Closing the app revokes any pending reads immediately." },
+        { tag: "03", title: "Local-only storage", desc: "Computed baselines, daily states, the 5-day check-in history, and widget snapshots live in the app's Documents directory as plain JSON. Delete the app and they are gone — there is no copy off-device." },
+        { tag: "04", title: "No analytics, no telemetry", desc: "There is no Firebase, no Amplitude, no Mixpanel, no Sentry, and no crash reporter. ARCHITECTURE.md states it explicitly: no network request is allowed for analytics or sync, ever." }
+      ],
+      hkBadge: "HealthKit",
+      hkHeading: "Exactly seven HealthKit signals are read",
+      hkSub: "Read-only, on demand, capped to 600 samples per fetch to stay battery-friendly. Nothing else.",
+      hkNote: "Reads are issued by HealthKitService.fetchSignals(forRange:) — the same call site the README documents.",
+      hkReads: [
+        "HKQuantityTypeIdentifier.heartRate",
+        "HKQuantityTypeIdentifier.heartRateVariabilitySDNN",
+        "HKQuantityTypeIdentifier.restingHeartRate",
+        "HKCategoryTypeIdentifier.sleepAnalysis",
+        "HKQuantityTypeIdentifier.stepCount",
+        "HKQuantityTypeIdentifier.activeEnergyBurned",
+        "HKQuantityTypeIdentifier.appleExerciseTime (iOS 18+ also reads appleStandTime)"
+      ],
+      hkWritesLabel: "HealthKit writes",
+      hkWritesValue: "None — never requested, never performed.",
+      analyticsBadge: "Networking",
+      analyticsTitle: "What crosses the network — and what doesn't",
+      analyticsBody: "We treat the network boundary as the privacy boundary. Here is the complete inventory.",
+      analyticsRows: [
+        { label: "Analytics / telemetry", value: "Not transmitted", tone: "ok" },
+        { label: "Crash reporting", value: "Not transmitted", tone: "ok" },
+        { label: "Account / login traffic", value: "Not transmitted", tone: "ok" },
+        { label: "Health data sync", value: "Not transmitted", tone: "ok" },
+        { label: "Optional opt-in upload", value: "Does not exist", tone: "ok" },
+        { label: "Outgoing requests (total)", value: "Zero, by policy", tone: "info" }
+      ],
+      sourceBadge: "Documentation",
+      sourceTitle: "Three places this promise is written down",
+      sourceBody: "Privacy claims are easy to make and easy to break. So this page links the same three documents the README, the Settings screen, and the architecture diagram all reference. If you ever find a contradiction, the bug is the contradiction, not the page.",
+      ctaTitle: "Read the code, not the marketing.",
+      ctaSub: "The repo is open-source. HealthKitService, BaselineEngine, FeatureExtractor, and CoreMLWellnessAnalyzer are the four files that touch your data. Open them, audit them, build them yourself.",
+      ctaPrimary: "View on GitHub",
+      ctaSecondary: "How it works",
+      backHome: "Back to home"
     },
     how: {
       badge: "How it works",
@@ -517,6 +601,58 @@ const copy: Record<Lang, Copy> = {
       cardDesc: "所有健康数据仅存储于你的 iPhone / Apple Watch。",
       chips: ["HealthKit", "本机存储", "离线可用"],
       cta: "阅读隐私说明"
+    },
+    privacyPage: {
+      eyebrow: "隐私",
+      title1: "你的健康数据",
+      title2: "只属于你一个人。",
+      subtitle: "StressWatch 从第一天起就是本地优先——没有账号、没有云上传、没有分析 SDK、设置里也没有隐藏的上传开关。任何离开设备的数据，都必须是你主动发出的。",
+      introEyebrow: "本地优先",
+      introTitle: "在本机读取，在本机决策，留在本机。",
+      introBody: "安装、授权 HealthKit、开始使用。没有服务端身份、没有注册流程、没有同步开关，也没有「可选上报」选项。App 不集成任何分析 SDK，也不会因为遥测而发起任何网络请求。",
+      introChips: ["无账号", "无云上传", "无分析 SDK", "离线可用"],
+      pillarsHeading: "四条底线",
+      pillarsSub: "每一项功能都按这四条标准审核。任何一条被破坏，那就是 bug。",
+      pillars: [
+        { tag: "01", title: "没有账号，无需登录", desc: "服务端不存在身份系统。安装 + 授权 HealthKit 就是完整的入门流程。设置页里没有邮箱框、没有登录框，因为根本没有要登录的地方。" },
+        { tag: "02", title: "HealthKit 只读", desc: "App 只请求读取权限，永远不会向 Apple Health 写入，也从未要求过写权限。退出 App 后任何挂起读取立即失效。" },
+        { tag: "03", title: "仅本机存储", desc: "基线、每日状态、5 天打卡历史、小组件快照都以 JSON 形式保存在 App 的 Documents 目录。删除 App 即全部销毁，设备外没有任何副本。" },
+        { tag: "04", title: "无分析、无埋点", desc: "没有 Firebase / Amplitude / Mixpanel / Sentry，也没有崩溃上报 SDK。ARCHITECTURE.md 明确写了：禁止任何用于分析或同步的网络请求。" }
+      ],
+      hkBadge: "HealthKit",
+      hkHeading: "App 只读取这 7 条 HealthKit 信号",
+      hkSub: "全部只读、按需拉取、每次最多 600 条以兼顾续航。除此之外什么都不读。",
+      hkNote: "读取由 HealthKitService.fetchSignals(forRange:) 发起——与 README 文档中的调用点一致。",
+      hkReads: [
+        "HKQuantityTypeIdentifier.heartRate",
+        "HKQuantityTypeIdentifier.heartRateVariabilitySDNN",
+        "HKQuantityTypeIdentifier.restingHeartRate",
+        "HKCategoryTypeIdentifier.sleepAnalysis",
+        "HKQuantityTypeIdentifier.stepCount",
+        "HKQuantityTypeIdentifier.activeEnergyBurned",
+        "HKQuantityTypeIdentifier.appleExerciseTime（iOS 18+ 还读取 appleStandTime）"
+      ],
+      hkWritesLabel: "HealthKit 写入",
+      hkWritesValue: "无——从未请求，也从未执行。",
+      analyticsBadge: "网络",
+      analyticsTitle: "什么会穿过网络——什么不会",
+      analyticsBody: "我们把网络边界当作隐私边界。以下是完整的清单。",
+      analyticsRows: [
+        { label: "分析 / 遥测", value: "不发送", tone: "ok" },
+        { label: "崩溃上报", value: "不发送", tone: "ok" },
+        { label: "账号 / 登录流量", value: "不发送", tone: "ok" },
+        { label: "健康数据同步", value: "不发送", tone: "ok" },
+        { label: "可选上报开关", value: "不存在", tone: "ok" },
+        { label: "外发请求（合计）", value: "策略为 0", tone: "info" }
+      ],
+      sourceBadge: "文档",
+      sourceTitle: "这个承诺写在了三个地方",
+      sourceBody: "隐私承诺说起来容易，做起来难。所以本页直接链接 README、设置页、架构文档中描述同一件事的三段文字。如果你发现说法不一致，那就是不一致本身是 bug。",
+      ctaTitle: "看代码，不看营销。",
+      ctaSub: "仓库是开源的。HealthKitService、BaselineEngine、FeatureExtractor、CoreMLWellnessAnalyzer 是接触你数据的四个文件。打开它们、审阅它们、自己构建。",
+      ctaPrimary: "前往 GitHub",
+      ctaSecondary: "工作原理",
+      backHome: "返回首页"
     },
     how: {
       badge: "工作原理",
@@ -820,9 +956,10 @@ function NavBar({
   // "home"  -> page is at the repo root (./)
   // "subpage" / "changelog" -> page is one directory deeper (../)
   const homeHref = variant === "home" ? "./" : "../";
-  // Same-page → "./"; cross-page → "./how/" or "./changelog/"
+  // Same-page → "./"; cross-page → "./how/" "./changelog/" or "./privacy/"
   const howHref = variant === "subpage" ? "./" : "./how/";
   const changelogHref = variant === "changelog" ? "./" : "./changelog/";
+  const privacyHref = "./privacy/";
 
   return (
     <header className={`apple-nav fixed inset-x-0 top-0 z-50 h-11 ${scrolled ? "scrolled" : ""}`}>
@@ -866,6 +1003,17 @@ function NavBar({
                   className={`focus-ring rounded-md text-[12px] transition hover:text-white ${
                     isActive ? "font-semibold text-white" : "font-normal text-white/80"
                   }`}
+                >
+                  {item.label}
+                </a>
+              );
+            }
+            if (item.label === t.nav.privacy) {
+              return (
+                <a
+                  key={item.id}
+                  href={privacyHref}
+                  className="focus-ring rounded-md text-[12px] font-normal text-white/80 transition hover:text-white"
                 >
                   {item.label}
                 </a>
@@ -968,6 +1116,20 @@ function NavBar({
                       className={`focus-ring flex w-full items-center justify-between border-b border-white/10 py-4 text-left text-[15px] transition hover:text-white ${
                         variant === "changelog" ? "font-semibold text-white" : "font-medium text-white/90"
                       }`}
+                    >
+                      {item.label}
+                      <span className="text-white/40" aria-hidden="true">›</span>
+                    </a>
+                  </li>
+                );
+              }
+              if (item.label === t.nav.privacy) {
+                return (
+                  <li key={item.id}>
+                    <a
+                      href={privacyHref}
+                      onClick={() => setMobileOpen(false)}
+                      className="focus-ring flex w-full items-center justify-between border-b border-white/10 py-4 text-left text-[15px] font-medium text-white/90 transition hover:text-white"
                     >
                       {item.label}
                       <span className="text-white/40" aria-hidden="true">›</span>
@@ -1616,6 +1778,15 @@ function Footer({ t, variant = "home" }: { t: Copy; variant?: "home" | "subpage"
   const prefix = variant === "home" ? "./" : "../";
   const linkHref = (label: string): string => {
     if (label === "Changelog") return `${prefix}changelog/`;
+    if (
+      label === "Privacy" ||
+      label === "Privacy whitepaper" ||
+      label === "Local-first" ||
+      label === "HealthKit" ||
+      label === "Data security"
+    ) {
+      return `${prefix}privacy/`;
+    }
     return "#";
   };
   return (
@@ -2064,8 +2235,218 @@ function ChangelogPage() {
   );
 }
 
-export default function App({ variant }: { variant?: "home" | "changelog" } = {}) {
+/* ───────────────────────── Privacy — subpage ───────────────────────── */
+
+function PrivacyPage() {
+  const [language, setLanguage] = useState<Lang>("zh");
+  const [langTick, setLangTick] = useState(0);
+  const t = copy[language];
+  const switchLanguage = (l: Lang) => {
+    if (l === language) return;
+    setLangTick((n) => n + 1);
+    setLanguage(l);
+  };
+  const p = t.privacyPage;
+
+  return (
+    <>
+      <main
+        key={langTick}
+        className="lang-fade font-apple min-h-screen overflow-x-hidden bg-white text-ink antialiased"
+        lang={language === "zh" ? "zh-CN" : "en"}
+      >
+        <NavBar language={language} setLanguage={switchLanguage} t={t} variant="subpage" />
+
+        {/* Hero — light parchment */}
+        <section className="bg-parchment px-5 pb-20 pt-28 sm:pb-24 sm:pt-36">
+          <div className="mx-auto max-w-[820px] text-center">
+            <span className="type-eyebrow text-blue">{p.eyebrow}</span>
+            <h1 className="type-hero mt-3 text-ink">
+              {p.title1}
+              <br />
+              {p.title2}
+            </h1>
+            <p className="type-lead mx-auto mt-5 max-w-[680px] text-ink-2">{p.subtitle}</p>
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-2">
+              {p.introChips.map((chip) => (
+                <span
+                  key={chip}
+                  className="inline-flex items-center rounded-full bg-white px-3 py-1 text-[12px] font-semibold text-ink-2 shadow-product"
+                >
+                  {chip}
+                </span>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Intro — light, single product card */}
+        <section className="bg-white px-5 py-16">
+          <div className="mx-auto max-w-[820px] text-center">
+            <span className="type-eyebrow text-blue">{p.introEyebrow}</span>
+            <h2 className="mt-3 text-[34px] font-semibold leading-tight tracking-tight text-ink sm:text-[40px]">
+              {p.introTitle}
+            </h2>
+            <p className="mx-auto mt-5 max-w-[680px] text-[18px] leading-relaxed text-ink-2">
+              {p.introBody}
+            </p>
+          </div>
+        </section>
+
+        {/* Four pillars — parchment, two-column cards */}
+        <section className="bg-parchment px-5 py-20">
+          <div className="mx-auto flex max-w-[1040px] flex-col items-center gap-12">
+            <div className="text-center">
+              <span className="type-eyebrow text-blue">{p.pillarsHeading}</span>
+              <h2 className="mt-3 text-[34px] font-semibold leading-tight tracking-tight text-ink sm:text-[40px]">
+                {p.pillarsSub}
+              </h2>
+            </div>
+            <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2">
+              {p.pillars.map((it) => (
+                <article
+                  key={it.tag}
+                  className="flex flex-col gap-4 rounded-[24px] border border-black/10 bg-white p-7 shadow-product"
+                >
+                  <span className="inline-flex w-fit items-center rounded-full bg-[#E6F0FF] px-3 py-1 text-[12px] font-semibold tracking-wider text-blue">
+                    {it.tag}
+                  </span>
+                  <h3 className="text-[22px] font-semibold tracking-tight text-ink">{it.title}</h3>
+                  <p className="text-[15px] leading-relaxed text-ink-2">{it.desc}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* HealthKit reads — light, two-column: list + reads card */}
+        <section className="bg-white px-5 py-20">
+          <div className="mx-auto flex max-w-[1040px] flex-col gap-10 sm:flex-row sm:gap-12">
+            <div className="flex flex-1 flex-col gap-4">
+              <span className="type-eyebrow text-blue">{p.hkBadge}</span>
+              <h2 className="text-[34px] font-semibold leading-tight tracking-tight text-ink sm:text-[40px]">
+                {p.hkHeading}
+              </h2>
+              <p className="text-[18px] leading-relaxed text-ink-2">{p.hkSub}</p>
+              <p className="text-[12px] leading-relaxed text-ink-3">{p.hkNote}</p>
+            </div>
+            <div className="flex flex-1 flex-col gap-4 rounded-[24px] border border-black/10 bg-parchment p-7 shadow-product">
+              <h3 className="text-[13px] font-semibold uppercase tracking-wider text-ink-2">{language === "zh" ? "读取" : "Reads"}</h3>
+              <ul className="flex flex-col gap-3">
+                {p.hkReads.map((line) => (
+                  <li key={line} className="flex items-start gap-3 text-[14px] leading-relaxed text-ink">
+                    <span aria-hidden="true" className="mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-blue" />
+                    <code className="font-mono text-[13px]">{line}</code>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-2 border-t border-black/10 pt-4">
+                <p className="text-[12px] font-semibold uppercase tracking-wider text-ink-2">{p.hkWritesLabel}</p>
+                <p className="mt-1 text-[15px] font-medium text-ink">{p.hkWritesValue}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Networking inventory — dark tile, two-tone row */}
+        <section className="bg-[#272729] px-5 py-20 text-white">
+          <div className="mx-auto flex max-w-[1040px] flex-col gap-12">
+            <div className="text-center">
+              <span className="type-eyebrow text-blue-sky">{p.analyticsBadge}</span>
+              <h2 className="mt-3 text-[34px] font-semibold leading-tight tracking-tight sm:text-[40px]">
+                {p.analyticsTitle}
+              </h2>
+              <p className="mx-auto mt-4 max-w-[680px] text-[18px] leading-relaxed text-white/65">
+                {p.analyticsBody}
+              </p>
+            </div>
+            <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
+              {p.analyticsRows.map((row, i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between rounded-[14px] border border-white/10 bg-white/5 px-5 py-4"
+                >
+                  <span className="text-[14px] text-white/70">{row.label}</span>
+                  <span
+                    className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-[12px] font-semibold ${
+                      row.tone === "ok"
+                        ? "bg-[#30D158]/15 text-[#5BD574]"
+                        : row.tone === "warn"
+                          ? "bg-[#FFD60A]/15 text-[#FFD60A]"
+                          : "bg-[#2997FF]/15 text-[#6FB6FF]"
+                    }`}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`inline-block h-1.5 w-1.5 rounded-full ${
+                        row.tone === "ok" ? "bg-[#30D158]" : row.tone === "warn" ? "bg-[#FFD60A]" : "bg-[#2997FF]"
+                      }`}
+                    />
+                    {row.value}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Documentation — parchment */}
+        <section className="bg-parchment px-5 py-20">
+          <div className="mx-auto flex max-w-[820px] flex-col items-center gap-4 text-center">
+            <span className="type-eyebrow text-blue">{p.sourceBadge}</span>
+            <h2 className="text-[34px] font-semibold leading-tight tracking-tight text-ink sm:text-[40px]">
+              {p.sourceTitle}
+            </h2>
+            <p className="max-w-[680px] text-[16px] leading-relaxed text-ink-2">{p.sourceBody}</p>
+            <div className="mt-4 grid w-full grid-cols-1 gap-3 sm:grid-cols-3">
+              {[
+                { tag: "README.md", desc: language === "zh" ? "隐私段" : "Privacy section" },
+                { tag: "ARCHITECTURE.md", desc: language === "zh" ? "本地 only 条款" : "Local-only clause" },
+                { tag: "SettingsView.swift", desc: language === "zh" ? "隐私文案" : "Privacy copy" }
+              ].map((d) => (
+                <div key={d.tag} className="flex flex-col gap-1 rounded-[16px] border border-black/10 bg-white p-5 shadow-product">
+                  <code className="font-mono text-[14px] font-semibold text-ink">{d.tag}</code>
+                  <p className="text-[12px] text-ink-2">{d.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA — light */}
+        <section className="bg-white px-5 py-20">
+          <div className="mx-auto flex max-w-[820px] flex-col items-center gap-6 text-center">
+            <h2 className="text-[34px] font-semibold leading-tight tracking-tight text-ink sm:text-[40px]">
+              {p.ctaTitle}
+            </h2>
+            <p className="max-w-[680px] text-[18px] text-ink-2">{p.ctaSub}</p>
+            <a
+              href="https://github.com/Nanako-Arasaka/StressWatch"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="apple-cta-primary"
+            >
+              {p.ctaPrimary} ›
+            </a>
+            <a href="../how/" className="apple-cta-link text-blue">
+              {p.ctaSecondary} ›
+            </a>
+            <a href="../" className="apple-cta-link text-blue">
+              {p.backHome} ›
+            </a>
+          </div>
+        </section>
+
+        <Footer t={t} variant="subpage" />
+        <CursorParticles />
+      </main>
+    </>
+  );
+}
+
+export default function App({ variant }: { variant?: "home" | "changelog" | "privacy" } = {}) {
   if (variant === "changelog") return <ChangelogPage />;
+  if (variant === "privacy") return <PrivacyPage />;
   return <HomePage />;
 }
 
