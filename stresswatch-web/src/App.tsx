@@ -175,6 +175,34 @@ type Copy = {
     backHome: string;
     groups: { label: string; summary: string; entries: { date: string; sha: string; title: string; tags: string[] }[] }[];
   };
+  about: {
+    eyebrow: string;
+    title1: string;
+    title2: string;
+    subtitle: string;
+    profileBadge: string;
+    profileName: string;
+    profileRole: string;
+    profileSchool: string;
+    profileLab: string;
+    profileLocation: string;
+    profileBio: string;
+    profileChips: string[];
+    contactBadge: string;
+    contactTitle: string;
+    contactSub: string;
+    githubLabel: string;
+    githubHandle: string;
+    githubSub: string;
+    emailLabel: string;
+    emailAddress: string;
+    emailSub: string;
+    ctaTitle: string;
+    ctaSub: string;
+    ctaPrimary: string;
+    ctaSecondary: string;
+    backHome: string;
+  };
 };
 
 // Shape of stresswatch-web/public/changelog.json (produced by
@@ -437,7 +465,7 @@ const copy: Record<Lang, Copy> = {
       columns: [
         { title: "Product", links: ["Dashboard", "Live Stress", "AI Analysis", "Trends", "Sleep"] },
         { title: "Resources", links: ["Privacy whitepaper", "Support", "Changelog"] },
-        { title: "Company", links: ["About", "Contact"] },
+        { title: "About", links: ["About me"] },
         { title: "Privacy", links: ["Local-first", "HealthKit", "Data security"] }
       ],
       copyright: "Copyright 2026 · StressWatch. All rights reserved.",
@@ -501,6 +529,34 @@ const copy: Record<Lang, Copy> = {
           ]
         }
       ]
+    },
+    about: {
+      eyebrow: "About",
+      title1: "One student,",
+      title2: "one wellness app.",
+      subtitle: "StressWatch is a solo project — built, designed, and shipped by Chan Silence from the AI Lab at South-Central Minzu University. Below is who is behind it and how to reach them.",
+      profileBadge: "Author",
+      profileName: "Chan Silence",
+      profileRole: "Undergraduate · Artificial Intelligence",
+      profileSchool: "South-Central Minzu University",
+      profileLab: "AI Lab, School of Computer Science",
+      profileLocation: "Wuhan, Hubei, China",
+      profileBio: "AI major focused on applied machine learning and on-device intelligence. StressWatch started as a personal experiment: can a Core ML classifier, fed by Apple Health signals, give a useful daily wellness score without ever touching a server? The answer became the app on your wrist.",
+      profileChips: ["AI Lab · SCUN", "Core ML", "HealthKit", "Local-first"],
+      contactBadge: "Contact",
+      contactTitle: "Best way to reach me: GitHub.",
+      contactSub: "I do not publish a personal email. The email below is the address GitHub exposes on my commits — open them and you can verify the same one.",
+      githubLabel: "GitHub profile",
+      githubHandle: "@Nanako-Arasaka",
+      githubSub: "Open issues, send pull requests, or just say hi.",
+      emailLabel: "Email (visible on commits)",
+      emailAddress: "3143445389@qq.com",
+      emailSub: "Same address attached to every commit on github.com/Nanako-Arasaka/StressWatch.",
+      ctaTitle: "Read the code, send a PR.",
+      ctaSub: "StressWatch is open-source. Issues, ideas, and code reviews are the fastest way to reach me.",
+      ctaPrimary: "Open the repo on GitHub",
+      ctaSecondary: "How it works",
+      backHome: "Back to home"
     }
   },
   zh: {
@@ -749,7 +805,7 @@ const copy: Record<Lang, Copy> = {
       columns: [
         { title: "产品", links: ["仪表盘", "实时压力", "AI 分析", "趋势", "睡眠"] },
         { title: "资源", links: ["隐私白皮书", "支持中心", "更新日志"] },
-        { title: "公司", links: ["关于我们", "联系我们"] },
+        { title: "关于", links: ["关于我"] },
         { title: "隐私", links: ["本地优先", "HealthKit", "数据安全"] }
       ],
       copyright: "Copyright 2026 · StressWatch. 保留所有权利。",
@@ -813,6 +869,34 @@ const copy: Record<Lang, Copy> = {
           ]
         }
       ]
+    },
+    about: {
+      eyebrow: "关于",
+      title1: "一名学生，",
+      title2: "一款健康应用。",
+      subtitle: "StressWatch 是一个人的项目——由来自中南民族大学计算机学院人工智能实验室的 Chan Silence 独立完成设计、开发与发布。下面是作者本人，以及与他联系的方式。",
+      profileBadge: "作者",
+      profileName: "Chan Silence",
+      profileRole: "本科生 · 人工智能专业",
+      profileSchool: "中南民族大学",
+      profileLab: "计算机学院 · 人工智能实验室",
+      profileLocation: "中国 · 湖北 · 武汉",
+      profileBio: "人工智能专业在读，方向是应用机器学习与端侧智能。StressWatch 起初是一个个人实验：用 Core ML 分类器读 Apple Health 信号，能不能在不联网的情况下，给出一个足够有用的每日健康评分？这个问题的答案就是你腕上的这个 App。",
+      profileChips: ["中南民族大学 AI 实验室", "Core ML", "HealthKit", "本地优先"],
+      contactBadge: "联系",
+      contactTitle: "找我最直接的方式：GitHub。",
+      contactSub: "我没有公开私人邮箱。下面这封邮箱是 GitHub 在我每次 commit 上公开的地址——打开任意一个提交就能核对同一封。",
+      githubLabel: "GitHub 个人主页",
+      githubHandle: "@Nanako-Arasaka",
+      githubSub: "提 Issue、发 PR，或者只是打个招呼。",
+      emailLabel: "邮箱（在 commit 上公开）",
+      emailAddress: "3143445389@qq.com",
+      emailSub: "与 github.com/Nanako-Arasaka/StressWatch 上每一次提交的作者邮箱一致。",
+      ctaTitle: "看代码，发 PR。",
+      ctaSub: "StressWatch 是开源的。提 Issue、提想法、或者提交 Code Review 都是最快的联系路径。",
+      ctaPrimary: "打开 GitHub 仓库",
+      ctaSecondary: "工作原理",
+      backHome: "返回首页"
     }
   }
 };
@@ -1820,6 +1904,7 @@ function Footer({ t, variant = "home" }: { t: Copy; variant?: "home" | "subpage"
 
   const linkHref = (label: string): string => {
     if (label === "Changelog" || label === "更新日志") return `${prefix}changelog/`;
+    if (label === "About me" || label === "关于我") return `${prefix}about/`;
     if (
       label === "Privacy" ||
       label === "Privacy whitepaper" ||
@@ -2491,9 +2576,204 @@ function PrivacyPage() {
   );
 }
 
-export default function App({ variant }: { variant?: "home" | "changelog" | "privacy" } = {}) {
+/* ───────────────────────── About — subpage ───────────────────────── */
+
+function AboutPage() {
+  const [language, setLanguage] = usePersistedLang();
+  const [langTick, setLangTick] = useState(0);
+  const t = copy[language];
+  const switchLanguage = (l: Lang) => {
+    if (l === language) return;
+    setLangTick((n) => n + 1);
+    setLanguage(l);
+  };
+  const a = t.about;
+  const githubProfile = "https://github.com/Nanako-Arasaka";
+
+  return (
+    <>
+      <main
+        key={langTick}
+        className="lang-fade font-apple min-h-screen overflow-x-hidden bg-white text-ink antialiased"
+        lang={language === "zh" ? "zh-CN" : "en"}
+      >
+        <NavBar language={language} setLanguage={switchLanguage} t={t} variant="subpage" />
+
+        {/* Hero — parchment, mirrors the other subpages */}
+        <section className="bg-parchment px-5 pb-20 pt-28 sm:pb-24 sm:pt-36">
+          <div className="mx-auto max-w-[820px] text-center">
+            <span className="type-eyebrow text-blue">{a.eyebrow}</span>
+            <h1 className="type-hero mt-3 text-ink">
+              {a.title1}
+              <br />
+              {a.title2}
+            </h1>
+            <p className="type-lead mx-auto mt-5 max-w-[680px] text-ink-2">{a.subtitle}</p>
+          </div>
+        </section>
+
+        {/* Profile — light, two-column: avatar block + bio */}
+        <section className="bg-white px-5 py-20">
+          <div className="mx-auto flex max-w-[1040px] flex-col gap-10 sm:flex-row sm:gap-14">
+            {/* Avatar / role card — single product shadow, mirrors Privacy hero card */}
+            <aside className="flex flex-1 flex-col items-center gap-5 rounded-[24px] border border-black/10 bg-parchment p-8 shadow-product">
+              <div
+                className="flex h-28 w-28 items-center justify-center rounded-full text-[40px] font-semibold text-white"
+                style={{
+                  background: "linear-gradient(135deg, #0066cc 0%, #2997ff 100%)",
+                  boxShadow: "rgba(0,0,0,0.22) 3px 5px 30px"
+                }}
+                aria-hidden="true"
+              >
+                CS
+              </div>
+              <div className="text-center">
+                <span className="inline-flex items-center rounded-full bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-blue shadow-product">
+                  {a.profileBadge}
+                </span>
+                <h2 className="mt-3 text-[26px] font-semibold tracking-tight text-ink">
+                  {a.profileName}
+                </h2>
+                <p className="mt-1 text-[14px] text-ink-2">{a.profileRole}</p>
+              </div>
+              <div className="w-full border-t border-black/10 pt-5">
+                <dl className="flex flex-col gap-3 text-left text-[14px]">
+                  <div className="flex items-start gap-3">
+                    <dt className="w-[88px] shrink-0 text-ink-2">{language === "zh" ? "学校" : "University"}</dt>
+                    <dd className="text-ink">{a.profileSchool}</dd>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <dt className="w-[88px] shrink-0 text-ink-2">{language === "zh" ? "实验室" : "Lab"}</dt>
+                    <dd className="text-ink">{a.profileLab}</dd>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <dt className="w-[88px] shrink-0 text-ink-2">{language === "zh" ? "所在地" : "Location"}</dt>
+                    <dd className="text-ink">{a.profileLocation}</dd>
+                  </div>
+                </dl>
+              </div>
+            </aside>
+
+            {/* Bio + chips */}
+            <div className="flex flex-1 flex-col gap-6">
+              <h3 className="text-[28px] font-semibold leading-tight tracking-tight text-ink sm:text-[34px]">
+                {language === "zh" ? "他是谁" : "Who"}
+              </h3>
+              <p className="text-[17px] leading-relaxed text-ink-2">{a.profileBio}</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {a.profileChips.map((chip) => (
+                  <span
+                    key={chip}
+                    className="inline-flex items-center rounded-full bg-[#E6F0FF] px-3 py-1 text-[12px] font-semibold text-blue"
+                  >
+                    {chip}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Contact — parchment, two stacked rows: GitHub + Email */}
+        <section className="bg-parchment px-5 py-20">
+          <div className="mx-auto flex max-w-[820px] flex-col gap-8">
+            <div className="text-center">
+              <span className="type-eyebrow text-blue">{a.contactBadge}</span>
+              <h2 className="mt-3 text-[34px] font-semibold leading-tight tracking-tight text-ink sm:text-[40px]">
+                {a.contactTitle}
+              </h2>
+              <p className="mx-auto mt-4 max-w-[680px] text-[16px] leading-relaxed text-ink-2">
+                {a.contactSub}
+              </p>
+            </div>
+
+            {/* GitHub row */}
+            <a
+              href={githubProfile}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="focus-ring flex flex-col gap-3 rounded-[20px] border border-black/10 bg-white p-6 shadow-product transition hover:-translate-y-px sm:flex-row sm:items-center sm:gap-6 sm:p-7"
+            >
+              <div
+                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white"
+                style={{ backgroundColor: "#1d1d1f" }}
+                aria-hidden="true"
+              >
+                <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
+                  <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.25 5.68.41.36.78 1.05.78 2.12 0 1.53-.01 2.76-.01 3.13 0 .31.21.67.8.55C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/>
+                </svg>
+              </div>
+              <div className="flex flex-1 flex-col gap-1">
+                <p className="text-[12px] font-semibold uppercase tracking-wider text-ink-2">
+                  {a.githubLabel}
+                </p>
+                <p className="text-[18px] font-semibold tracking-tight text-ink">{a.githubHandle}</p>
+                <p className="text-[13px] text-ink-2">{a.githubSub}</p>
+              </div>
+              <span className="shrink-0 text-[18px] text-blue" aria-hidden="true">›</span>
+            </a>
+
+            {/* Email row */}
+            <a
+              href={`mailto:${a.emailAddress}`}
+              className="focus-ring flex flex-col gap-3 rounded-[20px] border border-black/10 bg-white p-6 shadow-product transition hover:-translate-y-px sm:flex-row sm:items-center sm:gap-6 sm:p-7"
+            >
+              <div
+                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#E6F0FF] text-blue"
+                aria-hidden="true"
+              >
+                <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="5" width="18" height="14" rx="2" />
+                  <path d="m3 7 9 6 9-6" />
+                </svg>
+              </div>
+              <div className="flex flex-1 flex-col gap-1">
+                <p className="text-[12px] font-semibold uppercase tracking-wider text-ink-2">
+                  {a.emailLabel}
+                </p>
+                <p className="font-mono text-[16px] font-semibold text-ink">{a.emailAddress}</p>
+                <p className="text-[13px] text-ink-2">{a.emailSub}</p>
+              </div>
+              <span className="shrink-0 text-[18px] text-blue" aria-hidden="true">›</span>
+            </a>
+          </div>
+        </section>
+
+        {/* CTA — light, mirrors Privacy subpage */}
+        <section className="bg-white px-5 py-20">
+          <div className="mx-auto flex max-w-[820px] flex-col items-center gap-6 text-center">
+            <h2 className="text-[34px] font-semibold leading-tight tracking-tight text-ink sm:text-[40px]">
+              {a.ctaTitle}
+            </h2>
+            <p className="max-w-[680px] text-[18px] text-ink-2">{a.ctaSub}</p>
+            <a
+              href={githubProfile}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="apple-cta-primary"
+            >
+              {a.ctaPrimary} ›
+            </a>
+            <a href="../how/" className="apple-cta-link text-blue">
+              {a.ctaSecondary} ›
+            </a>
+            <a href="../" className="apple-cta-link text-blue">
+              {a.backHome} ›
+            </a>
+          </div>
+        </section>
+
+        <Footer t={t} variant="subpage" />
+        <CursorParticles />
+      </main>
+    </>
+  );
+}
+
+export default function App({ variant }: { variant?: "home" | "changelog" | "privacy" | "about" } = {}) {
   if (variant === "changelog") return <ChangelogPage />;
   if (variant === "privacy") return <PrivacyPage />;
+  if (variant === "about") return <AboutPage />;
   return <HomePage />;
 }
 
