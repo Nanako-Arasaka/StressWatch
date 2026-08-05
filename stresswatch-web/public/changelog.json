@@ -1,14 +1,65 @@
 {
-  "syncedAt": "2026-08-05T14:03:58.016Z",
+  "syncedAt": "2026-08-05T19:12:56.687Z",
   "repo": "Nanako-Arasaka/StressWatch",
-  "commitsTotal": 41,
+  "commitsTotal": 46,
   "releasesCount": 0,
   "releases": [],
   "commitsByMonth": [
     {
       "label": "August 2026",
-      "summary": "6 commits",
+      "summary": "11 commits",
       "entries": [
+        {
+          "date": "Aug 5",
+          "sha": "93c1804",
+          "title": "Add About subpage /about/, drop Company column from footer",
+          "tags": [
+            "Feature"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/93c1804801410831987570841b98eab978540135",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 5",
+          "sha": "f0473eb",
+          "title": "Fix footer Product column to navigate to home anchors",
+          "tags": [
+            "Fix",
+            "Link"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/f0473eb53faa380dc8467a41c55765e9a4b43ece",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 5",
+          "sha": "6085319",
+          "title": "Persist language across subpages via localStorage",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/6085319faa52dad0f7cc8148dd7adaca0cf4b6a0",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 5",
+          "sha": "79ccbca",
+          "title": "Add Privacy subpage /privacy/ mirroring home's Apple design",
+          "tags": [
+            "Feature"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/79ccbcaa18d1ccec1ac7d933ca81bc714a0b46a9",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 5",
+          "sha": "f055520",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/f055520defb2ce7c76fc081a9c6bf2883b4b1539",
+          "author": "stresswatch-bot"
+        },
         {
           "date": "Aug 5",
           "sha": "d29526c",
