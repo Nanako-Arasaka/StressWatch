@@ -96,6 +96,36 @@ type Copy = {
     chips: string[];
     cta: string;
   };
+  how: {
+    badge: string;
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    primaryCta: string;
+    secondaryCta: string;
+    pipelineEyebrow: string;
+    pipelineTitle: string;
+    pipelineSubtitle: string;
+    steps: { num: string; key: string; title: string; tag: string; body: string; chips: string[] }[];
+    pipelineNote: string;
+    signalsEyebrow: string;
+    signalsTitle: string;
+    signalsSubtitle: string;
+    signals: { key: string; label: string; source: string; what: string; unit: string }[];
+    privacyEyebrow: string;
+    privacyTitle: string;
+    privacySubtitle: string;
+    privacyPoints: { title: string; desc: string }[];
+    privacyNote: string;
+    surfaceEyebrow: string;
+    surfaceTitle: string;
+    surfaceSubtitle: string;
+    surfaces: { key: string; title: string; desc: string }[];
+    ctaTitle: string;
+    ctaSubtitle: string;
+    ctaPrimary: string;
+    ctaSecondary: string;
+  };
   footer: { tagline: string; columns: { title: string; links: string[] }[]; copyright: string; disclaimer: string };
 };
 
@@ -200,6 +230,96 @@ const copy: Record<Lang, Copy> = {
       cardDesc: "All health data is stored only on your iPhone / Apple Watch.",
       chips: ["HealthKit", "Local storage", "Offline"],
       cta: "Read the privacy note"
+    },
+    how: {
+      badge: "How it works",
+      eyebrow: "From signal to insight",
+      title: "Every number on the dashboard starts with a single Apple Health reading",
+      subtitle: "StressWatch reads seven HealthKit signals on-device, computes a baseline, runs a Core ML classifier (with a rule-based fallback), and surfaces a state, a confidence score, and four dimensions. Nothing leaves your iPhone.",
+      primaryCta: "View dashboard",
+      secondaryCta: "Read privacy",
+      pipelineEyebrow: "Pipeline",
+      pipelineTitle: "Five steps from raw signal to a state on the screen",
+      pipelineSubtitle: "Each stage runs locally on the device. The Core ML model is optional — if it isn't compiled, the same pipeline degrades to a transparent rule-based analyzer with the same output shape.",
+      steps: [
+        {
+          num: "01",
+          key: "collect",
+          title: "Collect signals",
+          tag: "HealthKit",
+          body: "Read heart rate, HRV (SDNN), resting heart rate, sleep analysis stages, steps, active energy, and exercise time. Apple Stand Time is read on iOS 18+. Each fetch is capped to 600 samples to stay battery-friendly.",
+          chips: ["7 HK types", "iOS 18+ Stand", "Bounded reads"]
+        },
+        {
+          num: "02",
+          key: "baseline",
+          title: "Build a baseline",
+          tag: "BaselineEngine",
+          body: "Once you have at least 3 valid days, the app builds your rolling baseline: average HR, HRV, resting HR, daily steps, and sleep hours. This is the denominator for every later comparison.",
+          chips: ["≥ 3 days", "Rolling", "Personal"]
+        },
+        {
+          num: "03",
+          key: "features",
+          title: "Extract features",
+          tag: "FeatureExtractor",
+          body: "Compute 7-day rolling means, end-vs-start trend, sleep consistency (SD), and activity level. A separate LiveStress estimator combines HRV deviation, resting HR delta, and last night's sleep ratio for real-time numbers.",
+          chips: ["7-day window", "Live estimator", "Sleep SD"]
+        },
+        {
+          num: "04",
+          key: "model",
+          title: "Classify state",
+          tag: "Core ML · fallback",
+          body: "The bundled Core ML classifier outputs one of 7 classes (attention stress, high stress, mild stress, normal, recovery good, sleep debt, low activity). When the model can't load — or to keep output explainable — a rule-based WellnessAnalyzer with the same 6-state vocabulary takes over.",
+          chips: ["7-class output", "Probability vector", "Rule fallback"]
+        },
+        {
+          num: "05",
+          key: "surface",
+          title: "Surface the state",
+          tag: "Dashboard · Widget",
+          body: "You see one of six WellnessStates with a confidence percentage and four dimensions (Stress / Sleep / Recovery / HRV). Daily check-ins and personalized factors are generated locally; a small home-screen widget snapshots the same numbers every 30 minutes.",
+          chips: ["6 states", "Confidence %", "Widget snapshot"]
+        }
+      ],
+      pipelineNote: "Five steps run locally. From the seventh day onwards you get personalized baselines; until then the analyzer shows a guided \"getting to know you\" state.",
+      signalsEyebrow: "Signals",
+      signalsTitle: "What the app actually reads from Apple Health",
+      signalsSubtitle: "Seven HealthKit quantity / category identifiers are queried. Missing permissions degrade to a clearly-labeled demo dataset so the rest of the app still works.",
+      signals: [
+        { key: "hr", label: "Heart rate", source: "HKQuantityTypeIdentifier.heartRate", what: "BPM samples, capped to the latest 600 readings", unit: "bpm" },
+        { key: "hrv", label: "HRV (SDNN)", source: "HKQuantityTypeIdentifier.heartRateVariabilitySDNN", what: "Standard deviation of NN intervals from your watch", unit: "ms" },
+        { key: "rhr", label: "Resting heart rate", source: "HKQuantityTypeIdentifier.restingHeartRate", what: "Daily resting HR used for trend and recovery", unit: "bpm" },
+        { key: "sleep", label: "Sleep analysis", source: "HKCategoryTypeIdentifier.sleepAnalysis", what: "Awake / REM / Core / Deep stages broken out by night", unit: "stage" },
+        { key: "steps", label: "Step count", source: "HKQuantityTypeIdentifier.stepCount", what: "Daily totals vs. your baseline for activity context", unit: "steps" },
+        { key: "energy", label: "Active energy", source: "HKQuantityTypeIdentifier.activeEnergyBurned", what: "Calories burned through movement, per day", unit: "kcal" },
+        { key: "exercise", label: "Exercise time", source: "HKQuantityTypeIdentifier.appleExerciseTime", what: "Minutes of brisk or higher-intensity activity", unit: "min" }
+      ],
+      privacyEyebrow: "Local-first",
+      privacyTitle: "Your data is read on-device, processed on-device, and stored on-device",
+      privacySubtitle: "There is no backend, no account, no analytics endpoint, and no opt-in upload. The README, the in-app privacy note, and the architecture document all say the same thing — no network request leaves the app for analytics or sync.",
+      privacyPoints: [
+        { title: "No account, no login", desc: "The app has no server-side identity. Install, grant HealthKit access, and you're in." },
+        { title: "Read-only HealthKit", desc: "Only read permissions are requested. The app never writes back to Apple Health." },
+        { title: "Local storage only", desc: "Computed states, baselines, and widget snapshots live in the app's Documents folder as JSON." },
+        { title: "No network for analytics", desc: "There is no telemetry, no crash reporting SDK, and no remote model download. Core ML ships inside the bundle." }
+      ],
+      privacyNote: "ARCHITECTURE.md states explicitly: \"Local-only\" and \"No network requests — including analytics\". The settings screen mirrors this in plain language.",
+      surfaceEyebrow: "Surfaces",
+      surfaceTitle: "Where you see the state",
+      surfaceSubtitle: "The same six-state vocabulary is reused across every surface so the wording never drifts.",
+      surfaces: [
+        { key: "dashboard", title: "Dashboard", desc: "Stress and Recovery scores (0–100), HR / HRV / Sleep / Steps / Activity cards, a live-stress ring, and a 7-day line." },
+        { key: "analysis", title: "Analysis", desc: "Predicted state with confidence, four dimension assessments, today's check-in, contributing factors, and three personalized pieces of advice." },
+        { key: "trends", title: "Trends", desc: "Monthly stress bars, a distribution pie, a 7-day recovery heatmap, and a recovery trend that pairs HRV with resting HR." },
+        { key: "sleep", title: "Sleep & Check-in", desc: "Stage breakdown with the same color palette the app uses, plus a daily five-option check-in for personalization." },
+        { key: "widget", title: "Home Screen widget", desc: "Small and medium widgets mirror the same numbers; the main app pushes a new snapshot whenever the state changes." }
+      ],
+      ctaTitle: "Ready to see what your body is telling you?",
+      ctaSubtitle: "The full source is on GitHub — read the code, build it yourself, or open the repo to see exactly how the pipeline works.",
+      ctaPrimary: "View on GitHub",
+      ctaSecondary: "Back to home"
     },
     footer: {
       tagline: "Read every signal your body sends.",
@@ -312,6 +432,96 @@ const copy: Record<Lang, Copy> = {
       chips: ["HealthKit", "本机存储", "离线可用"],
       cta: "阅读隐私说明"
     },
+    how: {
+      badge: "工作原理",
+      eyebrow: "从信号到洞察",
+      title: "仪表盘上的每一个数字，都来自一条 Apple Health 读数",
+      subtitle: "StressWatch 在本机读取 7 类 HealthKit 信号，构建个人基线，调用 Core ML 分类器（必要时回退规则版），输出状态、可信度与四个维度的评分。一切都在你的 iPhone 上完成。",
+      primaryCta: "查看仪表盘",
+      secondaryCta: "阅读隐私说明",
+      pipelineEyebrow: "流水线",
+      pipelineTitle: "从原始信号到屏幕上的状态，五步完成",
+      pipelineSubtitle: "每一步都在本机执行。Core ML 模型可选——若未编译，同一条流水线会自动降级到规则版 WellnessAnalyzer，输出形态保持一致。",
+      steps: [
+        {
+          num: "01",
+          key: "collect",
+          title: "采集信号",
+          tag: "HealthKit",
+          body: "读取心率、HRV（SDNN）、静息心率、睡眠分析分期、步数、活动能量与锻炼时长。iOS 18+ 额外读取 Apple Stand Time。每次拉取上限 600 条以兼顾续航。",
+          chips: ["7 类 HK", "iOS 18+ Stand", "限流拉取"]
+        },
+        {
+          num: "02",
+          key: "baseline",
+          title: "建立基线",
+          tag: "BaselineEngine",
+          body: "积累 ≥3 天有效数据后，App 构建滚动基线：平均心率、HRV、静息心率、日均步数、睡眠时长。所有后续比较都以这个基线为分母。",
+          chips: ["≥ 3 天", "滚动", "个性化"]
+        },
+        {
+          num: "03",
+          key: "features",
+          title: "提取特征",
+          tag: "FeatureExtractor",
+          body: "计算 7 天滚动均值、末-首趋势、睡眠一致性（标准差）与活动等级。独立的 LiveStress 估算器将 HRV 偏离、静息 HR delta 与昨晚睡眠比组合，给出实时数字。",
+          chips: ["7 天窗口", "实时估算", "睡眠 SD"]
+        },
+        {
+          num: "04",
+          key: "model",
+          title: "分类状态",
+          tag: "Core ML · 规则兜底",
+          body: "内置 Core ML 分类器输出 7 个类别之一（注意力压力、高压力、轻度压力、正常、恢复良好、睡眠负债、活动不足）。当模型无法加载时——或为保证可解释性——使用同一套 6 状态词汇的规则版 WellnessAnalyzer 接管。",
+          chips: ["7 类输出", "概率向量", "规则兜底"]
+        },
+        {
+          num: "05",
+          key: "surface",
+          title: "呈现状态",
+          tag: "仪表盘 · 小组件",
+          body: "你看到 6 种 WellnessState 之一，附可信度百分比与四个维度（压力 / 睡眠 / 恢复 / HRV）。每日打卡与个性化因素在本机生成；主屏小组件每 30 分钟同步相同数字。",
+          chips: ["6 状态", "可信度 %", "小组件快照"]
+        }
+      ],
+      pipelineNote: "五步均在本地执行。从第 7 天起获得个性化基线；之前为引导式的「正在认识你」状态。",
+      signalsEyebrow: "信号",
+      signalsTitle: "App 真正从 Apple Health 读取了什么",
+      signalsSubtitle: "实际查询 7 个 HealthKit 标识符。权限缺失时会降级到明确标注的演示数据，其余功能不受影响。",
+      signals: [
+        { key: "hr", label: "心率", source: "HKQuantityTypeIdentifier.heartRate", what: "BPM 采样，最多取最近 600 条", unit: "bpm" },
+        { key: "hrv", label: "HRV (SDNN)", source: "HKQuantityTypeIdentifier.heartRateVariabilitySDNN", what: "NN 间期的标准差，来自 Apple Watch", unit: "ms" },
+        { key: "rhr", label: "静息心率", source: "HKQuantityTypeIdentifier.restingHeartRate", what: "每日静息心率，用于趋势与恢复评估", unit: "bpm" },
+        { key: "sleep", label: "睡眠分析", source: "HKCategoryTypeIdentifier.sleepAnalysis", what: "按晚拆解清醒 / REM / Core / 深睡阶段", unit: "stage" },
+        { key: "steps", label: "步数", source: "HKQuantityTypeIdentifier.stepCount", what: "日总量，与基线对比得出活动情境", unit: "steps" },
+        { key: "energy", label: "活动能量", source: "HKQuantityTypeIdentifier.activeEnergyBurned", what: "每天通过运动消耗的热量", unit: "kcal" },
+        { key: "exercise", label: "锻炼时长", source: "HKQuantityTypeIdentifier.appleExerciseTime", what: "快走或更高强度活动的分钟数", unit: "min" }
+      ],
+      privacyEyebrow: "本地优先",
+      privacyTitle: "数据在本机读取、在本机处理、在本机存储",
+      privacySubtitle: "没有后端、没有账号、没有分析上报，也没有任何「可选上传」开关。README、应用内隐私说明、架构文档表达一致——没有网络请求用于分析或同步。",
+      privacyPoints: [
+        { title: "无需账号与登录", desc: "应用没有服务端身份。安装、授予 HealthKit 权限即可使用。" },
+        { title: "HealthKit 只读权限", desc: "只请求读取权限，App 不会回写 Apple Health。" },
+        { title: "仅本机存储", desc: "计算出的状态、基线与小组件快照保存在 App 文档目录的 JSON 中。" },
+        { title: "无分析上报", desc: "没有埋点、没有崩溃 SDK、也不会远程下载模型。Core ML 随包发布。" }
+      ],
+      privacyNote: "ARCHITECTURE.md 明确声明：「本地 only」与「无网络请求（包括分析）」。设置页以平实语言再次承诺。",
+      surfaceEyebrow: "呈现",
+      surfaceTitle: "你在哪里看到状态",
+      surfaceSubtitle: "同一套 6 状态词汇贯穿所有界面，措辞始终一致。",
+      surfaces: [
+        { key: "dashboard", title: "仪表盘", desc: "压力与恢复评分（0–100）、HR / HRV / 睡眠 / 步数 / 活动卡片、实时压力环与 7 日折线。" },
+        { key: "analysis", title: "分析", desc: "预测状态 + 可信度、四个维度评估、每日打卡、影响因素与三条个性化建议。" },
+        { key: "trends", title: "趋势", desc: "月度压力柱、分布饼图、7 天恢复热力图，以及将 HRV 与静息 HR 配对的恢复曲线。" },
+        { key: "sleep", title: "睡眠 & 打卡", desc: "睡眠分期使用 App 同一调色板，加每日五选一打卡用于个性化。" },
+        { key: "widget", title: "主屏小组件", desc: "小卡与大卡镜像相同数字；主 App 状态变化时即写入新快照。" }
+      ],
+      ctaTitle: "准备好听听身体的信号了吗？",
+      ctaSubtitle: "完整源码在 GitHub——你可以阅读代码、自己构建，或直接打开仓库查看流水线实现。",
+      ctaPrimary: "前往 GitHub",
+      ctaSecondary: "返回首页"
+    },
     footer: {
       tagline: "读懂身体的每一次信号。",
       columns: [
@@ -407,7 +617,7 @@ function App() {
         className="lang-fade font-apple min-h-screen overflow-x-hidden bg-white text-ink antialiased"
         lang={language === "zh" ? "zh-CN" : "en"}
       >
-        <NavBar language={language} setLanguage={switchLanguage} t={t} />
+        <NavBar language={language} setLanguage={switchLanguage} t={t} variant="home" />
         <HeroSection language={language} t={t} />
         <LiveStressTile t={t} />
         <AIAnalysisTile t={t} />
@@ -423,7 +633,19 @@ function App() {
 }
 
 /* ───────────────────────── Nav ───────────────────────── */
-function NavBar({ language, setLanguage, t }: { language: Lang; setLanguage: (l: Lang) => void; t: Copy }) {
+type NavVariant = "home" | "subpage";
+
+function NavBar({
+  language,
+  setLanguage,
+  t,
+  variant = "home"
+}: {
+  language: Lang;
+  setLanguage: (l: Lang) => void;
+  t: Copy;
+  variant?: NavVariant;
+}) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   useEffect(() => {
@@ -454,13 +676,17 @@ function NavBar({ language, setLanguage, t }: { language: Lang; setLanguage: (l:
     { label: t.nav.privacy, id: "privacy" }
   ];
 
+  const homeHref = "./";
+  const howHref = "./how/";
+
   return (
     <header className={`apple-nav fixed inset-x-0 top-0 z-50 h-11 ${scrolled ? "scrolled" : ""}`}>
       <nav className="mx-auto flex h-11 max-w-[1024px] items-center justify-between px-4 sm:px-5">
         <a
           className="focus-ring flex items-center gap-2 rounded-md transition hover:opacity-80"
-          href="#"
+          href={variant === "home" ? "#" : homeHref}
           onClick={(e) => {
+            if (variant !== "home") return;
             e.preventDefault();
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
@@ -470,16 +696,46 @@ function NavBar({ language, setLanguage, t }: { language: Lang; setLanguage: (l:
         </a>
 
         <div className="hidden items-center gap-8 md:flex">
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              className="focus-ring rounded-md text-[12px] font-normal text-white/80 transition hover:text-white"
-              onClick={() => scrollTo(item.id)}
-              type="button"
-            >
-              {item.label}
-            </button>
-          ))}
+          {navItems.map((item) => {
+            // "How it works" navigates to the dedicated subpage on the
+            // home variant, and stays as a cross-page link on the
+            // subpage variant (it can't scroll to an anchor that lives
+            // on a different HTML document).
+            if (item.label === t.nav.how) {
+              return (
+                <a
+                  key={item.id}
+                  href={howHref}
+                  className="focus-ring rounded-md text-[12px] font-normal text-white/80 transition hover:text-white"
+                >
+                  {item.label}
+                </a>
+              );
+            }
+            // On the subpage, the rest of the anchors would point at
+            // the home page — render them as cross-page links instead.
+            if (variant === "subpage") {
+              return (
+                <a
+                  key={item.id}
+                  href={`${homeHref}#${item.id}`}
+                  className="focus-ring rounded-md text-[12px] font-normal text-white/80 transition hover:text-white"
+                >
+                  {item.label}
+                </a>
+              );
+            }
+            return (
+              <button
+                key={item.id}
+                className="focus-ring rounded-md text-[12px] font-normal text-white/80 transition hover:text-white"
+                onClick={() => scrollTo(item.id)}
+                type="button"
+              >
+                {item.label}
+              </button>
+            );
+          })}
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
@@ -524,18 +780,49 @@ function NavBar({ language, setLanguage, t }: { language: Lang; setLanguage: (l:
       >
         <div className="bg-black/85 backdrop-blur-xl">
           <ul className="mx-auto flex max-w-[640px] flex-col px-6 py-3">
-            {navItems.map((item) => (
-              <li key={item.id}>
-                <button
-                  type="button"
-                  onClick={() => scrollTo(item.id)}
-                  className="focus-ring flex w-full items-center justify-between border-b border-white/10 py-4 text-left text-[15px] font-medium text-white/90 transition hover:text-white"
-                >
-                  {item.label}
-                  <span className="text-white/40" aria-hidden="true">›</span>
-                </button>
-              </li>
-            ))}
+            {navItems.map((item) => {
+              const isHow = item.label === t.nav.how;
+              if (isHow) {
+                return (
+                  <li key={item.id}>
+                    <a
+                      href={howHref}
+                      onClick={() => setMobileOpen(false)}
+                      className="focus-ring flex w-full items-center justify-between border-b border-white/10 py-4 text-left text-[15px] font-medium text-white/90 transition hover:text-white"
+                    >
+                      {item.label}
+                      <span className="text-white/40" aria-hidden="true">›</span>
+                    </a>
+                  </li>
+                );
+              }
+              if (variant === "subpage") {
+                return (
+                  <li key={item.id}>
+                    <a
+                      href={`${homeHref}#${item.id}`}
+                      onClick={() => setMobileOpen(false)}
+                      className="focus-ring flex w-full items-center justify-between border-b border-white/10 py-4 text-left text-[15px] font-medium text-white/90 transition hover:text-white"
+                    >
+                      {item.label}
+                      <span className="text-white/40" aria-hidden="true">›</span>
+                    </a>
+                  </li>
+                );
+              }
+              return (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    onClick={() => scrollTo(item.id)}
+                    className="focus-ring flex w-full items-center justify-between border-b border-white/10 py-4 text-left text-[15px] font-medium text-white/90 transition hover:text-white"
+                  >
+                    {item.label}
+                    <span className="text-white/40" aria-hidden="true">›</span>
+                  </button>
+                </li>
+              );
+            })}
             <li className="pt-4">
               <a
                 href="https://github.com/Nanako-Arasaka/StressWatch"
@@ -1340,3 +1627,262 @@ function CursorParticles() {
 }
 
 export default App;
+
+/* ───────────────────────── How it works — subpage ───────────────────────── */
+function HowPage() {
+  const [language, setLanguage] = useState<Lang>("zh");
+  const [langTick, setLangTick] = useState(0);
+  const t = copy[language];
+  const switchLanguage = (l: Lang) => {
+    if (l === language) return;
+    setLangTick((n) => n + 1);
+    setLanguage(l);
+  };
+  const h = t.how;
+
+  return (
+    <>
+      <main
+        key={langTick}
+        className="lang-fade font-apple min-h-screen overflow-x-hidden bg-white text-ink antialiased"
+        lang={language === "zh" ? "zh-CN" : "en"}
+      >
+        <NavBar language={language} setLanguage={switchLanguage} t={t} variant="subpage" />
+
+        {/* Hero — same visual language as the home hero */}
+        <section className="bg-white px-5 pb-20 pt-28 sm:pb-24 sm:pt-36">
+          <div className="mx-auto max-w-[820px] text-center">
+            <span className="type-eyebrow text-blue">{h.badge}</span>
+            <h1 className="type-hero mt-3 text-ink">{h.title}</h1>
+            <p className="type-lead mx-auto mt-5 max-w-[680px] text-ink-2">{h.subtitle}</p>
+            <div className="mt-7 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
+              <a
+                href="./#hero"
+                className="apple-cta-primary"
+              >
+                {h.primaryCta}
+              </a>
+              <a href="./#privacy" className="apple-cta-link text-blue">
+                {h.secondaryCta} ›
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* Pipeline — five steps, alternating tile themes, full-bleed */}
+        <Tile theme="parchment" id="pipeline">
+          <HowPipelineSection h={h} />
+        </Tile>
+
+        {/* Signals — list of HK identifiers the app actually queries */}
+        <Tile theme="light" id="signals">
+          <HowSignalsSection h={h} />
+        </Tile>
+
+        {/* Privacy — restate the local-first promise with the actual quotes */}
+        <Tile theme="dark" id="how-privacy">
+          <HowPrivacySection h={h} />
+        </Tile>
+
+        {/* Surfaces — where the state shows up */}
+        <Tile theme="parchment" id="surfaces">
+          <HowSurfacesSection h={h} />
+        </Tile>
+
+        {/* CTA — drive users to the GitHub repo */}
+        <HowCtaSection h={h} />
+
+        <Footer t={t} />
+      </main>
+      <CursorParticles />
+    </>
+  );
+}
+
+function HowPipelineSection({ h }: { h: Copy["how"] }) {
+  const { active, ref } = useRevealOnView<HTMLDivElement>();
+  return (
+    <div ref={ref} className={`reveal-group ${active ? "is-active" : ""}`}>
+      <div className="reveal-item mx-auto max-w-[720px] text-center">
+        <span className="type-eyebrow text-blue">{h.pipelineEyebrow}</span>
+        <h2 className="type-display mt-3 text-ink">{h.pipelineTitle}</h2>
+        <p className="type-lead mt-4 text-ink-2">{h.pipelineSubtitle}</p>
+      </div>
+
+      <ol className="mx-auto mt-14 grid max-w-5xl gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {h.steps.map((step, i) => (
+          <li
+            key={step.key}
+            className="reveal-item mockup-card product-shadow flex h-full flex-col rounded-2xl border border-black/10 bg-white p-6"
+            style={{ transitionDelay: `${i * 0.08}s` }}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[28px] font-semibold leading-none tracking-tight text-blue">{step.num}</span>
+              <span className="rounded-full bg-blue/10 px-2.5 py-1 text-[11px] font-semibold text-blue">{step.tag}</span>
+            </div>
+            <h3 className="type-tagline mt-5 text-ink">{step.title}</h3>
+            <p className="type-body mt-3 text-[14px] text-ink-2">{step.body}</p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {step.chips.map((chip) => (
+                <span key={chip} className="rounded-full bg-parchment px-3 py-1 text-[12px] font-semibold text-ink">
+                  {chip}
+                </span>
+              ))}
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <p className="reveal-item mx-auto mt-12 max-w-[680px] text-center text-[14px] text-ink-2">{h.pipelineNote}</p>
+    </div>
+  );
+}
+
+function HowSignalsSection({ h }: { h: Copy["how"] }) {
+  const { active, ref } = useRevealOnView<HTMLDivElement>();
+  return (
+    <div ref={ref} className={`reveal-group ${active ? "is-active" : ""}`}>
+      <div className="reveal-item mx-auto max-w-[720px] text-center">
+        <span className="type-eyebrow text-blue">{h.signalsEyebrow}</span>
+        <h2 className="type-display mt-3 text-ink">{h.signalsTitle}</h2>
+        <p className="type-lead mt-4 text-ink-2">{h.signalsSubtitle}</p>
+      </div>
+
+      <div className="mx-auto mt-14 grid max-w-5xl gap-3">
+        {h.signals.map((s, i) => (
+          <div
+            key={s.key}
+            className="reveal-item mockup-card product-shadow flex flex-col gap-3 rounded-2xl border border-black/10 bg-white p-5 sm:flex-row sm:items-center sm:justify-between"
+            style={{ transitionDelay: `${i * 0.06}s` }}
+          >
+            <div className="flex items-start gap-4">
+              <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-blue/10 text-[12px] font-semibold text-blue">
+                {s.unit}
+              </div>
+              <div>
+                <p className="text-[16px] font-semibold text-ink">{s.label}</p>
+                <p className="mt-1 text-[13px] text-ink-2">{s.source}</p>
+              </div>
+            </div>
+            <p className="max-w-[420px] text-[13px] text-ink-2 sm:text-right">{s.what}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function HowPrivacySection({ h }: { h: Copy["how"] }) {
+  const { active, ref } = useRevealOnView<HTMLDivElement>();
+  return (
+    <div ref={ref} className={`reveal-group ${active ? "is-active" : ""}`}>
+      <div className="reveal-item mx-auto max-w-[720px] text-center">
+        <span className="type-eyebrow text-blue-sky">{h.privacyEyebrow}</span>
+        <h2 className="type-display mt-3 text-white">{h.privacyTitle}</h2>
+        <p className="type-lead mt-4 text-white/70">{h.privacySubtitle}</p>
+      </div>
+
+      <div className="mx-auto mt-14 grid max-w-5xl gap-5 md:grid-cols-2">
+        {h.privacyPoints.map((p, i) => (
+          <div
+            key={p.title}
+            className="reveal-item mockup-card flex h-full flex-col rounded-2xl border border-white/10 bg-black/40 p-6"
+            style={{ transitionDelay: `${i * 0.08}s` }}
+          >
+            <h3 className="text-[17px] font-semibold text-white">{p.title}</h3>
+            <p className="type-body mt-2 text-[14px] text-white/70">{p.desc}</p>
+          </div>
+        ))}
+      </div>
+
+      <p className="reveal-item mx-auto mt-12 max-w-[720px] text-center text-[13px] text-white/60">{h.privacyNote}</p>
+    </div>
+  );
+}
+
+function HowSurfacesSection({ h }: { h: Copy["how"] }) {
+  const { active, ref } = useRevealOnView<HTMLDivElement>();
+  const icons: Record<string, ReactNode> = {
+    dashboard: (
+      <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="7" height="9" rx="2" />
+        <rect x="14" y="3" width="7" height="5" rx="2" />
+        <rect x="14" y="12" width="7" height="9" rx="2" />
+        <rect x="3" y="16" width="7" height="5" rx="2" />
+      </svg>
+    ),
+    analysis: (
+      <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="8" />
+        <path d="M12 7v5l3 2" />
+      </svg>
+    ),
+    trends: (
+      <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 17l5-6 4 4 8-9" />
+        <path d="M14 6h6v6" />
+      </svg>
+    ),
+    sleep: (
+      <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 14a8 8 0 1 1-9-10 6 6 0 0 0 9 10z" />
+      </svg>
+    ),
+    widget: (
+      <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="4" width="18" height="13" rx="3" />
+        <path d="M8 21h8M12 17v4" />
+      </svg>
+    )
+  };
+  return (
+    <div ref={ref} className={`reveal-group ${active ? "is-active" : ""}`}>
+      <div className="reveal-item mx-auto max-w-[720px] text-center">
+        <span className="type-eyebrow text-blue">{h.surfaceEyebrow}</span>
+        <h2 className="type-display mt-3 text-ink">{h.surfaceTitle}</h2>
+        <p className="type-lead mt-4 text-ink-2">{h.surfaceSubtitle}</p>
+      </div>
+
+      <div className="mx-auto mt-14 grid max-w-5xl gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {h.surfaces.map((s, i) => (
+          <div
+            key={s.key}
+            className="reveal-item mockup-card product-shadow flex h-full flex-col rounded-2xl border border-black/10 bg-white p-6"
+            style={{ transitionDelay: `${i * 0.07}s` }}
+          >
+            <div className="grid h-10 w-10 place-items-center rounded-xl bg-blue/10 text-blue">{icons[s.key] ?? null}</div>
+            <h3 className="type-tagline mt-5 text-ink">{s.title}</h3>
+            <p className="type-body mt-2 text-[14px] text-ink-2">{s.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function HowCtaSection({ h }: { h: Copy["how"] }) {
+  const { active, ref } = useRevealOnView<HTMLDivElement>();
+  return (
+    <section ref={ref} className={`reveal-group bg-white px-5 py-24 ${active ? "is-active" : ""}`}>
+      <div className="reveal-item mx-auto max-w-[720px] text-center">
+        <h2 className="type-display text-ink">{h.ctaTitle}</h2>
+        <p className="type-lead mx-auto mt-4 max-w-[600px] text-ink-2">{h.ctaSubtitle}</p>
+        <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
+          <a
+            href="https://github.com/Nanako-Arasaka/StressWatch"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="apple-cta-primary"
+          >
+            {h.ctaPrimary}
+          </a>
+          <a href="./" className="apple-cta-link text-blue">
+            {h.ctaSecondary} ›
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export { HowPage };
