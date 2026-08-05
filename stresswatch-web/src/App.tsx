@@ -754,7 +754,7 @@ function HomePage() {
         <SleepTile t={t} />
         <CheckInTile t={t} />
         <PrivacyTile t={t} />
-        <Footer t={t} />
+        <Footer t={t} variant="subpage" />
       </main>
       <CursorParticles />
     </>
@@ -806,9 +806,12 @@ function NavBar({
     { label: t.nav.changelog, id: "changelog" }
   ];
 
-  const homeHref = "./";
-  const howHref = "./how/";
-  const changelogHref = "./changelog/";
+  // "home"  -> page is at the repo root (./)
+  // "subpage" / "changelog" -> page is one directory deeper (../)
+  const homeHref = variant === "home" ? "./" : "../";
+  // Same-page → "./"; cross-page → "./how/" or "./changelog/"
+  const howHref = variant === "subpage" ? "./" : "./how/";
+  const changelogHref = variant === "changelog" ? "./" : "./changelog/";
 
   return (
     <header className={`apple-nav fixed inset-x-0 top-0 z-50 h-11 ${scrolled ? "scrolled" : ""}`}>
@@ -1594,12 +1597,14 @@ function ShieldIcon({ className = "" }: { className?: string }) {
 }
 
 /* ───────────────────────── Footer (parchment) ───────────────────────── */
-function Footer({ t }: { t: Copy }) {
+function Footer({ t, variant = "home" }: { t: Copy; variant?: "home" | "subpage" | "changelog" }) {
   const f = t.footer;
   // Map specific footer link labels to real targets. Anything not listed
   // here still falls back to a harmless "#" so the layout stays consistent.
+  // On subpages we are one directory deeper, so paths go up a level first.
+  const prefix = variant === "home" ? "./" : "../";
   const linkHref = (label: string): string => {
-    if (label === "Changelog") return "./changelog/";
+    if (label === "Changelog") return `${prefix}changelog/`;
     return "#";
   };
   return (
@@ -1937,13 +1942,13 @@ function ChangelogPage() {
             >
               {c.ctaPrimary} ›
             </a>
-            <a href="./" className="apple-cta-link text-blue">
+            <a href="../" className="apple-cta-link text-blue">
               {c.backHome} ›
             </a>
           </div>
         </section>
 
-        <Footer t={t} />
+        <Footer t={t} variant="changelog" />
         <CursorParticles />
       </main>
     </>
@@ -1984,12 +1989,12 @@ function HowPage() {
             <p className="type-lead mx-auto mt-5 max-w-[680px] text-ink-2">{h.subtitle}</p>
             <div className="mt-7 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
               <a
-                href="./#hero"
+                href="../#hero"
                 className="apple-cta-primary"
               >
                 {h.primaryCta}
               </a>
-              <a href="./#privacy" className="apple-cta-link text-blue">
+              <a href="../#privacy" className="apple-cta-link text-blue">
                 {h.secondaryCta} ›
               </a>
             </div>
@@ -2019,7 +2024,7 @@ function HowPage() {
         {/* CTA — drive users to the GitHub repo */}
         <HowCtaSection h={h} />
 
-        <Footer t={t} />
+        <Footer t={t} variant="subpage" />
       </main>
       <CursorParticles />
     </>
@@ -2203,7 +2208,7 @@ function HowCtaSection({ h }: { h: Copy["how"] }) {
           >
             {h.ctaPrimary}
           </a>
-          <a href="./" className="apple-cta-link text-blue">
+          <a href="../" className="apple-cta-link text-blue">
             {h.ctaSecondary} ›
           </a>
         </div>
