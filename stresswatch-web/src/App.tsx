@@ -62,7 +62,7 @@ const liveState = { value: 42, bpm: 72, confidence: 0.92 };
 
 /* ───────────────────────── Copy (bilingual) ───────────────────────── */
 type Copy = {
-  nav: { dashboard: string; features: string; how: string; privacy: string; download: string; languageLabel: string };
+  nav: { dashboard: string; features: string; how: string; privacy: string; download: string; languageLabel: string; changelog: string };
   hero: { badge: string; title: string; subtitle: string; primaryCta: string; secondaryCta: string; trust: string };
   dashboard: {
     title: string;
@@ -127,11 +127,27 @@ type Copy = {
     ctaSecondary: string;
   };
   footer: { tagline: string; columns: { title: string; links: string[] }[]; copyright: string; disclaimer: string };
+  changelog: {
+    eyebrow: string;
+    title1: string;
+    title2: string;
+    subtitle: string;
+    repo: string;
+    countLabel: string;
+    sourceTitle: string;
+    sourceBody: string;
+    tagLegend: string;
+    ctaTitle: string;
+    ctaSub: string;
+    ctaPrimary: string;
+    backHome: string;
+    groups: { label: string; summary: string; entries: { date: string; sha: string; title: string; tags: string[] }[] }[];
+  };
 };
 
 const copy: Record<Lang, Copy> = {
   en: {
-    nav: { dashboard: "Dashboard", features: "Features", how: "How it works", privacy: "Privacy", download: "Download App", languageLabel: "Language" },
+    nav: { dashboard: "Dashboard", features: "Features", how: "How it works", privacy: "Privacy", download: "Download App", languageLabel: "Language", changelog: "Changelog" },
     hero: {
       badge: "Apple Health · Local-first",
       title: "Read every signal your body sends",
@@ -331,10 +347,69 @@ const copy: Record<Lang, Copy> = {
       ],
       copyright: "Copyright 2026 · StressWatch. All rights reserved.",
       disclaimer: "This app is for personal wellness trend reference only and does not constitute medical advice."
+    },
+    changelog: {
+      eyebrow: "Changelog",
+      title1: "Every build of StressWatch,",
+      title2: "straight from GitHub.",
+      subtitle: "A chronological log of features, fixes, and polish pulled live from the master branch of the open-source repo. No marketing, no rewrite.",
+      repo: "github.com/Nanako-Arasaka/StressWatch",
+      countLabel: "30 commits shown",
+      sourceTitle: "Source",
+      sourceBody: "Every entry above is a direct quote of the commit subject on the master branch of github.com/Nanako-Arasaka/StressWatch. The page does not fetch data live — it's a curated snapshot of the most recent 30 commits as of today, grouped by month with date + short SHA on the left and a tag (Feature / Fix / Polish / Docs / CI / Motion / Link / Routing) on the right.",
+      tagLegend: "Tags · Feature · Fix · Polish · Docs · CI · Motion · Link · Routing",
+      ctaTitle: "Open the repo to see every diff.",
+      ctaSub: "Every commit on this page is a real commit on master. Tap below to jump straight to the source.",
+      ctaPrimary: "View the master branch on GitHub",
+      backHome: "Back to home",
+      groups: [
+        {
+          label: "August 2026",
+          summary: "3 commits · subpages, downloads, responsive polish",
+          entries: [
+            { date: "Aug 5", sha: "6400220", title: "Add How-it-works subpage and wire navigation across pages", tags: ["Feature", "Routing"] },
+            { date: "Aug 5", sha: "0487104", title: "Point Download CTAs to GitHub repo (open in new tab)", tags: ["Link"] },
+            { date: "Aug 5", sha: "3cc41a3", title: "Boost responsive design and micro-interactions", tags: ["Feature", "Polish"] }
+          ]
+        },
+        {
+          label: "July 2026",
+          summary: "5 commits · Apple landing redesign + motion overhaul",
+          entries: [
+            { date: "Jul 17", sha: "068d20a", title: "Improve recovery heatmap: multi-hue scale + legend", tags: ["Polish"] },
+            { date: "Jul 17", sha: "625ce57", title: "Fix scroll-driven reveal + strengthen cursor particles", tags: ["Fix", "Motion"] },
+            { date: "Jul 17", sha: "4c7ba60", title: "Add directional reveal, cursor particles, and chart annotations", tags: ["Feature"] },
+            { date: "Jul 17", sha: "28d9594", title: "Enhance landing-page motion (Apple-style reveal & data animations)", tags: ["Polish"] },
+            { date: "Jul 17", sha: "83c0d88", title: "Redesign landing page in Apple design language (overwrite original site)", tags: ["Feature", "CI"] }
+          ]
+        },
+        {
+          label: "June 2026",
+          summary: "4 commits · handoff + visual fixes",
+          entries: [
+            { date: "Jun 26", sha: "d0a75f7", title: "Add project handoff README", tags: ["Docs"] },
+            { date: "Jun 16", sha: "7519bd1", title: "修复已知问题", tags: ["Fix"] },
+            { date: "Jun 15", sha: "cc2a10f", title: "前端页面和app内容优化", tags: ["Polish"] },
+            { date: "Jun 11", sha: "0f20bc3", title: "修复编译错误问题", tags: ["Fix"] }
+          ]
+        },
+        {
+          label: "May 2026",
+          summary: "9 commits · widget, Live Stress, Core ML, training pipeline",
+          entries: [
+            { date: "Jun 9", sha: "51e91e2", title: "widget add in.", tags: ["Feature"] },
+            { date: "May 30", sha: "f5a9ab1", title: "加入基于个人数据训练模型", tags: ["Feature", "AI"] },
+            { date: "May 30", sha: "1e856f8", title: "Live Stress Estimate Upgrade", tags: ["Feature"] },
+            { date: "May 24", sha: "4b8a01a", title: "加入基于用户数据学习的 demo 功能，架构大幅优化", tags: ["Feature", "AI"] },
+            { date: "May 23", sha: "afddf60", title: "app 视觉结构与前端统一", tags: ["Polish"] },
+            { date: "May 23", sha: "14ddd8d", title: "修改 bug：设置页面按钮点击无效", tags: ["Fix"] }
+          ]
+        }
+      ]
     }
   },
   zh: {
-    nav: { dashboard: "仪表盘", features: "功能", how: "工作原理", privacy: "隐私", download: "下载 App", languageLabel: "语言" },
+    nav: { dashboard: "仪表盘", features: "功能", how: "工作原理", privacy: "隐私", download: "下载 App", languageLabel: "语言", changelog: "更新日志" },
     hero: {
       badge: "Apple Health 集成 · 本地优先",
       title: "读懂身体发出的每一个信号",
@@ -532,6 +607,65 @@ const copy: Record<Lang, Copy> = {
       ],
       copyright: "Copyright 2026 · StressWatch. 保留所有权利。",
       disclaimer: "本应用仅提供健康趋势参考，不构成医疗建议。"
+    },
+    changelog: {
+      eyebrow: "更新日志",
+      title1: "StressWatch 的每一次构建，",
+      title2: "都来自 GitHub。",
+      subtitle: "从开源仓库 master 分支直接抓取的功能、修复与打磨按时间顺序排列。无营销，无润色。",
+      repo: "github.com/Nanako-Arasaka/StressWatch",
+      countLabel: "展示最近 30 次提交",
+      sourceTitle: "数据来源",
+      sourceBody: "上方每一条都是 master 分支上提交信息原文。本页不做实时抓取——它是截至今日的最近 30 次提交的精选快照，按月份分组，左侧是日期 + 短 SHA，右侧是标签（Feature / Fix / Polish / Docs / CI / Motion / Link / Routing）。",
+      tagLegend: "标签 · Feature · Fix · Polish · Docs · CI · Motion · Link · Routing",
+      ctaTitle: "打开仓库查看每一次 diff。",
+      ctaSub: "本页的每条提交都是 master 上的真实提交。点击下方按钮直接跳到源码。",
+      ctaPrimary: "在 GitHub 上查看 master 分支",
+      backHome: "返回首页",
+      groups: [
+        {
+          label: "2026 年 8 月",
+          summary: "3 次提交 · 二级页、下载跳转、响应式打磨",
+          entries: [
+            { date: "8 月 5 日", sha: "6400220", title: "新增「工作原理」二级页并打通跨页导航", tags: ["Feature", "Routing"] },
+            { date: "8 月 5 日", sha: "0487104", title: "Download CTA 指向 GitHub 仓库（新标签页打开）", tags: ["Link"] },
+            { date: "8 月 5 日", sha: "3cc41a3", title: "强化响应式设计与微交互", tags: ["Feature", "Polish"] }
+          ]
+        },
+        {
+          label: "2026 年 7 月",
+          summary: "5 次提交 · Apple 风格落地页重做 + 动效升级",
+          entries: [
+            { date: "7 月 17 日", sha: "068d20a", title: "恢复热力图：多色色阶 + 图例", tags: ["Polish"] },
+            { date: "7 月 17 日", sha: "625ce57", title: "修复滚动驱动 reveal 并强化鼠标粒子", tags: ["Fix", "Motion"] },
+            { date: "7 月 17 日", sha: "4c7ba60", title: "新增方向感知 reveal、鼠标粒子与图表注释", tags: ["Feature"] },
+            { date: "7 月 17 日", sha: "28d9594", title: "落地页动效升级（Apple 式 reveal 与数据动画）", tags: ["Polish"] },
+            { date: "7 月 17 日", sha: "83c0d88", title: "按 Apple 设计语言重做落地页（覆盖原始站点）", tags: ["Feature", "CI"] }
+          ]
+        },
+        {
+          label: "2026 年 6 月",
+          summary: "4 次提交 · 项目交接与视觉修复",
+          entries: [
+            { date: "6 月 26 日", sha: "d0a75f7", title: "新增项目交接 README", tags: ["Docs"] },
+            { date: "6 月 16 日", sha: "7519bd1", title: "修复已知问题", tags: ["Fix"] },
+            { date: "6 月 15 日", sha: "cc2a10f", title: "前端页面与 App 内容优化", tags: ["Polish"] },
+            { date: "6 月 11 日", sha: "0f20bc3", title: "修复编译错误", tags: ["Fix"] }
+          ]
+        },
+        {
+          label: "2026 年 5 月",
+          summary: "9 次提交 · 小组件、Live Stress、Core ML、训练流水线",
+          entries: [
+            { date: "6 月 9 日", sha: "51e91e2", title: "加入主屏小组件", tags: ["Feature"] },
+            { date: "5 月 30 日", sha: "f5a9ab1", title: "加入基于个人数据的模型训练", tags: ["Feature", "AI"] },
+            { date: "5 月 30 日", sha: "1e856f8", title: "实时压力估算升级", tags: ["Feature"] },
+            { date: "5 月 24 日", sha: "4b8a01a", title: "加入基于用户数据学习的 demo，并大幅优化架构", tags: ["Feature", "AI"] },
+            { date: "5 月 23 日", sha: "afddf60", title: "App 视觉结构与前端统一", tags: ["Polish"] },
+            { date: "5 月 23 日", sha: "14ddd8d", title: "修复 bug：设置页按钮点击无效", tags: ["Fix"] }
+          ]
+        }
+      ]
     }
   }
 };
@@ -593,16 +727,11 @@ function buildSmoothPath(points: Array<{ x: number; y: number }>) {
   }, "");
 }
 
-/* ───────────────────────── App shell ───────────────────────── */
-function App() {
+/* ───────────────────────── App shell — Home ───────────────────────── */
+function HomePage() {
   const [language, setLanguage] = useState<Lang>("zh");
   const t = copy[language];
 
-  // Light cross-fade when switching language: bump a key so the main
-  // element remounts with the lang-fade-in animation (CSS, ~250ms).
-  // Keeps scroll position intact (window scrollY isn't reset by a
-  // key change on the same node tree) and avoids resetting the chart
-  // animations because the user is at the same spot.
   const [langTick, setLangTick] = useState(0);
   const switchLanguage = (l: Lang) => {
     if (l === language) return;
@@ -633,7 +762,7 @@ function App() {
 }
 
 /* ───────────────────────── Nav ───────────────────────── */
-type NavVariant = "home" | "subpage";
+type NavVariant = "home" | "subpage" | "changelog";
 
 function NavBar({
   language,
@@ -673,11 +802,13 @@ function NavBar({
     { label: t.nav.dashboard, id: "hero" },
     { label: t.nav.features, id: "live" },
     { label: t.nav.how, id: "trends" },
-    { label: t.nav.privacy, id: "privacy" }
+    { label: t.nav.privacy, id: "privacy" },
+    { label: t.nav.changelog, id: "changelog" }
   ];
 
   const homeHref = "./";
   const howHref = "./how/";
+  const changelogHref = "./changelog/";
 
   return (
     <header className={`apple-nav fixed inset-x-0 top-0 z-50 h-11 ${scrolled ? "scrolled" : ""}`}>
@@ -697,24 +828,39 @@ function NavBar({
 
         <div className="hidden items-center gap-8 md:flex">
           {navItems.map((item) => {
-            // "How it works" navigates to the dedicated subpage on the
-            // home variant, and stays as a cross-page link on the
-            // subpage variant (it can't scroll to an anchor that lives
-            // on a different HTML document).
+            // Cross-page links (subpage routes) for How-it-works and Changelog.
             if (item.label === t.nav.how) {
+              const isActive = variant === "subpage";
               return (
                 <a
                   key={item.id}
                   href={howHref}
-                  className="focus-ring rounded-md text-[12px] font-normal text-white/80 transition hover:text-white"
+                  className={`focus-ring rounded-md text-[12px] transition hover:text-white ${
+                    isActive ? "font-semibold text-white" : "font-normal text-white/80"
+                  }`}
                 >
                   {item.label}
                 </a>
               );
             }
-            // On the subpage, the rest of the anchors would point at
-            // the home page — render them as cross-page links instead.
-            if (variant === "subpage") {
+            if (item.label === t.nav.changelog) {
+              const isActive = variant === "changelog";
+              return (
+                <a
+                  key={item.id}
+                  href={changelogHref}
+                  className={`focus-ring rounded-md text-[12px] transition hover:text-white ${
+                    isActive ? "font-semibold text-white" : "font-normal text-white/80"
+                  }`}
+                >
+                  {item.label}
+                </a>
+              );
+            }
+            // On the subpage / changelog variants, the rest of the
+            // anchors point at the home page — render them as
+            // cross-page links instead of trying to scrollIntoView.
+            if (variant !== "home") {
               return (
                 <a
                   key={item.id}
@@ -782,13 +928,16 @@ function NavBar({
           <ul className="mx-auto flex max-w-[640px] flex-col px-6 py-3">
             {navItems.map((item) => {
               const isHow = item.label === t.nav.how;
+              const isCl = item.label === t.nav.changelog;
               if (isHow) {
                 return (
                   <li key={item.id}>
                     <a
                       href={howHref}
                       onClick={() => setMobileOpen(false)}
-                      className="focus-ring flex w-full items-center justify-between border-b border-white/10 py-4 text-left text-[15px] font-medium text-white/90 transition hover:text-white"
+                      className={`focus-ring flex w-full items-center justify-between border-b border-white/10 py-4 text-left text-[15px] transition hover:text-white ${
+                        variant === "subpage" ? "font-semibold text-white" : "font-medium text-white/90"
+                      }`}
                     >
                       {item.label}
                       <span className="text-white/40" aria-hidden="true">›</span>
@@ -796,7 +945,23 @@ function NavBar({
                   </li>
                 );
               }
-              if (variant === "subpage") {
+              if (isCl) {
+                return (
+                  <li key={item.id}>
+                    <a
+                      href={changelogHref}
+                      onClick={() => setMobileOpen(false)}
+                      className={`focus-ring flex w-full items-center justify-between border-b border-white/10 py-4 text-left text-[15px] transition hover:text-white ${
+                        variant === "changelog" ? "font-semibold text-white" : "font-medium text-white/90"
+                      }`}
+                    >
+                      {item.label}
+                      <span className="text-white/40" aria-hidden="true">›</span>
+                    </a>
+                  </li>
+                );
+              }
+              if (variant !== "home") {
                 return (
                   <li key={item.id}>
                     <a
@@ -1431,6 +1596,12 @@ function ShieldIcon({ className = "" }: { className?: string }) {
 /* ───────────────────────── Footer (parchment) ───────────────────────── */
 function Footer({ t }: { t: Copy }) {
   const f = t.footer;
+  // Map specific footer link labels to real targets. Anything not listed
+  // here still falls back to a harmless "#" so the layout stays consistent.
+  const linkHref = (label: string): string => {
+    if (label === "Changelog") return "./changelog/";
+    return "#";
+  };
   return (
     <footer className="bg-parchment px-5 py-14 text-ink">
       <div className="mx-auto max-w-5xl">
@@ -1441,7 +1612,7 @@ function Footer({ t }: { t: Copy }) {
               <ul className="mt-3">
                 {col.links.map((link) => (
                   <li key={link}>
-                    <a className="footer-link" href="#">
+                    <a className="footer-link" href={linkHref(link)}>
                       {link}
                     </a>
                   </li>
@@ -1626,7 +1797,163 @@ function CursorParticles() {
   );
 }
 
-export default App;
+/* ───────────────────────── Changelog — subpage ───────────────────────── */
+// One entry: date / short SHA / title / pill tags. Visually mirrors the
+// Ardot design (left meta column, right title + tag row).
+function ChangelogEntry({ entry }: { entry: { date: string; sha: string; title: string; tags: string[] } }) {
+  return (
+    <article className="flex flex-col gap-3 rounded-[18px] border border-black/10 bg-white px-6 py-4 sm:flex-row sm:items-center sm:gap-6 sm:px-7 sm:py-5">
+      <div className="flex w-full shrink-0 items-center justify-between gap-3 text-[12px] text-ink-2 sm:w-[150px] sm:flex-col sm:items-start sm:justify-center sm:text-[13px]">
+        <span className="font-medium text-ink-2">{entry.date}</span>
+        <span className="font-mono text-ink">{entry.sha}</span>
+      </div>
+      <div className="flex flex-1 flex-col gap-2">
+        <p className="text-[15px] font-semibold tracking-tight text-ink sm:text-[17px]">{entry.title}</p>
+        <div className="flex flex-wrap items-center gap-2">
+          {entry.tags.map((tag) => (
+            <ChangelogTag key={tag} label={tag} />
+          ))}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+// Map tag label to a small colored pill. Keeps the same palette as the
+// Ardot design — Feature blue, Fix red, Polish amber, Docs/CI green,
+// Motion amber, Link green, Routing green, AI green.
+const TAG_STYLE: Record<string, { bg: string; text: string }> = {
+  Feature: { bg: "#E6F0FF", text: "#0066CC" },
+  Fix: { bg: "#FFEEEE", text: "#A32D2D" },
+  Polish: { bg: "#FFF1E0", text: "#A35A0B" },
+  Docs: { bg: "#EAF7E8", text: "#187A2F" },
+  CI: { bg: "#EAF7E8", text: "#187A2F" },
+  Motion: { bg: "#FFF1E0", text: "#A35A0B" },
+  Link: { bg: "#EAF7E8", text: "#187A2F" },
+  Routing: { bg: "#EAF7E8", text: "#187A2F" },
+  AI: { bg: "#EAF7E8", text: "#187A2F" }
+};
+
+function ChangelogTag({ label }: { label: string }) {
+  const s = TAG_STYLE[label] ?? { bg: "#F1F1F4", text: "#1D1D1F" };
+  return (
+    <span
+      className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold"
+      style={{ backgroundColor: s.bg, color: s.text }}
+    >
+      {label}
+    </span>
+  );
+}
+
+function ChangelogPage() {
+  const [language, setLanguage] = useState<Lang>("zh");
+  const [langTick, setLangTick] = useState(0);
+  const t = copy[language];
+  const switchLanguage = (l: Lang) => {
+    if (l === language) return;
+    setLangTick((n) => n + 1);
+    setLanguage(l);
+  };
+  const c = t.changelog;
+
+  return (
+    <>
+      <main
+        key={langTick}
+        className="lang-fade font-apple min-h-screen overflow-x-hidden bg-white text-ink antialiased"
+        lang={language === "zh" ? "zh-CN" : "en"}
+      >
+        <NavBar language={language} setLanguage={switchLanguage} t={t} variant="changelog" />
+
+        {/* Hero */}
+        <section className="bg-white px-5 pb-20 pt-28 sm:pb-24 sm:pt-36">
+          <div className="mx-auto max-w-[820px] text-center">
+            <span className="type-eyebrow text-blue">{c.eyebrow}</span>
+            <h1 className="type-hero mt-3 text-ink">
+              {c.title1}
+              <br />
+              {c.title2}
+            </h1>
+            <p className="type-lead mx-auto mt-5 max-w-[680px] text-ink-2">{c.subtitle}</p>
+            <div className="mt-7 flex flex-col items-center justify-center gap-3 text-[13px] sm:flex-row sm:gap-5">
+              <a
+                className="text-blue"
+                href={`https://${c.repo}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {c.repo}
+              </a>
+              <span className="text-ink-3">·</span>
+              <span className="text-ink-2">{c.countLabel}</span>
+            </div>
+          </div>
+        </section>
+
+        {/* Timeline */}
+        <section className="bg-parchment px-5 pb-24 pt-4 sm:pt-8">
+          <div className="mx-auto flex max-w-[1040px] gap-8 sm:gap-12">
+            <div className="hidden w-1 shrink-0 self-stretch bg-[#D2D2D7] sm:block" aria-hidden="true" />
+            <div className="flex flex-1 flex-col gap-10">
+              {c.groups.map((g) => (
+                <div key={g.label} className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-1">
+                    <span className="type-eyebrow text-blue">{g.label}</span>
+                    <p className="text-[14px] text-ink-2">{g.summary}</p>
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    {g.entries.map((e) => (
+                      <ChangelogEntry key={e.sha} entry={e} />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Source note */}
+        <section className="bg-white px-5 py-16">
+          <div className="mx-auto flex max-w-[820px] flex-col items-center gap-3 text-center">
+            <span className="type-eyebrow text-blue">{c.sourceTitle}</span>
+            <p className="max-w-[820px] text-[14px] leading-relaxed text-ink-2">{c.sourceBody}</p>
+            <p className="text-[12px] font-medium text-ink">{c.tagLegend}</p>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="bg-parchment px-5 py-20">
+          <div className="mx-auto flex max-w-[820px] flex-col items-center gap-6 text-center">
+            <h2 className="text-[34px] font-semibold leading-tight tracking-tight text-ink sm:text-[40px]">
+              {c.ctaTitle}
+            </h2>
+            <p className="max-w-[680px] text-[18px] text-ink-2">{c.ctaSub}</p>
+            <a
+              href={`https://${c.repo}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="apple-cta-primary"
+            >
+              {c.ctaPrimary} ›
+            </a>
+            <a href="./" className="apple-cta-link text-blue">
+              {c.backHome} ›
+            </a>
+          </div>
+        </section>
+
+        <Footer t={t} />
+        <CursorParticles />
+      </main>
+    </>
+  );
+}
+
+export default function App({ variant }: { variant?: "home" | "changelog" } = {}) {
+  if (variant === "changelog") return <ChangelogPage />;
+  return <HomePage />;
+}
 
 /* ───────────────────────── How it works — subpage ───────────────────────── */
 function HowPage() {
