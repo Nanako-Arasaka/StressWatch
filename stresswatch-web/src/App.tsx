@@ -874,9 +874,32 @@ function buildSmoothPath(points: Array<{ x: number; y: number }>) {
   }, "");
 }
 
+/* ───────────────────────── Language persistence ───────────────────────── */
+const LANG_KEY = "stresswatch.lang";
+
+function usePersistedLang(): [Lang, (l: Lang) => void] {
+  const [language, setLanguage] = useState<Lang>(() => {
+    try {
+      const v = window.localStorage.getItem(LANG_KEY);
+      return v === "en" || v === "zh" ? v : "zh";
+    } catch {
+      return "zh";
+    }
+  });
+  const update = (l: Lang) => {
+    setLanguage(l);
+    try {
+      window.localStorage.setItem(LANG_KEY, l);
+    } catch {
+      // private mode or storage disabled — fall through silently
+    }
+  };
+  return [language, update];
+}
+
 /* ───────────────────────── App shell — Home ───────────────────────── */
 function HomePage() {
-  const [language, setLanguage] = useState<Lang>("zh");
+  const [language, setLanguage] = usePersistedLang();
   const t = copy[language];
 
   const [langTick, setLangTick] = useState(0);
@@ -2034,7 +2057,7 @@ function ChangelogTag({ label }: { label: string }) {
 }
 
 function ChangelogPage() {
-  const [language, setLanguage] = useState<Lang>("zh");
+  const [language, setLanguage] = usePersistedLang();
   const [langTick, setLangTick] = useState(0);
   const t = copy[language];
   const switchLanguage = (l: Lang) => {
@@ -2238,7 +2261,7 @@ function ChangelogPage() {
 /* ───────────────────────── Privacy — subpage ───────────────────────── */
 
 function PrivacyPage() {
-  const [language, setLanguage] = useState<Lang>("zh");
+  const [language, setLanguage] = usePersistedLang();
   const [langTick, setLangTick] = useState(0);
   const t = copy[language];
   const switchLanguage = (l: Lang) => {
@@ -2452,7 +2475,7 @@ export default function App({ variant }: { variant?: "home" | "changelog" | "pri
 
 /* ───────────────────────── How it works — subpage ───────────────────────── */
 function HowPage() {
-  const [language, setLanguage] = useState<Lang>("zh");
+  const [language, setLanguage] = usePersistedLang();
   const [langTick, setLangTick] = useState(0);
   const t = copy[language];
   const switchLanguage = (l: Lang) => {
