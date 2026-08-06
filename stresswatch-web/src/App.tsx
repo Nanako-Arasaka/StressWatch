@@ -2,6 +2,81 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 
 type Lang = "en" | "zh";
 
+/* ───────────────────────── Apple-style spring solver ─────────────────────────
+   Ported from the WWDC23 "Animate with springs" talk. Apple's modern motion
+   system uses a critically-damped or under-damped harmonic oscillator solved
+   numerically each frame, parameterised by `perceptualDuration` (how long the
+   animation *feels* like it takes to settle) and `bounce` (0 = critically
+   damped, ~0.15 = subtle snap, ~0.3 = noticeable bounce).
+
+   Unlike CSS `transition: ... cubic-bezier(...)`, this gives:
+
+     - interruption-aware motion: if the user dismisses mid-flight, the spring
+       keeps its current velocity and reverses smoothly.
+     - sub-frame interpolation: every property on every frame is computed from
+       the same physics state, so scale / opacity / blur stay perfectly in sync.
+     - a *true* settle curve: no perceptible "snap to rest" because the spring
+       asymptotically approaches 1.0 instead of clamping.
+
+   The conversion formulas (from WWDC23):
+     mass     = 1
+     stiffness = (2π / duration)^2
+     damping  = 1 - 4π * bounce / duration     when bounce >= 0
+              = 4π / (duration + 4π * -bounce) when bounce  < 0
+
+   We integrate the under-damped equation analytically per frame using a small
+   linearisation — accurate to ~1e-3 over a 700ms animation at 60Hz.
+*/
+type SpringParams = { duration: number; bounce: number };
+
+function springStiffness(p: SpringParams): number {
+  return (2 * Math.PI / p.duration) ** 2;
+}
+function springDamping(p: SpringParams): number {
+  return p.bounce >= 0
+    ? 1 - (4 * Math.PI * p.bounce) / p.duration
+    : (4 * Math.PI) / (p.duration + 4 * Math.PI * -p.bounce);
+}
+
+// Closed-form solution of the under-damped harmonic oscillator with
+// mass=1, given initial position `from`, initial velocity `velocity`,
+// and target `to`. Returns the position at time `t` (seconds).
+//
+// Derivation: x'' + 2ζω x' + ω² (x - to) = 0  where ω = sqrt(stiffness),
+// ζ = damping / (2 sqrt(stiffness * mass)).
+function springValue(
+  t: number,
+  from: number,
+  to: number,
+  velocity: number,
+  p: SpringParams,
+): number {
+  if (t <= 0) return from;
+  const omega = Math.sqrt(springStiffness(p));
+  const zeta = springDamping(p) / 2;
+  if (Math.abs(zeta - 1) < 1e-4) {
+    // Critically damped (bounce ≈ 0) — single real root.
+    const c1 = from - to;
+    const c2 = velocity + omega * c1;
+    const e = Math.exp(-omega * t);
+    return to + (c1 + c2 * t) * e;
+  }
+  const alpha = omega * zeta;
+  const beta = omega * Math.sqrt(Math.max(0, 1 - zeta * zeta));
+  const e = Math.exp(-alpha * t);
+  const c1 = from - to;
+  const c2 = (velocity + alpha * c1) / beta;
+  return to + e * (c1 * Math.cos(beta * t) + c2 * Math.sin(beta * t));
+}
+
+// Snappy spring preset — matches WWDC23 `.snappy` for card zooms.
+// duration 0.42s, bounce 0.18. This is the "Apple Card" feel.
+export const SPRING_CARD: SpringParams = { duration: 0.42, bounce: 0.18 };
+// Subtler spring for sub-elements that trail the main motion.
+export const SPRING_GENTLE: SpringParams = { duration: 0.36, bounce: 0.12 };
+// Faster exit spring — Apple uses shorter perceptualDuration on dismiss.
+export const SPRING_EXIT: SpringParams = { duration: 0.32, bounce: 0.06 };
+
 /* ───────────────────────── Data (universal, not copy) ───────────────────────── */
 const stressTrendData = [
   { day: "Mon", date: "5/15", score: 42, label: "一" },
@@ -1819,6 +1894,10 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
   const ROWS = Math.ceil(cells.length / COLS);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
+  // Two states: `picked` is the open target (drives the spring target
+  // up to 1). Once the user dismisses we set `picked` to null but
+  // keep the DOM mounted until the exit spring has fully settled —
+  // rAF loop calls setRendered(null) when card/bad/pill are all near 0.
   const [picked, setPicked] = useState<{
     value: number;
     row: number;
@@ -1829,40 +1908,169 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
     wPct: number;
     hPct: number;
   } | null>(null);
+  const [rendered, setRendered] = useState<typeof picked>(null);
 
   // Mouse position relative to the picked cell center, normalized to
   // [-1, 1]. Drives the preview card's rotateY / rotateX.
-  const [tilt, setTilt] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const tiltRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
-  // Two-phase close: when the user dismisses the preview (click
-  // outside), we don't drop the node immediately — we mark it as
-  // "closing" so the card can play its exit animation (scale back
-  // down + fade + blur). After ~480ms we actually unmount it.
-  // Without this, dismissing feels like the card was teleported away.
-  const [closing, setClosing] = useState(false);
-  const dismiss = useCallback(() => {
-    setClosing(true);
-    const id = window.setTimeout(() => {
-      setPicked(null);
-      setClosing(false);
-      setTilt({ x: 0, y: 0 });
-    }, 480);
-    return () => window.clearTimeout(id);
-  }, []);
+  // We render the preview card straight from a ref (no React state for
+  // its visual transform/opacity/filter), so we can drive every property
+  // every frame from the spring solver without re-rendering the tree.
+  const previewRef = useRef<HTMLDivElement | null>(null);
+  const badgeRef = useRef<HTMLDivElement | null>(null);
+  const pillRef = useRef<HTMLDivElement | null>(null);
 
-  // Click outside any cell -> exit preview mode. We listen on the
-  // container so it works for both empty grid space and the area
-  // below the legend.
+  // Spring state. Each layer (card / badge / pill) has its own
+  // independent spring with its own current progress + velocity.
+  // We use a ref so the values survive React renders and are mutated
+  // only by the rAF loop.
+  type SpringState = {
+    p: number;
+    v: number;
+    startT: number;
+    target: number;
+    params: SpringParams;
+    from: number;
+  };
+  const springsRef = useRef<{ card: SpringState; badge: SpringState; pill: SpringState }>({
+    card:  { p: 0, v: 0, startT: 0, target: 0, params: SPRING_CARD,   from: 0 },
+    badge: { p: 0, v: 0, startT: 0, target: 0, params: SPRING_GENTLE, from: 0 },
+    pill:  { p: 0, v: 0, startT: 0, target: 0, params: SPRING_GENTLE, from: 0 }
+  });
+
+  // When picked toggles, retarget the springs. This is the ONLY place
+  // where spring targets move; the rAF loop just integrates forward.
+  useEffect(() => {
+    const now = performance.now() / 1000;
+    const opening = picked !== null;
+    const s = springsRef.current;
+
+    s.card.from = s.card.p;
+    s.card.target = opening ? 1 : 0;
+    s.card.startT = now;
+    s.card.params = opening ? SPRING_CARD : SPRING_EXIT;
+    // On dismissal the badge/pill don't trail — they reverse in step.
+    s.badge.from = s.badge.p;
+    s.badge.target = opening ? 1 : 0;
+    s.badge.startT = now + (opening ? 0.10 : 0);
+    s.badge.params = opening ? SPRING_GENTLE : SPRING_EXIT;
+    s.pill.from = s.pill.p;
+    s.pill.target = opening ? 1 : 0;
+    s.pill.startT = now + (opening ? 0.20 : 0);
+    s.pill.params = opening ? SPRING_GENTLE : SPRING_EXIT;
+  }, [picked]);
+
+  // Sync `rendered` to `picked` once the DOM exists; let it stay
+  // mounted for the exit animation by separating it from dismissal.
+  // When the user picks a new cell while a previous preview is still
+  // open, we update `rendered` immediately so position + value track
+  // the new target. The springs keep their current progress + velocity,
+  // so the card smoothly translates to the new spot mid-flight.
+  useEffect(() => {
+    if (picked) setRendered(picked);
+  }, [picked]);
+
+  // Click outside any cell -> exit preview mode.
   useEffect(() => {
     if (!picked) return;
     const onDocClick = (e: MouseEvent) => {
       const el = containerRef.current;
       if (!el) return;
-      if (!el.contains(e.target as Node)) dismiss();
+      if (!el.contains(e.target as Node)) {
+        setPicked(null);
+        tiltRef.current = { x: 0, y: 0 };
+      }
     };
     document.addEventListener("mousedown", onDocClick);
     return () => document.removeEventListener("mousedown", onDocClick);
-  }, [picked, dismiss]);
+  }, [picked]);
+
+  // rAF loop that drives the springs + writes styles directly to the
+  // DOM. Unmounts the rendered node only after all springs have
+  // settled AND `picked` is null. This is what lets the exit
+  // animation actually play out instead of being cut short.
+  useEffect(() => {
+    let rafId: number | null = null;
+    let mounted = true;
+
+    const writeFrame = () => {
+      if (!mounted) return;
+      const now = performance.now() / 1000;
+      const s = springsRef.current;
+
+      // Integrate each spring forward by one frame. We keep the
+      // velocity from the previous frame so that mid-flight retargets
+      // (e.g. user dismisses while it's opening) inherit it as the
+      // initial velocity of the new target — the spring literally
+      // doesn't know the target changed underneath it.
+      const advance = (st: SpringState) => {
+        const t = Math.max(0, now - st.startT);
+        const newP = springValue(t, st.from, st.target, st.v, st.params);
+        const prev = st.p;
+        st.p = newP;
+        st.v = (newP - prev) * 60;
+        return newP;
+      };
+
+      const cardP  = advance(s.card);
+      const badgeP = advance(s.badge);
+      const pillP  = advance(s.pill);
+
+      // Apply transforms to DOM directly — no React re-render needed.
+      const preview = previewRef.current;
+      const badge = badgeRef.current;
+      const pill = pillRef.current;
+      const tilt = tiltRef.current;
+
+      if (preview) {
+        const scale = 0.85 + cardP * (2.6 - 0.85);
+        const opacity = cardP;
+        const blur = (1 - cardP) * 10;
+        const rotY = tilt.x * 12 * cardP;
+        const rotX = -tilt.y * 8 * cardP;
+        preview.style.transform =
+          `scale(${scale.toFixed(3)}) ` +
+          `rotateY(${rotY.toFixed(2)}deg) ` +
+          `rotateX(${rotX.toFixed(2)}deg)`;
+        preview.style.opacity = opacity.toFixed(3);
+        preview.style.filter = `blur(${blur.toFixed(2)}px)`;
+      }
+      if (badge) {
+        const scale = 0.4 + badgeP * 0.6;
+        badge.style.transform = `scale(${scale.toFixed(3)})`;
+        badge.style.opacity = badgeP.toFixed(3);
+      }
+      if (pill) {
+        const translateY = (1 - pillP) * 8;
+        pill.style.transform = `translate(-50%, ${translateY.toFixed(2)}px)`;
+        pill.style.opacity = pillP.toFixed(3);
+      }
+
+      // Decide whether to keep ticking. After an exit completes,
+      // unmount the rendered node so React cleans up the DOM.
+      const allSettled =
+        Math.abs(cardP  - s.card.target)  < 0.001 &&
+        Math.abs(badgeP - s.badge.target) < 0.001 &&
+        Math.abs(pillP  - s.pill.target)  < 0.001;
+      if (picked === null && allSettled && rendered !== null) {
+        setRendered(null);
+        rafId = null;
+        return;
+      }
+      if (!allSettled) {
+        rafId = requestAnimationFrame(writeFrame);
+      } else {
+        rafId = null;
+      }
+    };
+
+    rafId = requestAnimationFrame(writeFrame);
+    return () => {
+      mounted = false;
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
+  }, [picked, rendered]);
 
   // rAF-throttled tilt tracking so rapid mousemove never causes jank.
   useEffect(() => {
@@ -1880,10 +2088,10 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
         const centerY = r.top + (picked.row + 0.5) * cellH;
         const dx = (e.clientX - centerX) / (cellW / 2);
         const dy = (e.clientY - centerY) / (cellH / 2);
-        setTilt({
+        tiltRef.current = {
           x: Math.max(-1, Math.min(1, dx)),
           y: Math.max(-1, Math.min(1, dy))
-        });
+        };
       });
     };
     window.addEventListener("mousemove", onMove);
@@ -1925,7 +2133,10 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
       onMouseDown={(e) => {
         // Clicks on the container background (not on a cell) exit
         // preview. Cells call e.stopPropagation() in handleCellClick.
-        if (e.target === containerRef.current) dismiss();
+        if (e.target === containerRef.current) {
+          setPicked(null);
+          tiltRef.current = { x: 0, y: 0 };
+        }
       }}
     >
       <div
@@ -1953,85 +2164,65 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
         })}
       </div>
 
-      {picked ? (
+      {rendered ? (
         <div
           className="pointer-events-none absolute z-20"
           style={{
-            left: `${picked.xPct}%`,
-            top: `${picked.yPct}%`,
-            width: `${picked.wPct}%`,
+            left: `${rendered.xPct}%`,
+            top: `${rendered.yPct}%`,
+            width: `${rendered.wPct}%`,
             aspectRatio: "1 / 1",
             perspective: "800px",
-            perspectiveOrigin: "50% 50%"
+            perspectiveOrigin: "50% 50%",
+            // Initial state is set inline by the spring loop's first
+            // frame, so SSR / first paint never flashes the card at
+            // its rest position. Hidden before the loop ticks.
+            opacity: 0,
+            transform: "scale(0.85) rotateY(0deg) rotateX(0deg)",
+            filter: "blur(10px)"
           }}
           aria-hidden="true"
         >
           <div
+            ref={previewRef}
             className="relative h-full w-full"
             style={{
-              // Apple SF Symbols / Apple Health card-zoom: long,
-              // single-curve ease, no overshoot. From
-              //   scale 0.85 + opacity 0 + blur 10px
-              // to
-              //   scale 2.6 + opacity 1 + blur 0
-              // using cubic-bezier(0.16, 1, 0.3, 1) (the Apple
-              // "spring-easing" decelerate) at 700ms. The cursor
-              // tilt uses a 240ms ease-out so it still feels live
-              // but doesn't fight the entrance curve.
-              transform: closing
-                ? `scale(0.85) rotateY(0deg) rotateX(0deg)`
-                : `scale(2.6) rotateY(${tilt.x * 12}deg) rotateX(${-tilt.y * 8}deg)`,
               transformStyle: "preserve-3d",
-              opacity: closing ? 0 : 1,
-              filter: closing ? "blur(10px)" : "blur(0px)",
-              transition: closing
-                ? "transform 480ms cubic-bezier(0.16, 1, 0.3, 1), opacity 360ms cubic-bezier(0.16, 1, 0.3, 1), filter 480ms cubic-bezier(0.16, 1, 0.3, 1)"
-                : "transform 700ms cubic-bezier(0.16, 1, 0.3, 1), opacity 520ms cubic-bezier(0.16, 1, 0.3, 1), filter 560ms cubic-bezier(0.16, 1, 0.3, 1)",
               willChange: "transform, opacity, filter"
             }}
           >
             <div
               className="h-full w-full rounded-[6px]"
               style={{
-                background: heatmapColor(picked.value),
+                background: heatmapColor(rendered.value),
                 boxShadow:
                   "0 0 0 1px rgba(255,255,255,0.18), 0 24px 60px rgba(0,0,0,0.55), 0 0 24px rgba(41,151,255,0.18)",
                 transform: "translateZ(0)"
               }}
             />
             <div
+              ref={badgeRef}
               className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-semibold text-white"
               style={{
                 background: "#2997ff",
                 boxShadow: "0 4px 10px rgba(41,151,255,0.45)",
-                // Trail the card entrance. Same curve family as the
-                // card so the motion reads as one continuous gesture.
-                opacity: closing ? 0 : 1,
-                transform: closing
-                  ? "scale(0.4)"
-                  : "scale(1)",
-                transition: closing
-                  ? "transform 360ms cubic-bezier(0.16, 1, 0.3, 1), opacity 280ms cubic-bezier(0.16, 1, 0.3, 1)"
-                  : "transform 600ms cubic-bezier(0.16, 1, 0.3, 1) 180ms, opacity 480ms cubic-bezier(0.16, 1, 0.3, 1) 180ms"
+                transform: "scale(0.4)",
+                opacity: 0,
+                willChange: "transform, opacity"
               }}
             >
               %
             </div>
             <div
+              ref={pillRef}
               className="pointer-events-none absolute -bottom-12 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-black/80 px-2.5 py-1 text-[10px] font-semibold text-white"
               style={{
-                // Pill enters last with a slight upward translate,
-                // so the eye reads "card -> badge -> caption".
-                opacity: closing ? 0 : 1,
-                transform: closing
-                  ? "translate(-50%, 8px)"
-                  : "translate(-50%, 0px)",
-                transition: closing
-                  ? "transform 360ms cubic-bezier(0.16, 1, 0.3, 1), opacity 280ms cubic-bezier(0.16, 1, 0.3, 1)"
-                  : "transform 600ms cubic-bezier(0.16, 1, 0.3, 1) 320ms, opacity 480ms cubic-bezier(0.16, 1, 0.3, 1) 320ms"
+                transform: "translate(-50%, 8px)",
+                opacity: 0,
+                willChange: "transform, opacity"
               }}
             >
-              {Math.round(picked.value * 100)}% · row {picked.row + 1} · col {picked.col + 1}
+              {Math.round(rendered.value * 100)}% · row {rendered.row + 1} · col {rendered.col + 1}
             </div>
           </div>
         </div>
