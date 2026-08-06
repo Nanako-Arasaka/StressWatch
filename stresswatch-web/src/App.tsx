@@ -2167,13 +2167,7 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
             width: `${rendered.wPct}%`,
             aspectRatio: "1 / 1",
             perspective: "800px",
-            perspectiveOrigin: "50% 50%",
-            // Initial state is set inline by the spring loop's first
-            // frame, so SSR / first paint never flashes the card at
-            // its rest position. Hidden before the loop ticks.
-            opacity: 0,
-            transform: "scale(0.85) rotateY(0deg) rotateX(0deg)",
-            filter: "blur(10px)"
+            perspectiveOrigin: "50% 50%"
           }}
           aria-hidden="true"
         >
@@ -2181,7 +2175,17 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
             ref={previewRef}
             className="relative h-full w-full"
             style={{
+              // Inline initial state matches the spring's startT so
+              // the element is invisible before the first rAF tick.
+              // The rAF loop then writes scale / opacity / filter
+              // directly to this same element every frame. Putting
+              // these styles on the wrapper would multiply with the
+              // wrapper's own opacity and make the card invisible
+              // forever.
               transformStyle: "preserve-3d",
+              transform: "scale(0.85) rotateY(0deg) rotateX(0deg)",
+              opacity: 0,
+              filter: "blur(10px)",
               willChange: "transform, opacity, filter"
             }}
           >
