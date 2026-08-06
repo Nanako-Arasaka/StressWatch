@@ -13,7 +13,25 @@ const stressTrendData = [
   { day: "Sun", date: "5/21", score: 68, label: "日" }
 ];
 
-const monthlyStress = [55, 62, 48, 70, 58, 44, 66, 52, 60, 49, 57, 63, 46, 54];
+// Mocked daily stress scores for the past N days. Each entry has a
+// stable id, a stress score (0–100), and an ISO date so the bar hover
+// tooltip can show "Aug 1 · 72" instead of an unlabeled number.
+type DailyStress = { id: number; score: number; date: string };
+const monthlyStress: DailyStress[] = (() => {
+  const today = new Date();
+  const scores = [55, 62, 48, 70, 58, 44, 66, 52, 60, 49, 57, 63, 46, 54];
+  const out: DailyStress[] = [];
+  for (let i = scores.length - 1; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    out.push({
+      id: scores.length - i,
+      date: d.toISOString(),
+      score: scores[scores.length - 1 - i]
+    });
+  }
+  return out;
+})();
 
 const heatmapValues = Array.from({ length: 70 }, (_, i) => {
   const r = Math.floor(i / 10);
@@ -33,6 +51,35 @@ const HEAT_STOPS: { p: number; c: string }[] = [
 ];
 
 const heatGradientCss = `linear-gradient(90deg, ${HEAT_STOPS.map((s) => `${s.c} ${(s.p * 100).toFixed(0)}%`).join(", ")})`;
+
+// Map a 0–100 stress score into the same six-state vocabulary used by
+// the rest of the app (Apple design language ↔ WellnessState). Used by
+// the monthly-stress hover tooltip so the chip is consistent with what
+// users see on the dashboard.
+const STRESS_STATE_THRESHOLDS: { upTo: number; en: string; zh: string }[] = [
+  { upTo: 20, en: "Calm",         zh: "平静" },
+  { upTo: 40, en: "Restored",     zh: "恢复" },
+  { upTo: 60, en: "Steady",       zh: "平稳" },
+  { upTo: 80, en: "Pressured",    zh: "承压" },
+  { upTo: 100, en: "Strained",    zh: "紧绷" }
+];
+
+function stressBucket(score: number, t: Copy): string {
+  const lang = t.trends.monthlyLabel === "月度压力" ? "zh" : "en";
+  for (const r of STRESS_STATE_THRESHOLDS) {
+    if (score <= r.upTo) return r[lang];
+  }
+  return lang === "zh" ? "紧绷" : "Strained";
+}
+
+function formatStressDate(iso: string, t: Copy): string {
+  const d = new Date(iso);
+  const lang = t.trends.monthlyLabel === "月度压力" ? "zh-CN" : "en-US";
+  return d.toLocaleDateString(lang, {
+    month: "short",
+    day: "numeric"
+  });
+}
 
 function heatmapColor(v: number): string {
   const t = Math.max(0, Math.min(1, v));
@@ -1643,11 +1690,21 @@ function TrendsTile({ t }: { t: Copy }) {
 function TrendsMockup({ t, active }: { t: Copy; active: boolean }) {
   const tr = t.trends;
   const bars = monthlyStress;
-  const max = Math.max(...bars);
+  const max = Math.max(...bars.map((b) => b.score));
   const w = 600;
   const h = 200;
   const pad = 10;
   const bw = (w - pad * 2) / bars.length - 6;
+
+  // Hover state for the bar tooltip. Position is stored in SVG user
+  // coords so the tooltip can sit just above the hovered bar without
+  // jumping around as the cursor crosses gridlines.
+  const [hover, setHover] = useState<{
+    bar: DailyStress;
+    idx: number;
+    x: number;
+    y: number;
+  } | null>(null);
 
   return (
     <div className="mockup-card product-shadow-dark mx-auto w-full max-w-[760px] rounded-[28px] border border-white/10 bg-black/40 p-6 sm:p-8">
@@ -1658,49 +1715,283 @@ function TrendsMockup({ t, active }: { t: Copy; active: boolean }) {
         </span>
       </div>
 
-      <svg viewBox={`0 0 ${w} ${h}`} className="mt-5 w-full" role="img" aria-label="Monthly stress bar chart">
-        {bars.map((b, i) => {
-          const bh = (b / max) * (h - 20);
-          const x = pad + i * (bw + 6);
-          const y = h - bh - 4;
-          return (
-            <rect
-              key={i}
-              className={`bar-grow ${active ? "is-on" : ""}`}
-              x={x}
-              y={y}
-              width={bw}
-              height={bh}
-              rx={4}
-              fill="#2997ff"
-              opacity={0.55 + (b / max) * 0.45}
-              style={{ transitionDelay: `${i * 45}ms` }}
+      <div className="relative">
+        <svg
+          viewBox={`0 0 ${w} ${h}`}
+          className="mt-5 w-full"
+          role="img"
+          aria-label="Monthly stress bar chart"
+          onMouseLeave={() => setHover(null)}
+        >
+          {bars.map((b, i) => {
+            const bh = (b.score / max) * (h - 20);
+            const x = pad + i * (bw + 6);
+            const y = h - bh - 4;
+            return (
+              <g
+                key={i}
+                onMouseEnter={(e) => {
+                  const r = (e.currentTarget.ownerSVGElement as SVGSVGElement).getBoundingClientRect();
+                  // SVG user coord (x, y-top-of-bar) -> percent inside svg box
+                  const px = ((x + bw / 2) / w) * 100;
+                  const py = (y / h) * 100;
+                  setHover({ bar: b, idx: i, x: px, y: py });
+                  void r;
+                }}
+                onMouseMove={(e) => {
+                  const r = (e.currentTarget.ownerSVGElement as SVGSVGElement).getBoundingClientRect();
+                  const px = ((x + bw / 2) / w) * 100;
+                  const py = (y / h) * 100;
+                  setHover({ bar: b, idx: i, x: px, y: py });
+                  void r;
+                }}
+              >
+                <rect
+                  className={`bar-grow ${active ? "is-on" : ""} cursor-pointer transition-opacity ${
+                    hover && hover.idx === i ? "opacity-100" : ""
+                  }`}
+                  x={x}
+                  y={y}
+                  width={bw}
+                  height={bh}
+                  rx={4}
+                  fill="#2997ff"
+                  opacity={
+                    hover ? (hover.idx === i ? 1 : 0.35) : 0.55 + (b.score / max) * 0.45
+                  }
+                  style={{ transitionDelay: active ? `${i * 45}ms` : "0ms" }}
+                />
+              </g>
+            );
+          })}
+        </svg>
+
+        {hover ? (
+          <div
+            className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full"
+            style={{ left: `${hover.x}%`, top: `${hover.y}%` }}
+            role="tooltip"
+          >
+            <div className="rounded-[14px] border border-white/15 bg-black/85 px-3.5 py-2.5 text-white shadow-[0_8px_24px_rgba(0,0,0,0.45)] backdrop-blur-md">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-white/55">
+                {formatStressDate(hover.bar.date, t)}
+              </p>
+              <p className="mt-1 flex items-baseline gap-1.5">
+                <span className="text-[20px] font-semibold tabular-nums text-white">
+                  {hover.bar.score}
+                </span>
+                <span className="text-[11px] text-white/55">/ 100</span>
+              </p>
+              <p className="text-[10px] text-white/55">
+                {stressBucket(hover.bar.score, t)}
+              </p>
+            </div>
+            <div
+              className="mx-auto h-1.5 w-1.5 -translate-y-0.5 rotate-45 border-b border-r border-white/15 bg-black/85"
+              aria-hidden="true"
             />
-          );
-        })}
-      </svg>
+          </div>
+        ) : null}
+      </div>
 
       <p className="mt-3 text-[12px] leading-snug text-white/45">{tr.monthlyNote}</p>
 
       <div className="mt-6 border-t border-white/10 pt-5">
         <p className="text-[15px] font-semibold text-white/80">{tr.heatmapLabel}</p>
-        <div className="mt-3 grid grid-cols-10 gap-1 sm:gap-1.5">
-          {heatmapValues.map((val, i) => (
-            <div
-              key={i}
-              className={`cell-pop aspect-square rounded-[3px] ${active ? "is-on" : ""}`}
-              style={{ background: heatmapColor(val), transitionDelay: `${i * 12}ms` }}
-            />
-          ))}
-        </div>
-
-        <div className="mt-4 flex items-center gap-3">
-          <span className="text-[12px] text-white/50">{tr.heatmapLow}</span>
-          <div className="h-2 flex-1 rounded-full" style={{ background: heatGradientCss }} aria-hidden="true" />
-          <span className="text-[12px] text-white/50">{tr.heatmapHigh}</span>
-        </div>
-        <p className="mt-3 text-[12px] leading-snug text-white/45">{tr.heatmapNote}</p>
+        <HeatmapMockup t={t} active={active} />
       </div>
+    </div>
+  );
+}
+
+/* ───────────────────────── Heatmap — interactive preview ───────────────────────── */
+
+// A small 10-column recovery heatmap. Click any cell to "lift" it:
+// the original cell is hidden, a scaled-up (2.6×) preview takes its
+// place and tilts up to ±12° on the Y axis and ±8° on X based on the
+// mouse's offset from the cell center. Click any empty area to exit
+// preview mode. Mouse-driven tilt is throttled via rAF so the rotation
+// stays smooth even when the cursor moves quickly.
+function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
+  const tr = t.trends;
+  const cells = heatmapValues;
+  const COLS = 10;
+  const ROWS = Math.ceil(cells.length / COLS);
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [picked, setPicked] = useState<{
+    value: number;
+    row: number;
+    col: number;
+    // Stored as percentage of container so resize doesn't break layout.
+    xPct: number;
+    yPct: number;
+    wPct: number;
+    hPct: number;
+  } | null>(null);
+
+  // Mouse position relative to the picked cell center, normalized to
+  // [-1, 1]. Drives the preview card's rotateY / rotateX.
+  const [tilt, setTilt] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+
+  // Click outside any cell -> exit preview mode. We listen on the
+  // container so it works for both empty grid space and the area
+  // below the legend.
+  useEffect(() => {
+    if (!picked) return;
+    const onDocClick = (e: MouseEvent) => {
+      const el = containerRef.current;
+      if (!el) return;
+      if (!el.contains(e.target as Node)) setPicked(null);
+    };
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, [picked]);
+
+  // rAF-throttled tilt tracking so rapid mousemove never causes jank.
+  useEffect(() => {
+    if (!picked || !containerRef.current) return;
+    const container = containerRef.current;
+    let rafId: number | null = null;
+    const onMove = (e: MouseEvent) => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        const r = container.getBoundingClientRect();
+        const cellW = r.width / COLS;
+        const cellH = r.height / ROWS;
+        const centerX = r.left + (picked.col + 0.5) * cellW;
+        const centerY = r.top + (picked.row + 0.5) * cellH;
+        const dx = (e.clientX - centerX) / (cellW / 2);
+        const dy = (e.clientY - centerY) / (cellH / 2);
+        setTilt({
+          x: Math.max(-1, Math.min(1, dx)),
+          y: Math.max(-1, Math.min(1, dy))
+        });
+      });
+    };
+    window.addEventListener("mousemove", onMove);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
+  }, [picked]);
+
+  const handleCellClick = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    idx: number,
+  ) => {
+    const el = containerRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const cellW = r.width / COLS;
+    const cellH = r.height / ROWS;
+    const row = Math.floor(idx / COLS);
+    const col = idx % COLS;
+    setPicked({
+      value: cells[idx],
+      row,
+      col,
+      xPct: (col * cellW) / r.width * 100,
+      yPct: (row * cellH) / r.height * 100,
+      wPct: (cellW / r.width) * 100,
+      hPct: (cellH / r.height) * 100
+    });
+    // Eat the click so it does not bubble to the container's
+    // background-click handler that would immediately close the preview.
+    e.stopPropagation();
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative"
+      onMouseDown={(e) => {
+        // Clicks on the container background (not on a cell) exit
+        // preview. Cells call e.stopPropagation() in handleCellClick.
+        if (e.target === containerRef.current) setPicked(null);
+      }}
+    >
+      <div
+        className="grid grid-cols-10 gap-1 sm:gap-1.5"
+        role="grid"
+        aria-label={tr.heatmapLabel}
+      >
+        {cells.map((val, i) => {
+          const isPicked = picked !== null && i === picked.row * COLS + picked.col;
+          return (
+            <button
+              key={i}
+              type="button"
+              onClick={(e) => handleCellClick(e, i)}
+              aria-label={`Recovery ${Math.round(val * 100)}%`}
+              className={`cell-pop aspect-square rounded-[3px] ${active ? "is-on" : ""} ${
+                isPicked ? "invisible" : "cursor-pointer transition-opacity hover:opacity-80"
+              }`}
+              style={{
+                background: heatmapColor(val),
+                transitionDelay: active && !isPicked ? `${i * 12}ms` : "0ms"
+              }}
+            />
+          );
+        })}
+      </div>
+
+      {picked ? (
+        <div
+          className="pointer-events-none absolute z-20"
+          style={{
+            left: `${picked.xPct}%`,
+            top: `${picked.yPct}%`,
+            width: `${picked.wPct}%`,
+            aspectRatio: "1 / 1",
+            perspective: "800px",
+            perspectiveOrigin: "50% 50%"
+          }}
+          aria-hidden="true"
+        >
+          <div
+            className="relative h-full w-full"
+            style={{
+              transform: `scale(2.6) rotateY(${tilt.x * 12}deg) rotateX(${-tilt.y * 8}deg) translateZ(0)`,
+              transformStyle: "preserve-3d",
+              transition: "transform 80ms linear",
+              willChange: "transform"
+            }}
+          >
+            <div
+              className="h-full w-full rounded-[6px]"
+              style={{
+                background: heatmapColor(picked.value),
+                boxShadow:
+                  "0 0 0 1px rgba(255,255,255,0.18), 0 24px 60px rgba(0,0,0,0.55), 0 0 24px rgba(41,151,255,0.18)",
+                transform: "translateZ(0)"
+              }}
+            />
+            <div
+              className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-semibold text-white"
+              style={{
+                background: "#2997ff",
+                boxShadow: "0 4px 10px rgba(41,151,255,0.45)"
+              }}
+            >
+              %
+            </div>
+            <div
+              className="pointer-events-none absolute -bottom-12 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-black/80 px-2.5 py-1 text-[10px] font-semibold text-white"
+            >
+              {Math.round(picked.value * 100)}% · row {picked.row + 1} · col {picked.col + 1}
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      <div className="mt-4 flex items-center gap-3">
+        <span className="text-[12px] text-white/50">{tr.heatmapLow}</span>
+        <div className="h-2 flex-1 rounded-full" style={{ background: heatGradientCss }} aria-hidden="true" />
+        <span className="text-[12px] text-white/50">{tr.heatmapHigh}</span>
+      </div>
+      <p className="mt-3 text-[12px] leading-snug text-white/45">{tr.heatmapNote}</p>
     </div>
   );
 }
