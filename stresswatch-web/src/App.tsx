@@ -1939,18 +1939,23 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
   // independent spring with its own current progress + velocity.
   // We use a ref so the values survive React renders and are mutated
   // only by the rAF loop.
+  // No `v` field: the spring solver is time-based and self-contained
+  // (position at time t given from/to/v0). We always pass v0=0; the
+  // retarget effect already captures the current `p` into `from` so
+  // the new trajectory starts from where we are. This eliminates the
+  // compounding jitter that occurred when each frame fed the previous
+  // frame's discrete-difference velocity back into the solver.
   type SpringState = {
     p: number;
-    v: number;
     startT: number;
     target: number;
     params: SpringParams;
     from: number;
   };
   const springsRef = useRef<{ card: SpringState; badge: SpringState; pill: SpringState }>({
-    card:  { p: 0, v: 0, startT: 0, target: 0, params: SPRING_CARD,   from: 0 },
-    badge: { p: 0, v: 0, startT: 0, target: 0, params: SPRING_GENTLE, from: 0 },
-    pill:  { p: 0, v: 0, startT: 0, target: 0, params: SPRING_GENTLE, from: 0 }
+    card:  { p: 0, startT: 0, target: 0, params: SPRING_CARD,   from: 0 },
+    badge: { p: 0, startT: 0, target: 0, params: SPRING_GENTLE, from: 0 },
+    pill:  { p: 0, startT: 0, target: 0, params: SPRING_GENTLE, from: 0 }
   });
 
   // When picked toggles, retarget the springs AND keep the DOM in
@@ -2015,12 +2020,18 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
       const now = performance.now() / 1000;
       const s = springsRef.current;
 
+      // Time-based spring: every frame asks "where is the spring at
+      // time (now - startT)?" using its own closed-form solution.
+      // v0 is always 0; the spring starts at `from` with zero velocity
+      // on each retarget, and `from` is captured from the previous p
+      // so motion is visually continuous (no jump) even though
+      // velocity is not carried forward. This eliminates the
+      // compounding jitter from feeding discrete-difference velocity
+      // back into the analytic solver each frame.
       const advance = (st: SpringState) => {
         const t = Math.max(0, now - st.startT);
-        const newP = springValue(t, st.from, st.target, st.v, st.params);
-        const prev = st.p;
+        const newP = springValue(t, st.from, st.target, 0, st.params);
         st.p = newP;
-        st.v = (newP - prev) * 60;
         return newP;
       };
 
