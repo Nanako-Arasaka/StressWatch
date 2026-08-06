@@ -1939,8 +1939,10 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
     pill:  { p: 0, v: 0, startT: 0, target: 0, params: SPRING_GENTLE, from: 0 }
   });
 
-  // When picked toggles, retarget the springs. This is the ONLY place
-  // where spring targets move; the rAF loop just integrates forward.
+  // When picked toggles, retarget the springs AND keep the DOM in
+  // sync. This is the ONLY place where spring targets move and the
+  // rendered node mounts/unmounts. The rAF loop just integrates
+  // forward and reads from `rendered`.
   useEffect(() => {
     const now = performance.now() / 1000;
     const opening = picked !== null;
@@ -1950,7 +1952,6 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
     s.card.target = opening ? 1 : 0;
     s.card.startT = now;
     s.card.params = opening ? SPRING_CARD : SPRING_EXIT;
-    // On dismissal the badge/pill don't trail — they reverse in step.
     s.badge.from = s.badge.p;
     s.badge.target = opening ? 1 : 0;
     s.badge.startT = now + (opening ? 0.10 : 0);
@@ -1959,15 +1960,11 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
     s.pill.target = opening ? 1 : 0;
     s.pill.startT = now + (opening ? 0.20 : 0);
     s.pill.params = opening ? SPRING_GENTLE : SPRING_EXIT;
-  }, [picked]);
 
-  // Sync `rendered` to `picked` once the DOM exists; let it stay
-  // mounted for the exit animation by separating it from dismissal.
-  // When the user picks a new cell while a previous preview is still
-  // open, we update `rendered` immediately so position + value track
-  // the new target. The springs keep their current progress + velocity,
-  // so the card smoothly translates to the new spot mid-flight.
-  useEffect(() => {
+    // Keep the DOM mounted until the rAF loop tears it down. The
+    // loop calls setRendered(null) when exit has fully settled, so
+    // we never need to set it to null here. We only need to ensure
+    // it has the *current* picked value when the user retargets.
     if (picked) setRendered(picked);
   }, [picked]);
 
@@ -1987,10 +1984,15 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
   }, [picked]);
 
   // rAF loop that drives the springs + writes styles directly to the
-  // DOM. Unmounts the rendered node only after all springs have
-  // settled AND `picked` is null. This is what lets the exit
-  // animation actually play out instead of being cut short.
+  // DOM. The loop is gated by `rendered`: it runs only while a
+  // preview node is mounted. When the springs have settled AND
+  // `picked` is null, the loop schedules `setRendered(null)` on the
+  // next microtask so React can commit the final frame before
+  // unmounting. Once `rendered` is null, the effect cleanup tears
+  // down the loop. This avoids the earlier race where
+  // `[picked, rendered]` deps were killing in-flight animations.
   useEffect(() => {
+    if (rendered === null) return;
     let rafId: number | null = null;
     let mounted = true;
 
@@ -1999,11 +2001,6 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
       const now = performance.now() / 1000;
       const s = springsRef.current;
 
-      // Integrate each spring forward by one frame. We keep the
-      // velocity from the previous frame so that mid-flight retargets
-      // (e.g. user dismisses while it's opening) inherit it as the
-      // initial velocity of the new target — the spring literally
-      // doesn't know the target changed underneath it.
       const advance = (st: SpringState) => {
         const t = Math.max(0, now - st.startT);
         const newP = springValue(t, st.from, st.target, st.v, st.params);
@@ -2017,7 +2014,6 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
       const badgeP = advance(s.badge);
       const pillP  = advance(s.pill);
 
-      // Apply transforms to DOM directly — no React re-render needed.
       const preview = previewRef.current;
       const badge = badgeRef.current;
       const pill = pillRef.current;
@@ -2047,22 +2043,20 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
         pill.style.opacity = pillP.toFixed(3);
       }
 
-      // Decide whether to keep ticking. After an exit completes,
-      // unmount the rendered node so React cleans up the DOM.
       const allSettled =
         Math.abs(cardP  - s.card.target)  < 0.001 &&
         Math.abs(badgeP - s.badge.target) < 0.001 &&
         Math.abs(pillP  - s.pill.target)  < 0.001;
-      if (picked === null && allSettled && rendered !== null) {
-        setRendered(null);
-        rafId = null;
+
+      if (picked === null && allSettled) {
+        // Defer setRendered so React commits the final visual frame
+        // first, then unmounts. After setRendered(null) commits,
+        // this effect's cleanup runs and the loop tears down.
+        queueMicrotask(() => setRendered(null));
+        rafId = requestAnimationFrame(writeFrame);
         return;
       }
-      if (!allSettled) {
-        rafId = requestAnimationFrame(writeFrame);
-      } else {
-        rafId = null;
-      }
+      rafId = requestAnimationFrame(writeFrame);
     };
 
     rafId = requestAnimationFrame(writeFrame);
@@ -2070,7 +2064,7 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
       mounted = false;
       if (rafId !== null) cancelAnimationFrame(rafId);
     };
-  }, [picked, rendered]);
+  }, [rendered, picked]);
 
   // rAF-throttled tilt tracking so rapid mousemove never causes jank.
   useEffect(() => {
