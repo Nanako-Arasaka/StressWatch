@@ -29,21 +29,26 @@ type Lang = "en" | "zh";
 */
 type SpringParams = { duration: number; bounce: number };
 
-function springStiffness(p: SpringParams): number {
-  return (2 * Math.PI / p.duration) ** 2;
-}
-function springDamping(p: SpringParams): number {
-  return p.bounce >= 0
-    ? 1 - (4 * Math.PI * p.bounce) / p.duration
-    : (4 * Math.PI) / (p.duration + 4 * Math.PI * -p.bounce);
+// Map Apple's "bounce" preset [0, 1] to a damping ratio ζ ∈ [0, 1]:
+//   bounce = 0  -> ζ = 1  (critical damping, no overshoot)
+//   bounce = 1  -> ζ ≈ 0  (very bouncy, long ring-out)
+// Linear mapping ζ = 1 - bounce gives a sensible perceptual match:
+// SPRING_CARD (bounce 0.18) settles with ~1% overshoot around its
+// perceptualDuration, which is what Apple Health card-zoom feels like.
+function springDampingRatio(p: SpringParams): number {
+  return Math.max(0, 1 - p.bounce);
 }
 
 // Closed-form solution of the under-damped harmonic oscillator with
-// mass=1, given initial position `from`, initial velocity `velocity`,
+// mass = 1, given initial position `from`, initial velocity `velocity`,
 // and target `to`. Returns the position at time `t` (seconds).
 //
-// Derivation: x'' + 2ζω x' + ω² (x - to) = 0  where ω = sqrt(stiffness),
-// ζ = damping / (2 sqrt(stiffness * mass)).
+// Equation:  x'' + 2ζω x' + ω² (x - to) = 0
+// Under-damped (ζ < 1):
+//   x(t) = to + e^(-αt) · (c1·cos(βt) + c2·sin(βt))
+//   α = ζω,   β = ω·sqrt(1 - ζ²)
+// Critical-damping (ζ ≈ 1):
+//   x(t) = to + (c1 + c2·t) · e^(-ωt)
 function springValue(
   t: number,
   from: number,
@@ -52,21 +57,30 @@ function springValue(
   p: SpringParams,
 ): number {
   if (t <= 0) return from;
-  const omega = Math.sqrt(springStiffness(p));
-  const zeta = springDamping(p) / 2;
-  if (Math.abs(zeta - 1) < 1e-4) {
-    // Critically damped (bounce ≈ 0) — single real root.
-    const c1 = from - to;
+  const omega = (2 * Math.PI) / Math.max(0.001, p.duration);
+  const zeta = Math.min(1, Math.max(0, springDampingRatio(p)));
+  const c1 = from - to;
+  if (zeta >= 0.999) {
+    // Critical damping — single real root.
     const c2 = velocity + omega * c1;
     const e = Math.exp(-omega * t);
     return to + (c1 + c2 * t) * e;
   }
-  const alpha = omega * zeta;
+  const alpha = zeta * omega;
   const beta = omega * Math.sqrt(Math.max(0, 1 - zeta * zeta));
   const e = Math.exp(-alpha * t);
-  const c1 = from - to;
   const c2 = (velocity + alpha * c1) / beta;
-  return to + e * (c1 * Math.cos(beta * t) + c2 * Math.sin(beta * t));
+  const result =
+    to + e * (c1 * Math.cos(beta * t) + c2 * Math.sin(beta * t));
+  // Defensive fallback: if math produced NaN/Infinity (extreme params,
+  // floating-point drift), fall back to a linear blend so the rAF
+  // loop never writes an invalid opacity value to the DOM — the browser
+  // would silently drop a "NaN" style and leave opacity frozen at the
+  // initial inline 0.
+  if (!Number.isFinite(result)) {
+    return from + (to - from) * Math.min(1, t / p.duration);
+  }
+  return result;
 }
 
 // Snappy spring preset — matches WWDC23 `.snappy` for card zooms.
