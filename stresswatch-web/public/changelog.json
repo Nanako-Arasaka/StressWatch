@@ -1,14 +1,54 @@
 {
-  "syncedAt": "2026-08-06T08:13:00.183Z",
+  "syncedAt": "2026-08-06T13:39:00.767Z",
   "repo": "Nanako-Arasaka/StressWatch",
-  "commitsTotal": 57,
+  "commitsTotal": 61,
   "releasesCount": 0,
   "releases": [],
   "commitsByMonth": [
     {
       "label": "August 2026",
-      "summary": "22 commits",
+      "summary": "26 commits",
       "entries": [
+        {
+          "date": "Aug 6",
+          "sha": "29264f7",
+          "title": "Fix spring iteration compounding: always pass v0=0 to solver",
+          "tags": [
+            "Fix"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/29264f75d48dd00d7641bb157799535be98fdc7c",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 6",
+          "sha": "0caa3e3",
+          "title": "Retry Pages deploy",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/0caa3e379a483bcd8e3bcb1ace1f246727f6e5cf",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 6",
+          "sha": "f699543",
+          "title": "Fix springValue math: rewrite damping as proper damping ratio",
+          "tags": [
+            "Fix"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/f69954379a60e8f713b5c4d9b69e3b4777d8d4fc",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 6",
+          "sha": "0598a6d",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/0598a6dec7325d3aa29dd571f8285d9e6563e64e",
+          "author": "stresswatch-bot"
+        },
         {
           "date": "Aug 6",
           "sha": "a1da8d9",
