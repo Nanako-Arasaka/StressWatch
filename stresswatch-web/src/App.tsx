@@ -1837,7 +1837,7 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
   // Two-phase close: when the user dismisses the preview (click
   // outside), we don't drop the node immediately — we mark it as
   // "closing" so the card can play its exit animation (scale back
-  // down + fade + blur). After ~260ms we actually unmount it.
+  // down + fade + blur). After ~480ms we actually unmount it.
   // Without this, dismissing feels like the card was teleported away.
   const [closing, setClosing] = useState(false);
   const dismiss = useCallback(() => {
@@ -1846,7 +1846,7 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
       setPicked(null);
       setClosing(false);
       setTilt({ x: 0, y: 0 });
-    }, 260);
+    }, 480);
     return () => window.clearTimeout(id);
   }, []);
 
@@ -1969,21 +1969,24 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
           <div
             className="relative h-full w-full"
             style={{
-              // Apple-style entrance: small overshoot spring from
-              // (scale 0.4, opacity 0, blur 8px) to the resting
-              // (scale 2.6, opacity 1, blur 0). Tilt from cursor
-              // movement layers on top with a shorter, snappier
-              // 120ms ease so it feels responsive without fighting
-              // the entrance curve.
+              // Apple SF Symbols / Apple Health card-zoom: long,
+              // single-curve ease, no overshoot. From
+              //   scale 0.85 + opacity 0 + blur 10px
+              // to
+              //   scale 2.6 + opacity 1 + blur 0
+              // using cubic-bezier(0.16, 1, 0.3, 1) (the Apple
+              // "spring-easing" decelerate) at 700ms. The cursor
+              // tilt uses a 240ms ease-out so it still feels live
+              // but doesn't fight the entrance curve.
               transform: closing
-                ? `scale(1.6) rotateY(0deg) rotateX(0deg)`
+                ? `scale(0.85) rotateY(0deg) rotateX(0deg)`
                 : `scale(2.6) rotateY(${tilt.x * 12}deg) rotateX(${-tilt.y * 8}deg)`,
               transformStyle: "preserve-3d",
               opacity: closing ? 0 : 1,
-              filter: closing ? "blur(4px)" : "blur(0px)",
+              filter: closing ? "blur(10px)" : "blur(0px)",
               transition: closing
-                ? "transform 260ms cubic-bezier(0.4, 0, 1, 1), opacity 200ms cubic-bezier(0.4, 0, 1, 1), filter 260ms cubic-bezier(0.4, 0, 1, 1)"
-                : "transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 220ms ease-out, filter 320ms ease-out",
+                ? "transform 480ms cubic-bezier(0.16, 1, 0.3, 1), opacity 360ms cubic-bezier(0.16, 1, 0.3, 1), filter 480ms cubic-bezier(0.16, 1, 0.3, 1)"
+                : "transform 700ms cubic-bezier(0.16, 1, 0.3, 1), opacity 520ms cubic-bezier(0.16, 1, 0.3, 1), filter 560ms cubic-bezier(0.16, 1, 0.3, 1)",
               willChange: "transform, opacity, filter"
             }}
           >
@@ -2001,14 +2004,15 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
               style={{
                 background: "#2997ff",
                 boxShadow: "0 4px 10px rgba(41,151,255,0.45)",
-                // Trail the card entrance by ~120ms.
+                // Trail the card entrance. Same curve family as the
+                // card so the motion reads as one continuous gesture.
                 opacity: closing ? 0 : 1,
                 transform: closing
-                  ? "scale(0.6)"
+                  ? "scale(0.4)"
                   : "scale(1)",
                 transition: closing
-                  ? "transform 200ms cubic-bezier(0.4, 0, 1, 1), opacity 160ms ease-in"
-                  : "transform 360ms cubic-bezier(0.34, 1.56, 0.64, 1) 120ms, opacity 240ms ease-out 120ms"
+                  ? "transform 360ms cubic-bezier(0.16, 1, 0.3, 1), opacity 280ms cubic-bezier(0.16, 1, 0.3, 1)"
+                  : "transform 600ms cubic-bezier(0.16, 1, 0.3, 1) 180ms, opacity 480ms cubic-bezier(0.16, 1, 0.3, 1) 180ms"
               }}
             >
               %
@@ -2016,14 +2020,15 @@ function HeatmapMockup({ t, active }: { t: Copy; active: boolean }) {
             <div
               className="pointer-events-none absolute -bottom-12 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-black/80 px-2.5 py-1 text-[10px] font-semibold text-white"
               style={{
-                // Pill enters last, with a small upward translate.
+                // Pill enters last with a slight upward translate,
+                // so the eye reads "card -> badge -> caption".
                 opacity: closing ? 0 : 1,
                 transform: closing
-                  ? "translate(-50%, 4px)"
+                  ? "translate(-50%, 8px)"
                   : "translate(-50%, 0px)",
                 transition: closing
-                  ? "transform 220ms cubic-bezier(0.4, 0, 1, 1), opacity 160ms ease-in"
-                  : "transform 320ms cubic-bezier(0.16, 1, 0.3, 1) 200ms, opacity 280ms ease-out 200ms"
+                  ? "transform 360ms cubic-bezier(0.16, 1, 0.3, 1), opacity 280ms cubic-bezier(0.16, 1, 0.3, 1)"
+                  : "transform 600ms cubic-bezier(0.16, 1, 0.3, 1) 320ms, opacity 480ms cubic-bezier(0.16, 1, 0.3, 1) 320ms"
               }}
             >
               {Math.round(picked.value * 100)}% · row {picked.row + 1} · col {picked.col + 1}
