@@ -1,14 +1,95 @@
 {
-  "syncedAt": "2026-08-06T01:24:30.999Z",
+  "syncedAt": "2026-08-06T08:13:00.183Z",
   "repo": "Nanako-Arasaka/StressWatch",
-  "commitsTotal": 49,
+  "commitsTotal": 57,
   "releasesCount": 0,
   "releases": [],
   "commitsByMonth": [
     {
       "label": "August 2026",
-      "summary": "14 commits",
+      "summary": "22 commits",
       "entries": [
+        {
+          "date": "Aug 6",
+          "sha": "a1da8d9",
+          "title": "Fix heatmap preview: move inline opacity from wrapper to ref'd inner div",
+          "tags": [
+            "Fix"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/a1da8d97c743ebc6335752aa29e3cdf66a996004",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 6",
+          "sha": "757704d",
+          "title": "Fix heatmap preview rAF loop killing in-flight animation",
+          "tags": [
+            "Fix",
+            "Motion"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/757704d788dbd1194d69a9e95b067a792e066e65",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 6",
+          "sha": "6dc2afa",
+          "title": "Heatmap preview: replace CSS transitions with a real Apple spring solver",
+          "tags": [
+            "Motion"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/6dc2afa364e8fc921dc1b42a4ca311636bfac1c1",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 6",
+          "sha": "a7db54f",
+          "title": "Expand design.md: every rule now has a copy-pasteable code recipe",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/a7db54fcc93936db563d18e29113c4917e1f2def",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 6",
+          "sha": "8190557",
+          "title": "Add design.md: source of truth for the StressWatch web design system",
+          "tags": [
+            "Feature"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/8190557cb67969572ed23c042d232e9cc02126f7",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 6",
+          "sha": "0b65b5b",
+          "title": "Heatmap preview: smoother, longer, single-curve Apple feel",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/0b65b5b122da6e79b5cbbdfbd9a9490dc0683ba6",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 6",
+          "sha": "1b0fe8c",
+          "title": "Heatmap preview: Apple-style spring entrance + animated exit",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/1b0fe8c881046a68b0c34086ec617e37a169875b",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 6",
+          "sha": "78aa45c",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/78aa45c607ae29c41c1e96f4ff53e25e2894f608",
+          "author": "stresswatch-bot"
+        },
         {
           "date": "Aug 6",
           "sha": "09f1592",
