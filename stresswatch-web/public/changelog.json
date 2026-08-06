@@ -1,14 +1,44 @@
 {
-  "syncedAt": "2026-08-05T19:12:56.687Z",
+  "syncedAt": "2026-08-06T01:24:30.999Z",
   "repo": "Nanako-Arasaka/StressWatch",
-  "commitsTotal": 46,
+  "commitsTotal": 49,
   "releasesCount": 0,
   "releases": [],
   "commitsByMonth": [
     {
       "label": "August 2026",
-      "summary": "11 commits",
+      "summary": "14 commits",
       "entries": [
+        {
+          "date": "Aug 6",
+          "sha": "09f1592",
+          "title": "Make Trends tile interactive (bar hover tooltip + heatmap cell preview)",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/09f1592d755b6c2f0234af2be9d036560b204619",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 6",
+          "sha": "4b12f5e",
+          "title": "Fix cross-subpage nav: from /how/ clicking Changelog went to /how/changelog/ (404)",
+          "tags": [
+            "Fix"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/4b12f5e26205793ce0957a772bce28fa1bfa3a3d",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 5",
+          "sha": "99bcee7",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/99bcee7d34a925d74a3bff31908b9848738e49fa",
+          "author": "stresswatch-bot"
+        },
         {
           "date": "Aug 5",
           "sha": "93c1804",
