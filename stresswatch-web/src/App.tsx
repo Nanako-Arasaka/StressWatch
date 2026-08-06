@@ -1063,10 +1063,13 @@ function NavBar({
   // "home"  -> page is at the repo root (./)
   // "subpage" / "changelog" -> page is one directory deeper (../)
   const homeHref = variant === "home" ? "./" : "../";
-  // Same-page → "./"; cross-page → "./how/" "./changelog/" or "./privacy/"
-  const howHref = variant === "subpage" ? "./" : "./how/";
-  const changelogHref = variant === "changelog" ? "./" : "./changelog/";
-  const privacyHref = "./privacy/";
+  // Cross-page links must escape the current subdir first. ./how/ from
+  // /how/ resolves to /how/how/ which is a 404. From any subpage we
+  // go up one level via ../, then back down to the target subpage.
+  // Same-page → "./" (the page mounts at ./index.html inside its own dir).
+  const howHref = variant === "subpage" ? "./" : variant === "home" ? "./how/" : "../how/";
+  const changelogHref = variant === "changelog" ? "./" : variant === "home" ? "./changelog/" : "../changelog/";
+  const privacyHref = variant === "home" ? "./privacy/" : "../privacy/";
 
   return (
     <header className={`apple-nav fixed inset-x-0 top-0 z-50 h-11 ${scrolled ? "scrolled" : ""}`}>
