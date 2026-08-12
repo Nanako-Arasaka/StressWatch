@@ -56,18 +56,18 @@ struct FloatingTabBar: View {
                 .accessibilityLabel(tab.title)
             }
         }
-        .frame(maxWidth: 360)
-        .padding(8)
-        .background(.ultraThinMaterial, in: Capsule())
-        .background(AppColors.floatingBarFill(for: colorScheme), in: Capsule())
-        .overlay {
-            Capsule()
-                .strokeBorder(AppColors.glassStroke(for: colorScheme), lineWidth: 1)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity)
+        .background(.regularMaterial)
+        .background(AppColors.floatingBarFill(for: colorScheme))
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(AppColors.glassStroke(for: colorScheme))
+                .frame(height: 0.8)
                 .allowsHitTesting(false)
         }
-        .shadow(color: AppColors.shadow(for: colorScheme), radius: 12, x: 0, y: 7)
-        .padding(.horizontal, 22)
-        .padding(.bottom, 10)
+        .shadow(color: AppColors.shadow(for: colorScheme), radius: 8, x: 0, y: -3)
     }
 
     private func tabItem(_ tab: AppTab) -> some View {
@@ -85,22 +85,13 @@ struct FloatingTabBar: View {
         }
         .foregroundStyle(isSelected ? AppColors.primaryText(for: colorScheme) : AppColors.secondaryText(for: colorScheme))
         .frame(maxWidth: .infinity)
-        .frame(height: 46)
+        .frame(height: 44)
         .background {
             if isSelected {
-                Capsule()
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .fill(AppColors.floatingBarHighlight(for: colorScheme))
                     .matchedGeometryEffect(id: "selectedTab", in: tabNamespace)
-                    .shadow(color: AppColors.softBlue.opacity(colorScheme == .dark ? 0.10 : 0.14), radius: 8, x: 0, y: 4)
-            }
-        }
-        .overlay(alignment: .bottom) {
-            if isSelected {
-                Circle()
-                    .fill(AppColors.softBlue)
-                    .frame(width: 4, height: 4)
-                    .offset(y: -4)
-                    .opacity(0.8)
+                    .shadow(color: AppColors.softBlue.opacity(colorScheme == .dark ? 0.08 : 0.10), radius: 5, x: 0, y: 2)
             }
         }
     }

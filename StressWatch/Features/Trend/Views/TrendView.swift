@@ -40,7 +40,7 @@ struct TrendView: View {
                 }
                 .padding(.horizontal, 18)
                 .padding(.top, 18)
-                .padding(.bottom, 118)
+                .padding(.bottom, 24)
             }
             .background(pageBackground)
             .navigationTitle("趋势")
@@ -93,8 +93,8 @@ struct TrendView: View {
     }
 
     private var stressTrendCard: some View {
-        GlassCardView(cornerRadius: 30, padding: 18) {
-            VStack(alignment: .leading, spacing: 16) {
+        GlassCardView(cornerRadius: 26, padding: 16) {
+            VStack(alignment: .leading, spacing: 14) {
                 GlassSectionHeader(
                     title: "Monthly Stress Trend",
                     subtitle: "综合压力趋势，支持周 / 月 / 年视图",
@@ -110,7 +110,7 @@ struct TrendView: View {
                         selectedBar: viewModel.selectedTrendBar,
                         onSelect: { viewModel.selectedTrendBar = $0 }
                     )
-                    .frame(height: 230)
+                    .frame(height: 196)
 
                     if let selected = viewModel.selectedTrendBar {
                         selectedTrendSummary(selected)
@@ -148,12 +148,12 @@ struct TrendView: View {
             VStack(alignment: .leading, spacing: 16) {
                 GlassSectionHeader(
                     title: "Stress Distribution",
-                    subtitle: "压力水平分布，不使用传统饼图",
+                    subtitle: "近 31 天压力状态占比",
                     systemImage: "chart.pie"
                 )
 
-                SegmentedDistributionBar(buckets: viewModel.analysis.distribution)
-                    .frame(height: 42)
+                StressDistributionPie(buckets: viewModel.analysis.distribution)
+                    .frame(height: 166)
 
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 132), spacing: 12)], spacing: 12) {
                     ForEach(viewModel.analysis.distribution) { bucket in
@@ -193,11 +193,11 @@ struct TrendView: View {
     }
 
     private var heatmapCard: some View {
-        GlassCardView(cornerRadius: 30, padding: 18) {
-            VStack(alignment: .leading, spacing: 16) {
+        GlassCardView(cornerRadius: 26, padding: 16) {
+            VStack(alignment: .leading, spacing: 14) {
                 GlassSectionHeader(
-                    title: "Stress Heatmap",
-                    subtitle: "按 24 小时估计压力时段，仅作为趋势参考",
+                    title: "压力时段热力图",
+                    subtitle: "近 7 天 · 每格代表 4 小时，暖色表示压力升高",
                     systemImage: "clock"
                 )
 
@@ -394,7 +394,8 @@ private struct StressBarTrendView: View {
         let maxValue = max(bars.map(\.value).max() ?? 100, 100)
         let barWidth: CGFloat = bars.count > 60 ? 9 : (bars.count > 20 ? 12 : 22)
         let spacing: CGFloat = bars.count > 60 ? 6 : 8
-        let contentWidth = max(320, CGFloat(bars.count) * (barWidth + spacing) + 28)
+        let labelWidth: CGFloat = bars.count > 20 ? 36 : 42
+        let contentWidth = max(320, CGFloat(bars.count) * (labelWidth + spacing) + 24)
 
         ScrollView(.horizontal, showsIndicators: false) {
             ZStack(alignment: .bottomLeading) {
@@ -430,7 +431,7 @@ private struct StressBarTrendView: View {
                                 Text(label(for: bar.date))
                                     .font(.caption2.weight(.bold))
                                     .foregroundStyle(AppColors.secondaryText(for: colorScheme))
-                                    .frame(width: max(34, barWidth + 14))
+                                    .frame(width: labelWidth)
                                     .lineLimit(1)
                             }
                         }
@@ -453,99 +454,208 @@ private struct StressBarTrendView: View {
     }
 }
 
-private struct SegmentedDistributionBar: View {
+private struct StressDistributionPie: View {
     let buckets: [StressDistributionBucket]
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        GeometryReader { proxy in
-            let segments = normalizedSegments
-            let gap: CGFloat = 5
+        VStack(spacing: 6) {
+            GeometryReader { proxy in
+                ZStack {
+                    Circle()
+                        .fill(AppColors.subtleActivityFill(for: colorScheme))
 
-            ZStack(alignment: .leading) {
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(AppColors.subtleActivityFill(for: colorScheme))
-
-                ForEach(Array(segments.enumerated()), id: \.offset) { index, segment in
-                    RoundedRectangle(cornerRadius: 15, style: .continuous)
-                        .fill(segment.color)
-                        .frame(
-                            width: max(0, proxy.size.width * segment.percentage - gap),
-                            height: 30
-                        )
-                        .offset(x: segmentOffset(index: index, segments: segments, width: proxy.size.width))
+                    ForEach(slices) { slice in
+                        PieSliceShape(startAngle: slice.startAngle, endAngle: slice.endAngle)
+                            .fill(slice.color)
+                            .overlay {
+                                PieSliceShape(startAngle: slice.startAngle, endAngle: slice.endAngle)
+                                    .stroke(AppColors.cardBackground(for: colorScheme), lineWidth: 3)
+                            }
+                    }
                 }
+                .frame(
+                    width: min(proxy.size.width, proxy.size.height),
+                    height: min(proxy.size.width, proxy.size.height)
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            .frame(height: 140)
+
+            Text(totalCount == 0 ? "暂无压力记录" : "共 \(totalCount) 次记录")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(AppColors.secondaryText(for: colorScheme))
         }
     }
 
-    private var normalizedSegments: [DistributionSegment] {
-        let total = buckets.reduce(0) { $0 + $1.percentage }
-        let source = total > 0 ? buckets : StressBand.allCases.map {
-            StressDistributionBucket(id: $0.rawValue, title: $0.title, count: 0, percentage: 0.25, previousCount: 0)
-        }
+    private var totalCount: Int {
+        buckets.reduce(0) { $0 + $1.count }
+    }
 
-        return source.map { bucket in
+    private var slices: [StressDistributionSlice] {
+        guard totalCount > 0 else { return [] }
+
+        var startAngle = -90.0
+        return buckets.compactMap { bucket in
+            guard bucket.count > 0 else { return nil }
+            let endAngle = startAngle + Double(bucket.count) / Double(totalCount) * 360
+            defer { startAngle = endAngle }
+
             let band = StressBand(rawValue: bucket.id) ?? .normal
-            return DistributionSegment(
+            return StressDistributionSlice(
                 id: bucket.id,
-                percentage: max(0, bucket.percentage / max(total, 1)),
+                startAngle: .degrees(startAngle),
+                endAngle: .degrees(endAngle),
                 color: band.color
             )
         }
     }
-
-    private func segmentOffset(index: Int, segments: [DistributionSegment], width: CGFloat) -> CGFloat {
-        guard index > 0 else { return 0 }
-        return segments.prefix(index).reduce(0) { $0 + width * $1.percentage }
-    }
 }
 
-private struct DistributionSegment {
+private struct StressDistributionSlice: Identifiable {
     let id: String
-    let percentage: Double
+    let startAngle: Angle
+    let endAngle: Angle
     let color: Color
+}
+
+private struct PieSliceShape: Shape {
+    let startAngle: Angle
+    let endAngle: Angle
+
+    func path(in rect: CGRect) -> Path {
+        let diameter = min(rect.width, rect.height)
+        let pieRect = CGRect(
+            x: rect.midX - diameter / 2,
+            y: rect.midY - diameter / 2,
+            width: diameter,
+            height: diameter
+        )
+        let center = CGPoint(x: pieRect.midX, y: pieRect.midY)
+
+        var path = Path()
+        path.move(to: center)
+        path.addArc(
+            center: center,
+            radius: diameter / 2,
+            startAngle: startAngle,
+            endAngle: endAngle,
+            clockwise: false
+        )
+        path.closeSubpath()
+        return path
+    }
 }
 
 private struct StressHeatmapView: View {
     let rows: [StressHeatmapRow]
     @Environment(\.colorScheme) private var colorScheme
 
+    private let bucketStartHours = [0, 4, 8, 12, 16, 20]
+    private let labelWidth: CGFloat = 38
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                ForEach([0, 6, 12, 18, 23], id: \.self) { hour in
-                    Text("\(hour)")
-                        .font(.caption2.weight(.semibold))
-                        .foregroundStyle(AppColors.secondaryText(for: colorScheme))
-                    Spacer()
+            VStack(spacing: 3) {
+                HStack(spacing: 3) {
+                    Text("日期")
+                        .frame(width: labelWidth, alignment: .leading)
+
+                    ForEach(bucketStartHours, id: \.self) { hour in
+                        Text(hourLabel(hour))
+                            .frame(maxWidth: .infinity)
+                    }
                 }
-            }
-            .padding(.leading, 42)
+                .font(.caption2.weight(.bold))
+                .foregroundStyle(AppColors.secondaryText(for: colorScheme))
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 6) {
-                    ForEach(rows) { row in
-                        HStack(spacing: 6) {
-                            Text(row.date, format: .dateTime.month().day())
-                                .font(.caption2.weight(.semibold))
-                                .foregroundStyle(AppColors.secondaryText(for: colorScheme))
-                                .frame(width: 36, alignment: .leading)
+                ForEach(Array(rows.suffix(7))) { row in
+                    HStack(spacing: 3) {
+                        Text(dateLabel(row.date))
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(AppColors.primaryText(for: colorScheme))
+                            .frame(width: labelWidth, alignment: .leading)
+                            .lineLimit(1)
 
-                            ForEach(row.cells) { cell in
-                                RoundedRectangle(cornerRadius: 4, style: .continuous)
-                                    .fill(cell.level.color.opacity(0.88))
-                                    .frame(width: 13, height: 7)
-                            }
+                        ForEach(buckets(for: row)) { bucket in
+                            RoundedRectangle(cornerRadius: 5, style: .continuous)
+                                .fill(bucket.level.color.opacity(colorScheme == .dark ? 0.82 : 0.94))
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 26)
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 5, style: .continuous)
+                                        .strokeBorder(Color.white.opacity(colorScheme == .dark ? 0.08 : 0.50), lineWidth: 0.7)
+                                }
+                                .accessibilityLabel("\(dateLabel(row.date)) \(hourLabel(bucket.startHour))，压力估计 \(bucket.value)")
                         }
                     }
                 }
-                .padding(.vertical, 6)
             }
+
+            legend
         }
         .padding(12)
         .background(AppColors.subtleActivityFill(for: colorScheme), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
+
+    private var legend: some View {
+        HStack(spacing: 0) {
+            ForEach(StressBand.allCases, id: \.rawValue) { band in
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(band.color)
+                        .frame(width: 7, height: 7)
+
+                    Text(legendTitle(for: band))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                }
+                .frame(maxWidth: .infinity)
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("颜色图例：恢复、正常、注意、过载")
+    }
+
+    private func buckets(for row: StressHeatmapRow) -> [StressHeatmapBucket] {
+        bucketStartHours.map { startHour in
+            let values = row.cells
+                .filter { $0.hour >= startHour && $0.hour < startHour + 4 }
+                .map(\.value)
+            let average = values.isEmpty ? 0 : Int(round(Double(values.reduce(0, +)) / Double(values.count)))
+            return StressHeatmapBucket(
+                startHour: startHour,
+                value: average,
+                level: StressBand.band(for: average)
+            )
+        }
+    }
+
+    private func hourLabel(_ hour: Int) -> String {
+        String(format: "%02d", hour)
+    }
+
+    private func dateLabel(_ date: Date) -> String {
+        let components = Calendar.current.dateComponents([.month, .day], from: date)
+        return "\(components.month ?? 0)/\(components.day ?? 0)"
+    }
+
+    private func legendTitle(for band: StressBand) -> String {
+        switch band {
+        case .recovered: return "恢复"
+        case .normal: return "正常"
+        case .attention: return "注意"
+        case .overload: return "过载"
+        }
+    }
+}
+
+private struct StressHeatmapBucket: Identifiable {
+    let startHour: Int
+    let value: Int
+    let level: StressBand
+
+    var id: Int { startHour }
 }
 
 private struct TrendLinePanel: View {
