@@ -49,9 +49,16 @@ jobs:
 
       - name: Commit and push
         if: steps.diff.outputs.changed == 'true'
+        # The committer identity must match a GitHub-verified address
+        # so the commit counts toward Nanako-Arasaka's contribution
+        # graph and shows the user's avatar (not the anonymous
+        # github-actions[bot] / stresswatch-bot identity, which used
+        # to show up here and break the contribution streak).
+        # 3143445389@qq.com is the address GitHub already links to
+        # the user's commits (verified via gh api .../commits).
         run: |
-          git config user.name "stresswatch-bot"
-          git config user.email "bot@users.noreply.github.com"
+          git config user.name "Nanako-Arasaka"
+          git config user.email "3143445389@qq.com"
           git add stresswatch-web/public/changelog.json
           git commit -m "chore(changelog): refresh GitHub snapshot [skip ci]"
           git push origin HEAD:master
