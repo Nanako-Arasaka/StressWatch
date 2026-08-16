@@ -1,14 +1,14 @@
 name: Snapshot changelog
 
 # Refreshes stresswatch-web/public/changelog.json from the live
-# GitHub master branch every 6 hours (and on manual dispatch).
+# GitHub master branch every 2 days (and on manual dispatch).
 # If the file changes, the change is committed back to master,
 # which triggers the Pages deploy workflow.
 
 on:
   schedule:
-    # Every 6 hours: 00:00, 06:00, 12:00, 18:00 UTC
-    - cron: "0 */6 * * *"
+    # Every 2 days at 00:00 UTC (odd days of the month: 1st, 3rd, 5th, ...)
+    - cron: "0 0 */2 * *"
   workflow_dispatch:
   push:
     # Allow a manual refresh via a one-liner label
