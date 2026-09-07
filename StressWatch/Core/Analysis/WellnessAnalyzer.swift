@@ -93,7 +93,7 @@ struct WellnessAnalyzer: WellnessAnalyzing {
             generatedAt: generatedAt
         )
 
-        WellnessAnalysis(
+        return WellnessAnalysis(
             state: state,
             predictedLabel: label,
             confidence: features.dataConfidence,
