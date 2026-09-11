@@ -5,6 +5,7 @@ struct SettingsView: View {
 
     @ObservedObject var viewModel: SettingsViewModel
     @State private var contentVisible = false
+    @State private var apiKeyInput: String = ""
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -160,12 +161,15 @@ struct SettingsView: View {
                     }
                     .appStaggeredCard(isVisible: contentVisible, delay: 0.34, reduceMotion: reduceMotion)
 
+                    aiAnalysisCard
+                        .appStaggeredCard(isVisible: contentVisible, delay: 0.40, reduceMotion: reduceMotion)
+
                     GlassCardView(cornerRadius: 22, padding: 14) {
                         Text("本应用仅用于个人健康趋势参考，不提供专业健康判断或紧急用途。如有健康问题，请咨询专业人士。")
                             .font(.footnote)
                             .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                     }
-                    .appStaggeredCard(isVisible: contentVisible, delay: 0.40, reduceMotion: reduceMotion)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.46, reduceMotion: reduceMotion)
                 }
                 .padding(.horizontal, 18)
                 .padding(.top, 18)
@@ -175,6 +179,7 @@ struct SettingsView: View {
             .navigationTitle("设置")
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
+                apiKeyInput = viewModel.miniMaxAPIKey
                 showContent()
             }
         }
@@ -241,6 +246,57 @@ struct SettingsView: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .background(color.opacity(colorScheme == .dark ? 0.14 : 0.10), in: Capsule())
+    }
+
+    private var aiAnalysisCard: some View {
+        GlassCardView(cornerRadius: 28, padding: 18) {
+            VStack(alignment: .leading, spacing: 14) {
+                GlassSectionHeader(
+                    title: "AI 个性化分析 (MiniMax)",
+                    subtitle: "调用大模型对你近期数据做自然语言解读。",
+                    systemImage: "brain"
+                )
+
+                Toggle("启用 AI 分析", isOn: Binding(
+                    get: { viewModel.enableAIAnalysis },
+                    set: { viewModel.setEnableAIAnalysis($0) }
+                ))
+
+                SecureField("MiniMax API Key", text: $apiKeyInput)
+                    .textFieldStyle(.roundedBorder)
+
+                HStack(spacing: 10) {
+                    Button("保存 Key") {
+                        viewModel.saveMiniMaxAPIKey(apiKeyInput)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(AppColors.primaryBlue)
+
+                    Button("清除", role: .destructive) {
+                        apiKeyInput = ""
+                        viewModel.clearMiniMaxAPIKey()
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(AppColors.stressWarm)
+                }
+
+                Picker("模型", selection: $viewModel.miniMaxModel) {
+                    ForEach(MiniMaxModel.allCases, id: \.rawValue) { model in
+                        Text(model.displayName).tag(model.rawValue)
+                    }
+                }
+                .pickerStyle(.menu)
+                .tint(AppColors.primaryBlue)
+                .onChange(of: viewModel.miniMaxModel) { model in
+                    viewModel.setMiniMaxModel(model)
+                }
+
+                Text("你的健康数据仅以聚合摘要形式发送给 MiniMax 云端，不含姓名与精确日期；Key 保存在本机钥匙串。关闭此功能则完全不调用网络。")
+                    .font(.footnote)
+                    .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
     }
 
     private var pageBackground: some View {

@@ -8,6 +8,11 @@ class SettingsViewModel: ObservableObject {
     @Published var authorizationState: SettingsAuthorizationState
     @Published var errorMessage: String?
 
+    // MARK: - AI 个性化分析（MiniMax）
+    @Published var enableAIAnalysis: Bool
+    @Published var miniMaxModel: String
+    @Published var miniMaxAPIKey: String
+
     private let storage: any LocalStorageProtocol
     private let healthDataProvider: any HealthKitDataProvider
     private let calendar: Calendar
@@ -27,7 +32,42 @@ class SettingsViewModel: ObservableObject {
         self.healthKitStatusText = Self.statusText(for: authStatus)
         self.authorizationState = Self.state(for: authStatus)
         self.errorMessage = nil
+
+        self.enableAIAnalysis = (try? storage.fetchEnableAIAnalysis()) ?? false
+        self.miniMaxModel = (try? storage.fetchMiniMaxModel()).flatMap { MiniMaxModel(rawValue: $0) }?.rawValue
+            ?? MiniMaxModel.default.rawValue
+        self.miniMaxAPIKey = KeychainStore.read() ?? ""
+
         print("[SettingsViewModel] init healthDataProvider=\(type(of: healthDataProvider))")
+    }
+
+    // MARK: - AI 个性化分析配置
+
+    func setEnableAIAnalysis(_ enabled: Bool) {
+        enableAIAnalysis = enabled
+        try? storage.saveEnableAIAnalysis(enabled)
+    }
+
+    func setMiniMaxModel(_ model: String) {
+        miniMaxModel = model
+        try? storage.saveMiniMaxModel(model)
+    }
+
+    /// 保存用户粘贴的 MiniMax API Key 到钥匙串（空字符串表示清除）。
+    func saveMiniMaxAPIKey(_ key: String) {
+        let trimmed = key.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty {
+            KeychainStore.delete()
+            miniMaxAPIKey = ""
+        } else {
+            KeychainStore.save(trimmed)
+            miniMaxAPIKey = trimmed
+        }
+    }
+
+    func clearMiniMaxAPIKey() {
+        KeychainStore.delete()
+        miniMaxAPIKey = ""
     }
 
     func updateBaselineWindow(_ days: Int) {

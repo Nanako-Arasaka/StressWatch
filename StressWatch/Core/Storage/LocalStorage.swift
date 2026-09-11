@@ -108,6 +108,34 @@ class LocalStorage: LocalStorageProtocol {
         return try loadDailyCheckIns().first { calendar.isDateInToday($0.date) }
     }
 
+    func saveEnableAIAnalysis(_ enabled: Bool) throws {
+        let data = try encoder.encode(enabled)
+        try data.write(to: aiEnabledFileURL, options: [.atomic])
+    }
+
+    func fetchEnableAIAnalysis() throws -> Bool {
+        guard FileManager.default.fileExists(atPath: aiEnabledFileURL.path) else {
+            return false
+        }
+
+        let data = try Data(contentsOf: aiEnabledFileURL)
+        return try decoder.decode(Bool.self, from: data)
+    }
+
+    func saveMiniMaxModel(_ model: String) throws {
+        let data = try encoder.encode(model)
+        try data.write(to: miniMaxModelFileURL, options: [.atomic])
+    }
+
+    func fetchMiniMaxModel() throws -> String {
+        guard FileManager.default.fileExists(atPath: miniMaxModelFileURL.path) else {
+            return ""
+        }
+
+        let data = try Data(contentsOf: miniMaxModelFileURL)
+        return try decoder.decode(String.self, from: data)
+    }
+
     private var stressScoresFileURL: URL {
         storageDirectory.appendingPathComponent("stress_scores.json")
     }
@@ -126,6 +154,14 @@ class LocalStorage: LocalStorageProtocol {
 
     private var dailyCheckInsFileURL: URL {
         storageDirectory.appendingPathComponent("daily_check_ins.json")
+    }
+
+    private var aiEnabledFileURL: URL {
+        storageDirectory.appendingPathComponent("ai_analysis_enabled.json")
+    }
+
+    private var miniMaxModelFileURL: URL {
+        storageDirectory.appendingPathComponent("minimax_model.json")
     }
 
     private func loadStressScores() throws -> [StressScore] {

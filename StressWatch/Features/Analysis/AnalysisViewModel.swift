@@ -4,8 +4,15 @@ import Foundation
 final class AnalysisViewModel: ObservableObject {
     @Published private(set) var analysis: WellnessAnalysis
     @Published private(set) var advice: [String]
+    @Published private(set) var personalizedAnalysis: PersonalizedAnalysis?
+    @Published private(set) var personalizedGoals: PersonalizedGoals?
+    @Published private(set) var personalizedRecommendations: [PersonalizedRecommendation] = []
     @Published private(set) var todayCheckIn: DailyWellnessCheckIn?
     @Published private(set) var checkInErrorMessage: String?
+
+    // MARK: - AI 个性化分析（MiniMax）
+    @Published private(set) var llmInsightState: LLMInsightState = .off
+    @Published private(set) var llmInsight: LLMInsight?
 
     private let metrics: [HealthMetric]
     private let stressScore: StressScore?
@@ -15,6 +22,9 @@ final class AnalysisViewModel: ObservableObject {
     private let featureExtractor: any HealthFeatureExtracting
     private let analyzer: any WellnessAnalyzing
     private let adviceGenerator: any AdviceGenerating
+    private let personalizationEngine: any PersonalizationEngineing
+    private let llmService: any LLMPersonalizationAnalyzing
+    private var lastContext: PersonalizationContext?
 
     init(
         metrics: [HealthMetric],
@@ -24,7 +34,9 @@ final class AnalysisViewModel: ObservableObject {
         storage: any LocalStorageProtocol,
         featureExtractor: any HealthFeatureExtracting = FeatureExtractor(),
         analyzer: any WellnessAnalyzing = CoreMLWellnessAnalyzer(),
-        adviceGenerator: any AdviceGenerating = AdviceGenerator()
+        adviceGenerator: any AdviceGenerating = AdviceGenerator(),
+        personalizationEngine: any PersonalizationEngineing = PersonalizationEngine(),
+        llmService: any LLMPersonalizationAnalyzing = LLMPersonalizationService()
     ) {
         self.metrics = metrics
         self.stressScore = stressScore
@@ -34,6 +46,8 @@ final class AnalysisViewModel: ObservableObject {
         self.featureExtractor = featureExtractor
         self.analyzer = analyzer
         self.adviceGenerator = adviceGenerator
+        self.personalizationEngine = personalizationEngine
+        self.llmService = llmService
 
         let initialFeatures = featureExtractor.extract(
             metrics: metrics,
@@ -47,6 +61,8 @@ final class AnalysisViewModel: ObservableObject {
         self.advice = adviceGenerator.advice(for: initialAnalysis)
         self.todayCheckIn = try? storage.fetchTodayCheckIn()
         self.checkInErrorMessage = nil
+
+        runPersonalization(analysis: initialAnalysis)
     }
 
     var confidenceText: String {
@@ -98,6 +114,115 @@ final class AnalysisViewModel: ObservableObject {
         analysis = newAnalysis
         advice = adviceGenerator.advice(for: newAnalysis)
         todayCheckIn = try? storage.fetchTodayCheckIn()
+
+        runPersonalization(analysis: newAnalysis)
+    }
+
+    // MARK: - 个性化优化
+
+    /// 在基础分析之上叠加“基于用户数据”的个性化：动态目标 + 数据驱动建议 + 打卡调和。
+    private func runPersonalization(analysis: WellnessAnalysis) {
+        let context = buildPersonalizationContext()
+        lastContext = context
+        let result = personalizationEngine.personalize(analysis: analysis, context: context)
+        personalizedAnalysis = result
+        personalizedGoals = result.goals
+        personalizedRecommendations = result.recommendations
+        refreshLLMStatus()
+    }
+
+    // MARK: - AI 个性化分析（MiniMax）
+
+    /// 根据开关与 Key 是否存在，刷新 AI 卡片应显示的状态（不清除已生成的洞察）。
+    func refreshLLMStatus() {
+        let enabled = (try? storage.fetchEnableAIAnalysis()) ?? false
+        let hasKey = KeychainStore.read() != nil
+        if !enabled || !hasKey {
+            if case .loading = llmInsightState { return }
+            llmInsightState = .off
+        } else {
+            switch llmInsightState {
+            case .loading, .success:
+                break
+            default:
+                llmInsightState = .idle
+            }
+        }
+    }
+
+    /// 调用 MiniMax 对当前个性化快照做自然语言解读。
+    @MainActor
+    func generateLLMInsight() async {
+        guard (try? storage.fetchEnableAIAnalysis()) ?? false else {
+            llmInsightState = .off
+            return
+        }
+        guard let apiKey = KeychainStore.read(), !apiKey.isEmpty else {
+            llmInsightState = .off
+            return
+        }
+        guard let context = lastContext, let analysis = personalizedAnalysis else {
+            llmInsightState = .failure("请先完成基础分析")
+            return
+        }
+        let model = (try? storage.fetchMiniMaxModel()).flatMap { MiniMaxModel(rawValue: $0) }?.rawValue
+            ?? MiniMaxModel.default.rawValue
+
+        llmInsightState = .loading
+        do {
+            let insight = try await llmService.generateInsight(
+                context: context,
+                analysis: analysis,
+                model: model,
+                apiKey: apiKey
+            )
+            llmInsight = insight
+            llmInsightState = .success
+        } catch {
+            llmInsightState = .failure(error.localizedDescription)
+        }
+    }
+
+    private func buildPersonalizationContext() -> PersonalizationContext {
+        let baseline = try? storage.fetchBaseline()
+
+        let allCheckIns = (try? storage.fetchDailyCheckIns()) ?? []
+        let cutoff = Calendar.current.date(byAdding: .day, value: -14, to: Date()) ?? Date()
+        let recentCheckIns = allCheckIns
+            .filter { $0.date >= cutoff }
+            .sorted { $0.date < $1.date }
+
+        return PersonalizationContext(
+            baseline: baseline,
+            hrvTrend: trendOverRecentWindow(for: .hrv),
+            restingHRTrend: trendOverRecentWindow(for: .restingHeartRate),
+            sleepTrend: trendOverRecentWindow(for: .sleep),
+            stepsTrend: trendOverRecentWindow(for: .steps),
+            avgActiveEnergy: average(for: .activeEnergyBurned),
+            avgExerciseMinutes: average(for: .appleExerciseTime),
+            avgStandHours: average(for: .appleStandTime),
+            recentCheckIns: recentCheckIns
+        )
+    }
+
+    /// 近 7 天该指标“末值 - 首值”的变化，用于判断趋势方向。
+    private func trendOverRecentWindow(for type: MetricType) -> Double? {
+        let series = metrics
+            .filter { $0.type == type }
+            .sorted { $0.date < $1.date }
+        guard series.count >= 2 else { return nil }
+
+        let cutoff = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
+        let window = series.filter { $0.date >= cutoff }
+        let use = window.count >= 2 ? window : series
+        guard let first = use.first, let last = use.last else { return nil }
+        return last.value - first.value
+    }
+
+    private func average(for type: MetricType) -> Double? {
+        let series = metrics.filter { $0.type == type }
+        guard !series.isEmpty else { return nil }
+        return series.map(\.value).reduce(0, +) / Double(series.count)
     }
 
     func saveTodayCheckIn(label: DailyWellnessLabel) {
@@ -157,6 +282,14 @@ final class AnalysisViewModel: ObservableObject {
 
         return "\(Int(round(value * 100)))%"
     }
+}
+
+enum LLMInsightState: Equatable {
+    case off        // 未启用或无 Key
+    case idle       // 就绪，尚未生成
+    case loading
+    case success
+    case failure(String)
 }
 
 struct AnalysisFeatureRow: Identifiable {

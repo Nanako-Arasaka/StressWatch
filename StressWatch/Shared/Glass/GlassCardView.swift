@@ -22,28 +22,27 @@ struct GlassCardView<Content: View>: View {
         content
             .padding(padding)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(.ultraThinMaterial, in: shape)
-            .overlay {
-                shape
-                    .fill(AppColors.glassFill(for: colorScheme))
-                    .allowsHitTesting(false)
+            .background {
+                ZStack {
+                    shape.fill(.ultraThinMaterial)
+                    shape.fill(AppColors.glassFill(for: colorScheme))
+                    shape.fill(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(colorScheme == .dark ? 0.035 : 0.10),
+                                Color.white.opacity(0.0)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                }
+                .allowsHitTesting(false)
             }
             .overlay {
                 shape
                     .strokeBorder(AppColors.glassStroke(for: colorScheme), lineWidth: 0.8)
                     .allowsHitTesting(false)
-            }
-            .overlay(alignment: .topLeading) {
-                LinearGradient(
-                    colors: [
-                        Color.white.opacity(colorScheme == .dark ? 0.035 : 0.10),
-                        Color.white.opacity(0.0)
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                .clipShape(shape)
-                .allowsHitTesting(false)
             }
             .shadow(color: AppColors.shadow(for: colorScheme), radius: 10, x: 0, y: 6)
     }

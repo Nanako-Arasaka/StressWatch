@@ -49,11 +49,14 @@ struct AnalysisView: View {
                 adviceCard
                     .appStaggeredCard(isVisible: contentVisible, delay: 0.24, reduceMotion: reduceMotion)
 
+                aiAnalysisCard
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.27, reduceMotion: reduceMotion)
+
                 featuresCard
-                    .appStaggeredCard(isVisible: contentVisible, delay: 0.30, reduceMotion: reduceMotion)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.33, reduceMotion: reduceMotion)
 
                 disclaimerCard
-                    .appStaggeredCard(isVisible: contentVisible, delay: 0.36, reduceMotion: reduceMotion)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.39, reduceMotion: reduceMotion)
             }
             .padding(.horizontal, 18)
             .padding(.top, 18)
@@ -283,6 +286,93 @@ struct AnalysisView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(12)
                         .background(AppColors.subtleActivityFill(for: colorScheme), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    }
+                }
+            }
+        }
+    }
+
+    private var aiAnalysisCard: some View {
+        GlassCardView(cornerRadius: 28, padding: 18) {
+            VStack(alignment: .leading, spacing: 14) {
+                GlassSectionHeader(
+                    title: "AI 个性化分析",
+                    subtitle: "由 MiniMax 大模型基于你的聚合数据解读。",
+                    systemImage: "brain"
+                )
+
+                switch viewModel.llmInsightState {
+                case .off:
+                    Text("尚未开启 AI 分析。请在「设置」中开启并填写 MiniMax API Key。")
+                        .font(.subheadline)
+                        .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                        .fixedSize(horizontal: false, vertical: true)
+
+                case .idle:
+                    Button {
+                        Task { await viewModel.generateLLMInsight() }
+                    } label: {
+                        Label("生成 AI 分析", systemImage: "sparkles")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(AppColors.primaryBlue)
+
+                case .loading:
+                    HStack(spacing: 10) {
+                        ProgressView()
+                        Text("大模型正在分析…")
+                            .font(.subheadline)
+                            .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                    }
+
+                case .success:
+                    if let insight = viewModel.llmInsight {
+                        Text(insight.summary)
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(AppColors.primaryText(for: colorScheme))
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        ForEach(Array(insight.suggestions.enumerated()), id: \.offset) { index, text in
+                            HStack(alignment: .top, spacing: 12) {
+                                Text("\(index + 1)")
+                                    .font(.caption.weight(.bold))
+                                    .foregroundStyle(AppColors.primaryText(for: colorScheme))
+                                    .frame(width: 24, height: 24)
+                                    .background(stateColor.opacity(colorScheme == .dark ? 0.18 : 0.14), in: Circle())
+
+                                Text(text)
+                                    .font(.subheadline)
+                                    .foregroundStyle(AppColors.primaryText(for: colorScheme))
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+
+                        Button {
+                            Task { await viewModel.generateLLMInsight() }
+                        } label: {
+                            Label("重新生成", systemImage: "arrow.clockwise")
+                                .font(.caption.weight(.bold))
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(AppColors.primaryBlue)
+                    }
+
+                case .failure(let message):
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(message)
+                            .font(.subheadline)
+                            .foregroundStyle(AppColors.stressWarm)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        Button {
+                            Task { await viewModel.generateLLMInsight() }
+                        } label: {
+                            Label("重试", systemImage: "arrow.clockwise")
+                                .font(.caption.weight(.bold))
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(AppColors.primaryBlue)
                     }
                 }
             }

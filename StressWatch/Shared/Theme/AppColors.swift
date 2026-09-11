@@ -8,10 +8,10 @@ enum AppColors {
     static let softPink = Color(red: 0.988, green: 0.773, blue: 0.773) // #FCC5C5
     static let darkBackground = Color(red: 0.055, green: 0.090, blue: 0.125)
 
-    static let recoveryBlue = softBlue
-    static let stressWarm = softPink
+    static let recoveryBlue = Color(red: 0.153, green: 0.510, blue: 0.620)
+    static let stressWarm = Color(red: 0.875, green: 0.345, blue: 0.310)
     static let chartPrimary = primaryBlue
-    static let chartSecondary = softPink
+    static let chartSecondary = stressWarm
 
     // 兼容旧调用名，全部映射到新的品牌语义色，避免视觉系统继续分裂。
     static let teal = primaryBlue
@@ -28,11 +28,11 @@ enum AppColors {
     }
 
     static func secondaryText(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.68) : Color(red: 0.067, green: 0.122, blue: 0.165).opacity(0.68)
+        scheme == .dark ? Color.white.opacity(0.76) : Color(red: 0.067, green: 0.122, blue: 0.165).opacity(0.76)
     }
 
     static func glassFill(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.075) : Color.white.opacity(0.62)
+        scheme == .dark ? Color.white.opacity(0.075) : Color.white.opacity(0.76)
     }
 
     static func glassBorder(for scheme: ColorScheme) -> Color {
@@ -60,11 +60,11 @@ enum AppColors {
     }
 
     static func floatingBarFill(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? Color.white.opacity(0.082) : Color.white.opacity(0.68)
+        scheme == .dark ? Color.white.opacity(0.082) : Color.white.opacity(0.86)
     }
 
     static func floatingBarHighlight(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? primaryBlue.opacity(0.22) : softBlue.opacity(0.42)
+        scheme == .dark ? primaryBlue.opacity(0.22) : primaryBlue.opacity(0.24)
     }
 
     static func badgeFill(for scheme: ColorScheme) -> Color {

@@ -11,7 +11,7 @@ enum WidgetStorage {
         return fallbackAppGroupIdentifier
     }
 
-    private static let fallbackAppGroupIdentifier = "group.com.stresswatch.demo"
+    private static let fallbackAppGroupIdentifier = "group.com.stresswatch.h8l2cagp84"
     private static let fileName = "widget_snapshot.json"
 
     private static let encoder: JSONEncoder = {

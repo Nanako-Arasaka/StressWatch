@@ -10,6 +10,8 @@ Notes:
 - Assigns sleep records to the wake-up/end date.
 - Generates rule-based weak labels for personal wellness trend experiments only.
 - Optionally joins local Daily Check-in labels into user_label without replacing weak_label.
+  打卡的 5 类主观枚举（feelingGood/normal/tired/highStress/poorRecovery）会自动映射为
+  7 类 wellness 标签（见 label_mapping.py），确保与 weak_label / Core ML 类别对齐。
 """
 
 import argparse
@@ -18,6 +20,7 @@ import csv
 import json
 import math
 import os
+import sys
 import tempfile
 import zipfile
 import xml.etree.ElementTree as ET
@@ -25,6 +28,9 @@ from datetime import datetime, timedelta
 
 import numpy as np
 import pandas as pd
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from label_mapping import map_user_label
 
 
 def parse_dt(s):
@@ -86,7 +92,10 @@ def load_user_labels(path):
         except Exception:
             day = str(date_value)[:10]
 
-        labels[day] = label
+        # 把 App 5 类打卡枚举映射为 7 类 wellness 标签；已是 7 类则透传。
+        mapped = map_user_label(label)
+        if mapped:
+            labels[day] = mapped
 
     return labels
 
@@ -347,7 +356,7 @@ def main():
     parser.add_argument(
         "--user-labels",
         default=None,
-        help="Optional path to StressWatch daily_check_ins.json; adds user_label without replacing weak_label.",
+        help="Optional path to StressWatch daily_check_ins.json; 5 类打卡会自动映射为 7 类 wellness 标签并写入 user_label（不覆盖 weak_label）。",
     )
     args = parser.parse_args()
 

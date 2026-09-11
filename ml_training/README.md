@@ -156,3 +156,69 @@ pip install "scikit-learn==1.5.1" pandas numpy joblib coremltools
    - 将结果展示为“趋势参考”文案（避免医疗表述）
 4. 若模型缺失、加载失败、预测失败或输入特征不完整，App 会自动使用规则模型 fallback。
 5. 若当前仅有 `.joblib`：先在 Python 侧验证效果，再根据报告选择可转模型继续导出，或后续使用 Create ML / 单独转换脚本。
+
+## 8) 打卡标签的 5 类 → 7 类映射（重要）
+
+App 端 `DailyWellnessCheckIn.label` 是 5 类主观枚举，而训练目标 `user_label` 必须是 7 类
+wellness 标签（与 `weak_label`、Core ML 类别顺序一致）。两者通过 `label_mapping.py` 自动映射：
+
+| App 打卡（DailyWellnessLabel） | 7 类 wellness 标签 |
+| --- | --- |
+| `feelingGood`   | `recovery_good` |
+| `normal`        | `normal`        |
+| `tired`         | `low_activity`  |
+| `highStress`    | `high_stress`   |
+| `poorRecovery`  | `sleep_debt`    |
+
+- 若输入已经是 7 类之一，则原样透传（便于后续扩展或人工校正）。
+- 其它 / 空值视为“无 user_label”，训练时回退 `weak_label`。
+- 映射表 `MAP_APP_CHECKIN_TO_WELLNESS` 在 `label_mapping.py` 中，可按个人语义调整。
+- 该映射同时被 `data/parse_apple_health_to_stresswatch_ml_csv.py`（`--user-labels`）和
+  `export_app_training_csv.py` 复用，保证两端一致。
+
+## 9) 从 App 打卡回灌训练数据（端到端）
+
+完整闭环分三步，产出“带个人监督标签”的训练 CSV：
+
+```bash
+# 1) Apple Health 导出 -> 日特征 CSV（含 weak_label，user_label 暂空）
+python data/parse_apple_health_to_stresswatch_ml_csv.py export.zip \
+    --out ./stresswatch_ml_export \
+    --user-labels /path/to/daily_check_ins.json   # 可选：直接在此叠加打卡映射
+
+# 2)（推荐）若已生成过日特征 CSV，仅用本脚本把最新打卡叠加/更新到 user_label，
+#    避免重新解析耗时的 Apple Health 压缩包
+python export_app_training_csv.py \
+    --features data/stresswatch_ml_daily_features_recent_90d.csv \
+    --checkins /path/to/daily_check_ins.json \
+    --out data/stresswatch_ml_daily_features_labeled.csv
+
+# 3) 训练（user_label 样本 >=20 时以个人打卡为主；否则回退弱监督）
+python train_wellness_model.py --csv data/stresswatch_ml_daily_features_labeled.csv
+```
+
+`export_app_training_csv.py` 额外支持 `--summary-only`：只打印有效打卡天数与分布，
+并在 `user_label < 20` 时给出“仍以弱监督为主”的提示，方便你判断何时适合训练个人模型。
+
+### 个人模型落地到 App（Core ML）
+
+```bash
+# A. 训练 Core ML 兼容的 LogisticRegression 模型 + 类别顺序
+python train_coreml_model.py
+
+# B. 在 sklearn==1.5.1 环境转换为 .mlmodel
+conda create -n stresswatch-coreml python=3.11 -y
+conda activate stresswatch-coreml
+pip install "scikit-learn==1.5.1" pandas numpy joblib coremltools
+python export_coreml_logistic.py
+```
+
+导出成功后，把以下文件同步到 App 工程（类别顺序必须与 App 端 `coreml_class_labels.json` 一致）：
+
+- `ml_training/output/StressWatchWellnessClassifier.mlmodel`
+  → `StressWatch/StressWatch/Resources/ML/StressWatchWellnessClassifier.mlmodel`
+- `ml_training/output/coreml_class_labels.json`
+  → `StressWatch/StressWatch/Resources/ML/coreml_class_labels.json`
+
+Xcode 构建时会把 `.mlmodel` 编译为 `.mlmodelc`，`CoreMLWellnessAnalyzer` 随后自动加载；
+任何加载/预测失败都会回退到规则模型，不会中断 App。

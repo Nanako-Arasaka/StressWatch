@@ -18,4 +18,11 @@ protocol LocalStorageProtocol {
     func saveDailyCheckIn(_ checkIn: DailyWellnessCheckIn) throws
     func fetchDailyCheckIns() throws -> [DailyWellnessCheckIn]
     func fetchTodayCheckIn() throws -> DailyWellnessCheckIn?
+
+    // MARK: - AI 个性化分析（MiniMax）配置
+    // 注意：API Key 本身存于 Keychain，这里只持久化开关与模型选择。
+    func saveEnableAIAnalysis(_ enabled: Bool) throws
+    func fetchEnableAIAnalysis() throws -> Bool
+    func saveMiniMaxModel(_ model: String) throws
+    func fetchMiniMaxModel() throws -> String
 }
