@@ -6,6 +6,7 @@ class HealthKitService: HealthKitDataProvider {
     private let authorizationRequestedKey = "StressWatch.HealthKitAuthorizationRequested"
     private let calendar: Calendar
     private let standTimeIdentifier = HKQuantityTypeIdentifier(rawValue: "HKQuantityTypeIdentifierAppleStandTime")
+    private var hrvObserverQuery: HKObserverQuery?
 
     init(healthStore: HKHealthStore = HKHealthStore(), calendar: Calendar = .current) {
         self.healthStore = healthStore
@@ -101,6 +102,40 @@ class HealthKitService: HealthKitDataProvider {
         let elapsed = Date().timeIntervalSince(startedAt)
         print("[HealthKitService] fetchMetrics end count=\(sortedMetrics.count) elapsed=\(String(format: "%.2f", elapsed))s")
         return sortedMetrics
+    }
+
+    func startObservingHRVUpdates(onUpdate: @escaping () async -> Void) throws {
+        guard hrvObserverQuery == nil else {
+            return
+        }
+
+        guard let hrvType = HKObjectType.quantityType(forIdentifier: .heartRateVariabilitySDNN) else {
+            throw HealthKitServiceError.unavailable
+        }
+
+        let query = HKObserverQuery(sampleType: hrvType, predicate: nil) { _, completion, error in
+            if let error {
+                print("[HealthKitService] HRV observer failed: \(error)")
+                completion()
+                return
+            }
+
+            Task {
+                await onUpdate()
+                completion()
+            }
+        }
+
+        hrvObserverQuery = query
+        healthStore.execute(query)
+        healthStore.enableBackgroundDelivery(for: hrvType, frequency: .immediate) { success, error in
+            if let error {
+                print("[HealthKitService] HRV background delivery failed: \(error)")
+            } else {
+                print("[HealthKitService] HRV background delivery enabled=\(success)")
+            }
+        }
+        print("[HealthKitService] HRV observer started")
     }
 
     private func makeReadTypes() throws -> Set<HKObjectType> {

@@ -2,7 +2,9 @@ import SwiftUI
 import Charts
 
 struct MetricChart: View {
+    let metricType: MetricType
     let metrics: [HealthMetric]
+    let resetToken: Int
 
     @State private var selectedMetric: HealthMetric?
     @State private var visibleStartDate: Date?
@@ -50,6 +52,7 @@ struct MetricChart: View {
                 }
             }
             .chartXScale(domain: visibleDateRange ?? fullDateRange)
+            .chartYScale(domain: yAxisDomain)
             .chartXAxis {
                 AxisMarks(values: .automatic(desiredCount: 4)) { value in
                     AxisGridLine()
@@ -135,23 +138,9 @@ struct MetricChart: View {
                 selectedMetric = nil
                 setVisibleDomain(defaultVisibleDomain, centeredAt: sortedMetrics.last?.date)
             }
-            .overlay(alignment: .topTrailing) {
-                Button("重置") {
-                    resetZoom()
-                }
-                .font(.caption2.weight(.bold))
-                .foregroundStyle(AppColors.primaryText(for: colorScheme))
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
-                .background(.thinMaterial, in: Capsule())
-                .overlay {
-                    Capsule()
-                        .strokeBorder(AppColors.glassStroke(for: colorScheme), lineWidth: 0.8)
-                        .allowsHitTesting(false)
-                }
-                .padding(10)
+            .onChange(of: resetToken) { _ in
+                resetZoom()
             }
-            .padding(.bottom, 28)
         }
     }
 
@@ -163,6 +152,18 @@ struct MetricChart: View {
 
     private var displayMetrics: [HealthMetric] {
         downsample(sortedMetrics, maxCount: 120)
+    }
+
+    private var yAxisDomain: ClosedRange<Double> {
+        if metricType == .hrv {
+            return 0...100
+        }
+
+        let values = displayMetrics.map(\.value)
+        let minimum = values.min() ?? 0
+        let maximum = values.max() ?? 1
+        let padding = max((maximum - minimum) * 0.12, 1)
+        return (minimum - padding)...(maximum + padding)
     }
 
     private var metricsSignature: String {

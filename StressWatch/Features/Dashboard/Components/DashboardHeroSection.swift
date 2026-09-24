@@ -4,17 +4,16 @@ struct DashboardHeroSection: View {
     let metrics: [DashboardMetric]
     let dataSourceLabel: String
 
-    @State private var heroGlowBreathing = false
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        GlassCardView(cornerRadius: 34, padding: 20) {
-            VStack(alignment: .leading, spacing: 18) {
+        GlassCardView(cornerRadius: 28, padding: 18) {
+            VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("Today's balance")
-                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                        Text("今日状态")
+                            .font(.system(size: 22, weight: .bold, design: .rounded))
                             .foregroundStyle(AppColors.primaryText(for: colorScheme))
 
                         Text("个人健康趋势参考")
@@ -27,9 +26,7 @@ struct DashboardHeroSection: View {
                     DataSourceBadge(source: dataSourceLabel)
                 }
 
-                heroLogo
-
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 14)], spacing: 14) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 145), spacing: 12)], spacing: 12) {
                     ForEach(metrics) { metric in
                         heroMetricCard(metric)
                     }
@@ -38,43 +35,8 @@ struct DashboardHeroSection: View {
         }
     }
 
-    private var heroLogo: some View {
-        ZStack {
-            Circle()
-                .fill(AppColors.heroGlow(for: colorScheme)[0])
-                .frame(width: 164, height: 164)
-                .blur(radius: 26)
-                .scaleEffect(heroGlowBreathing ? 1.02 : 0.98)
-                .opacity(heroGlowBreathing ? 0.72 : 0.58)
-
-            Circle()
-                .fill(AppColors.heroGlow(for: colorScheme)[1])
-                .frame(width: 118, height: 118)
-                .blur(radius: 22)
-                .offset(x: 28, y: 18)
-                .opacity(0.74)
-
-            Circle()
-                .stroke(AppColors.glassStroke(for: colorScheme), lineWidth: 0.7)
-                .frame(width: 132, height: 132)
-                .opacity(0.28)
-
-            Image("StressWatchLogo")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 96, height: 96)
-                .shadow(color: AppColors.softBlue.opacity(colorScheme == .dark ? 0.10 : 0.14), radius: 8, x: 0, y: 5)
-        }
-        .frame(maxWidth: .infinity)
-        .frame(height: 118)
-        .onAppear(perform: startHeroGlow)
-        .onDisappear {
-            heroGlowBreathing = false
-        }
-    }
-
     private func heroMetricCard(_ metric: DashboardMetric) -> some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Image(systemName: metric.systemImage)
                     .font(.headline.weight(.bold))
@@ -92,7 +54,7 @@ struct DashboardHeroSection: View {
 
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Text(metric.value)
-                    .font(.system(size: 54, weight: .bold, design: .rounded))
+                    .font(.system(size: 46, weight: .bold, design: .rounded))
                     .foregroundStyle(AppColors.primaryText(for: colorScheme))
                     .monospacedDigit()
                     .minimumScaleFactor(0.74)
@@ -110,10 +72,10 @@ struct DashboardHeroSection: View {
                 .foregroundStyle(AppColors.secondaryText(for: colorScheme))
 
             DashboardSparklineView(values: metric.trendValues, color: metric.color)
-                .frame(height: 40)
+                .frame(height: 32)
         }
-        .padding(16)
-        .frame(maxWidth: .infinity, minHeight: 192, alignment: .leading)
+        .padding(14)
+        .frame(maxWidth: .infinity, minHeight: 166, alignment: .leading)
         .background(
             LinearGradient(
                 colors: metric.id == "stress" ? AppColors.stressCardTint(for: colorScheme) : [
@@ -132,14 +94,4 @@ struct DashboardHeroSection: View {
         }
     }
 
-    private func startHeroGlow() {
-        guard !reduceMotion else {
-            heroGlowBreathing = false
-            return
-        }
-
-        withAnimation(AppMotion.ambientBreathing(reduceMotion: reduceMotion)) {
-            heroGlowBreathing = true
-        }
-    }
 }
