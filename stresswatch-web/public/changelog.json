@@ -1,14 +1,230 @@
 {
-  "syncedAt": "2026-08-16T09:17:39.328Z",
+  "syncedAt": "2026-09-23T01:59:49.703Z",
   "repo": "Nanako-Arasaka/StressWatch",
-  "commitsTotal": 102,
+  "commitsTotal": 123,
   "releasesCount": 0,
   "releases": [],
   "commitsByMonth": [
     {
-      "label": "August 2026",
-      "summary": "67 commits",
+      "label": "September 2026",
+      "summary": "11 commits",
       "entries": [
+        {
+          "date": "Sep 21",
+          "sha": "32cfd45",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/32cfd4513166b75cf14deea3df59d70cd7f42802",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 19",
+          "sha": "0d06209",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/0d06209c6f77e5653ab33304df4bd9633bcd3c2d",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 17",
+          "sha": "b20fce9",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/b20fce92aa7168636b4b6640059d34cc27a8f7b5",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 15",
+          "sha": "af2c9e0",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/af2c9e083558d446f2f2aca90be486b5576e0934",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 13",
+          "sha": "f8fdbc9",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/f8fdbc960b0f6110956c999a7685b1fd99ee05f5",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 11",
+          "sha": "6fddf2e",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/6fddf2ef632c83f80da9e58beed392ff28165684",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 9",
+          "sha": "df2b397",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/df2b397b0589e62caf45a88d1327c715163e1341",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 7",
+          "sha": "80df1f9",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/80df1f9bbfc0bbb4ebb6e96c6420cfc00ed68788",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 5",
+          "sha": "701057e",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/701057e2e67bf5c1e610be94f9dbb3210aa00df3",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 3",
+          "sha": "fdb3e29",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/fdb3e29603cdec30080aa721bafd0e26c63d683f",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 1",
+          "sha": "7b8e00b",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/7b8e00b263f2bcc00c19065315eec2144c23ec5f",
+          "author": "Nanako-Arasaka"
+        }
+      ]
+    },
+    {
+      "label": "August 2026",
+      "summary": "77 commits",
+      "entries": [
+        {
+          "date": "Aug 31",
+          "sha": "fdc133d",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/fdc133dae102266fc11821258d6c471777342190",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 29",
+          "sha": "eeca477",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/eeca477c4a63bd71081fc8e18752c2ab1650a356",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 27",
+          "sha": "3967c84",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/3967c8418f873a861029f0c65a6d86ac7ef0b4bd",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 25",
+          "sha": "5fa25b2",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/5fa25b2592b16419c26b096e0f7567e958778d03",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 23",
+          "sha": "97035f4",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/97035f4a776ad36d666a3bb120da95a8ce9d1bab",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 21",
+          "sha": "16cfe30",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/16cfe304185459793e4bfca285e8779c3acab995",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 19",
+          "sha": "1128435",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/1128435c353ee68e99089b6813c280dd65d49a6f",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 17",
+          "sha": "5bfb4b9",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/5bfb4b9a9897f11cbeaa98377d5b967ce20b20c8",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Aug 16",
+          "sha": "e126a91",
+          "title": "ci: refresh changelog snapshot every 2 days instead of every 6 hours",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/e126a919ea69cb4335308ee19b71a9cd33a46bc8",
+          "author": "Chan Silence"
+        },
+        {
+          "date": "Aug 16",
+          "sha": "ba94b94",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/ba94b9499fefb2955271a7e1c06762c50ceb99cb",
+          "author": "Nanako-Arasaka"
+        },
         {
           "date": "Aug 16",
           "sha": "f2ce56a",
