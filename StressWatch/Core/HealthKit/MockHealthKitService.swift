@@ -108,6 +108,6 @@ class MockHealthKitService: HealthKitDataProvider {
         hour: Int
     ) -> HealthMetric {
         let timestamp = calendar.date(bySettingHour: hour, minute: 0, second: 0, of: date) ?? date
-        return HealthMetric(id: UUID(), type: type, value: value, unit: unit, date: timestamp)
+        return HealthMetric(id: UUID(), type: type, value: value, unit: unit, date: timestamp, sourceName: "Demo Data")
     }
 }

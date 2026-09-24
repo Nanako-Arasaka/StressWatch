@@ -195,7 +195,8 @@ class HealthKitService: HealthKitDataProvider {
                 type: type,
                 value: sample.quantity.doubleValue(for: unit),
                 unit: unitLabel,
-                date: sample.endDate
+                date: sample.endDate,
+                sourceName: sample.sourceRevision.source.name
             )
         }
     }
@@ -218,7 +219,8 @@ class HealthKitService: HealthKitDataProvider {
                 type: .steps,
                 value: value,
                 unit: "steps",
-                date: calendar.endOfDay(for: day)
+                date: calendar.endOfDay(for: day),
+                sourceName: "Apple Health"
             )
         }
     }
@@ -241,7 +243,8 @@ class HealthKitService: HealthKitDataProvider {
                 type: .activeEnergyBurned,
                 value: value,
                 unit: "kcal",
-                date: calendar.endOfDay(for: day)
+                date: calendar.endOfDay(for: day),
+                sourceName: "Apple Health"
             )
         }
     }
@@ -264,7 +267,8 @@ class HealthKitService: HealthKitDataProvider {
                 type: .appleExerciseTime,
                 value: value,
                 unit: "min",
-                date: calendar.endOfDay(for: day)
+                date: calendar.endOfDay(for: day),
+                sourceName: "Apple Health"
             )
         }
     }
@@ -291,7 +295,8 @@ class HealthKitService: HealthKitDataProvider {
                 type: .appleStandTime,
                 value: value,
                 unit: "h",
-                date: calendar.endOfDay(for: day)
+                date: calendar.endOfDay(for: day),
+                sourceName: "Apple Health"
             )
         }
     }
@@ -316,6 +321,7 @@ class HealthKitService: HealthKitDataProvider {
             .sleepDeep: [:],
             .sleepAwake: [:]
         ]
+        var sleepSourceNames = Set<String>()
 
         samples.forEach { sample in
             let hours = max(0, sample.endDate.timeIntervalSince(sample.startDate) / 3600)
@@ -338,6 +344,11 @@ class HealthKitService: HealthKitDataProvider {
             default:
                 break
             }
+
+            let sourceName = sample.sourceRevision.source.name.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !sourceName.isEmpty {
+                sleepSourceNames.insert(sourceName)
+            }
         }
 
         var metrics = totalsByDay.map { day, hours in
@@ -346,7 +357,8 @@ class HealthKitService: HealthKitDataProvider {
                 type: .sleep,
                 value: hours,
                 unit: "hours",
-                date: calendar.endOfDay(for: day)
+                date: calendar.endOfDay(for: day),
+                sourceName: sleepSourceNames.sorted().joined(separator: "+").nilIfEmpty
             )
         }
 
@@ -357,7 +369,8 @@ class HealthKitService: HealthKitDataProvider {
                     type: type,
                     value: hours,
                     unit: "hours",
-                    date: calendar.endOfDay(for: day)
+                    date: calendar.endOfDay(for: day),
+                    sourceName: sleepSourceNames.sorted().joined(separator: "+").nilIfEmpty
                 )
             }
         }

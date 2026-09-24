@@ -8,7 +8,7 @@ struct DataSourceBadge: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var isAppleHealth: Bool {
-        source == "Apple Health"
+        source.hasPrefix("Apple Health")
     }
 
     var body: some View {

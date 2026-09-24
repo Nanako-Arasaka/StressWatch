@@ -7,6 +7,9 @@ class SettingsViewModel: ObservableObject {
     @Published var healthKitStatusText: String
     @Published var authorizationState: SettingsAuthorizationState
     @Published var errorMessage: String?
+    /// 路径 A：从 HealthKit 样本汇总到的写入源（含小米运动健康等）。
+    @Published var detectedHealthSources: String?
+    @Published var xiaomiSourceNote: String?
 
     // MARK: - AI 个性化分析（MiniMax）
     @Published var enableAIAnalysis: Bool
@@ -151,6 +154,7 @@ class SettingsViewModel: ObservableObject {
                 authorizationState = .authorized
                 errorMessage = "\(context)：已读取到 \(metrics.count) 条 Apple Health 数据，已切换到 Apple Health。"
                 print("[SettingsViewModel] \(context) fetched metrics count=\(metrics.count), switched Apple Health")
+                applyDetectedSources(from: metrics)
             }
         } catch {
             try storage.savePreferredDataSource(.demo)
@@ -165,6 +169,20 @@ class SettingsViewModel: ObservableObject {
         let endDate = calendar.endOfDay(for: Date())
         let startDate = calendar.date(byAdding: .day, value: -6, to: calendar.startOfDay(for: Date())) ?? Date()
         return try await healthDataProvider.fetchMetrics(types: MetricType.allCases, from: startDate, to: endDate)
+    }
+
+    private func applyDetectedSources(from metrics: [HealthMetric]) {
+        let names = HealthSourceClassifier.uniqueSourceNames(in: metrics)
+        detectedHealthSources = HealthSourceClassifier.detectedSourcesDescription(in: metrics)
+
+        let xiaomiHits = names.filter { HealthSourceClassifier.isXiaomiFamily($0) }
+        if xiaomiHits.isEmpty {
+            xiaomiSourceNote = names.isEmpty
+                ? "暂未读到写入源名称。若使用小米手环，请先在小米运动健康中打开「同步到 Apple 健康」。"
+                : "未检测到小米运动健康写入。若已同步，请稍等片刻后重新点「使用 Apple Health」。"
+        } else {
+            xiaomiSourceNote = "已检测到 \(xiaomiHits.joined(separator: "、")) 写入，路径 A 生效：小米数据经 Apple 健康进入 StressWatch。"
+        }
     }
 
     private func applyAuthorizationFailure(_ error: Error) {

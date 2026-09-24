@@ -104,6 +104,40 @@ struct SettingsView: View {
                     GlassCardView(cornerRadius: 28, padding: 18) {
                         VStack(alignment: .leading, spacing: 14) {
                             GlassSectionHeader(
+                                title: "小米运动健康接入",
+                                subtitle: "路径 A：小米数据写入 Apple 健康后，StressWatch 直接读取。",
+                                systemImage: "heart.text.square"
+                            )
+
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("1. 在「小米运动健康」中开启同步到 Apple 健康（通常在 设置 → 数据同步 / Apple 健康）。")
+                                Text("2. 授权写入步数、心率、睡眠等；HRV 是否提供取决于手环与 App 版本。")
+                                Text("3. 回到本页点「使用 Apple Health」，Dashboard 会合并所有写入源。")
+                            }
+                            .font(.footnote)
+                            .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                            .fixedSize(horizontal: false, vertical: true)
+
+                            if let detected = viewModel.detectedHealthSources, !detected.isEmpty {
+                                Text("已检测写入源：\(detected)")
+                                    .font(.footnote.weight(.semibold))
+                                    .foregroundStyle(AppColors.primaryText(for: colorScheme))
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+
+                            if let xiaomiNote = viewModel.xiaomiSourceNote {
+                                Text(xiaomiNote)
+                                    .font(.footnote)
+                                    .foregroundStyle(AppColors.primaryBlue)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+                    }
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.19, reduceMotion: reduceMotion)
+
+                    GlassCardView(cornerRadius: 28, padding: 18) {
+                        VStack(alignment: .leading, spacing: 14) {
+                            GlassSectionHeader(
                                 title: "Baseline",
                                 subtitle: "选择用于个人基线参考的数据窗口。",
                                 systemImage: "calendar"

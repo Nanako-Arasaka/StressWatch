@@ -99,7 +99,13 @@ class DashboardViewModel: ObservableObject {
             )
             let metrics = fetchResult.metrics
             let resolvedDataSourceLabel = fetchResult.source == .appleHealth ? "Apple Health" : "Demo Data"
-            self.dataSourceLabel = resolvedDataSourceLabel
+            let sourceLabel = fetchResult.source == .appleHealth
+                ? HealthSourceClassifier.dashboardSourceLabel(
+                    metrics: fetchResult.metrics,
+                    baseLabel: resolvedDataSourceLabel
+                  )
+                : resolvedDataSourceLabel
+            self.dataSourceLabel = sourceLabel
             print("[DashboardViewModel] refresh fetched metrics=\(metrics.count) source=\(fetchResult.source)")
 
             guard let baseline = baselineEngine.calculate(from: metrics), baseline.isValid else {
@@ -108,7 +114,7 @@ class DashboardViewModel: ObservableObject {
                 self.needsMoreData = true
                 saveWidgetSnapshot(
                     WidgetSnapshot.placeholder(
-                        dataSource: resolvedDataSourceLabel,
+                        dataSource: sourceLabel,
                         analysisSource: widgetAnalysisSourceText()
                     )
                 )
