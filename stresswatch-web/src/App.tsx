@@ -2724,6 +2724,30 @@ function ChangelogTag({ label }: { label: string }) {
   );
 }
 
+// GitHub snapshot month labels are English ("August 2026"). Localize at
+// render so a language toggle updates the timeline without a refetch.
+const EN_MONTH_NAMES = [
+  "january", "february", "march", "april", "may", "june",
+  "july", "august", "september", "october", "november", "december",
+] as const;
+
+function localizeMonthLabel(label: string, lang: Lang): string {
+  if (lang !== "zh") return label;
+  const m = /^([A-Za-z]+)\s+(\d{4})$/.exec(label.trim());
+  if (!m) return label;
+  const monthIndex = EN_MONTH_NAMES.indexOf(m[1].toLowerCase() as (typeof EN_MONTH_NAMES)[number]);
+  if (monthIndex < 0) return label;
+  return `${m[2]} 年 ${monthIndex + 1} 月`;
+}
+
+function localizeCommitCountSummary(summary: string, lang: Lang): string {
+  if (lang === "zh") {
+    const m = /^(\d+)\s+commits?$/i.exec(summary.trim());
+    if (m) return `${m[1]} 次提交`;
+  }
+  return summary;
+}
+
 function ChangelogPage() {
   const [language, setLanguage] = usePersistedLang();
   const [langTick, setLangTick] = useState(0);
@@ -2735,76 +2759,76 @@ function ChangelogPage() {
   };
 
   // Snapshot from GitHub (refreshed by Actions every 6h, committed
-  // back to master, served at /changelog.json). If the fetch fails
-  // (offline preview, blocked, missing file), we fall back to the
-  // curated bilingual static copy so the page is never blank.
-  const fallbackGroups = t.changelog.groups;
-  const fallbackRepo = t.changelog.repo;
-  const fallbackCountLabel = t.changelog.countLabel;
-  const [snapshot, setSnapshot] = useState<{
+  // back to master, served at /changelog.json). Store only raw,
+  // language-independent fields — count labels and month titles are
+  // derived at render time from the current `language`.
+  // If the fetch fails (offline preview, blocked, missing file), fall
+  // back to the curated bilingual static copy so the page is never blank.
+  const [raw, setRaw] = useState<{
     syncedAt: string | null;
-    repo: string;
-    countLabel: string;
-    groups: typeof t.changelog.groups;
-    releaseCount: number;
+    repo: string | null;
+    commitsTotal: number | null;
+    commitsByMonth: NonNullable<ChangelogSnapshot["commitsByMonth"]> | null;
     loading: boolean;
     error: string | null;
   }>({
     syncedAt: null,
-    repo: fallbackRepo,
-    countLabel: fallbackCountLabel,
-    groups: fallbackGroups,
-    releaseCount: 0,
+    repo: null,
+    commitsTotal: null,
+    commitsByMonth: null,
     loading: true,
     error: null,
   });
 
   useEffect(() => {
     let cancelled = false;
-    const load = () =>
-      fetch("./changelog.json", { cache: "no-store" })
-        .then((r) => {
-          if (!r.ok) throw new Error(`HTTP ${r.status}`);
-          return r.json();
-        })
-        .then((data: ChangelogSnapshot) => {
-          if (cancelled) return;
-          setSnapshot({
-            syncedAt: data.syncedAt ?? null,
-            repo: data.repo ?? fallbackRepo,
-            countLabel:
-              typeof data.commitsTotal === "number"
-                ? `${data.commitsTotal} ${language === "zh" ? "次提交" : "commits"}`
-                : fallbackCountLabel,
-            groups: (data.commitsByMonth ?? []).map((g) => ({
-              label: g.label,
-              summary: g.summary,
-              entries: g.entries.map((e) => ({
-                date: e.date,
-                sha: e.sha,
-                title: e.title,
-                tags: e.tags,
-              })),
-            })),
-            releaseCount: Array.isArray(data.releases) ? data.releases.length : 0,
-            loading: false,
-            error: null,
-          });
-        })
-        .catch((e: Error) => {
-          if (cancelled) return;
-          setSnapshot((s) => ({ ...s, loading: false, error: e.message }));
+    fetch("./changelog.json", { cache: "no-store" })
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((data: ChangelogSnapshot) => {
+        if (cancelled) return;
+        setRaw({
+          syncedAt: data.syncedAt ?? null,
+          repo: data.repo ?? null,
+          commitsTotal: typeof data.commitsTotal === "number" ? data.commitsTotal : null,
+          commitsByMonth: data.commitsByMonth ?? null,
+          loading: false,
+          error: null,
         });
-    load();
+      })
+      .catch((e: Error) => {
+        if (cancelled) return;
+        setRaw((s) => ({ ...s, loading: false, error: e.message }));
+      });
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const c = t.changelog;
-  const syncTime = snapshot.syncedAt
-    ? new Date(snapshot.syncedAt).toLocaleString(
+  const snapshotRepo = raw.repo ?? c.repo;
+  const snapshotCountLabel =
+    raw.commitsTotal != null
+      ? `${raw.commitsTotal} ${language === "zh" ? "次提交" : "commits"}`
+      : c.countLabel;
+  const snapshotGroups =
+    raw.error || !raw.commitsByMonth?.length
+      ? c.groups
+      : raw.commitsByMonth.map((g) => ({
+          label: localizeMonthLabel(g.label, language),
+          summary: localizeCommitCountSummary(g.summary, language),
+          entries: g.entries.map((e) => ({
+            date: e.date,
+            sha: e.sha,
+            title: e.title,
+            tags: e.tags,
+          })),
+        }));
+
+  const syncTime = raw.syncedAt
+    ? new Date(raw.syncedAt).toLocaleString(
         language === "zh" ? "zh-CN" : "en-US",
         {
           year: "numeric",
@@ -2839,15 +2863,15 @@ function ChangelogPage() {
             <div className="mt-7 flex flex-col items-center justify-center gap-3 text-[13px] sm:flex-row sm:gap-5">
               <a
                 className="text-blue"
-                href={`https://${snapshot.repo}`}
+                href={`https://${snapshotRepo}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {snapshot.repo}
+                {snapshotRepo}
               </a>
               <span className="text-ink-3">·</span>
-              <span className="text-ink-2">{snapshot.countLabel}</span>
-              {snapshot.loading ? (
+              <span className="text-ink-2">{snapshotCountLabel}</span>
+              {raw.loading ? (
                 <span className="inline-flex items-center gap-1.5 text-[12px] text-ink-2">
                   <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-blue" />
                   {language === "zh" ? "从 GitHub 同步中…" : "Syncing from GitHub…"}
@@ -2858,7 +2882,7 @@ function ChangelogPage() {
                   {syncTime}
                 </span>
               ) : null}
-              {snapshot.error ? (
+              {raw.error ? (
                 <span className="text-[12px] text-[#A32D2D]">
                   {language === "zh" ? "已显示静态快照" : "Showing static snapshot"}
                 </span>
@@ -2872,7 +2896,7 @@ function ChangelogPage() {
           <div className="mx-auto flex max-w-[1040px] gap-8 sm:gap-12">
             <div className="hidden w-1 shrink-0 self-stretch bg-[#D2D2D7] sm:block" aria-hidden="true" />
             <div className="flex flex-1 flex-col gap-10">
-              {snapshot.groups.map((g) => (
+              {snapshotGroups.map((g) => (
                 <div key={g.label} className="flex flex-col gap-4">
                   <div className="flex flex-col gap-1">
                     <span className="type-eyebrow text-blue">{g.label}</span>
