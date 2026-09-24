@@ -297,7 +297,7 @@ struct AnalysisView: View {
             VStack(alignment: .leading, spacing: 14) {
                 GlassSectionHeader(
                     title: "AI 个性化分析",
-                    subtitle: "由 MiniMax 大模型基于你的聚合数据解读。",
+                    subtitle: "基于本地已算好的趋势与模型结论，由大模型生成结构化解读。",
                     systemImage: "brain"
                 )
 
@@ -333,6 +333,33 @@ struct AnalysisView: View {
                             .foregroundStyle(AppColors.primaryText(for: colorScheme))
                             .fixedSize(horizontal: false, vertical: true)
 
+                        if !insight.findings.isEmpty {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("关键发现")
+                                    .font(.caption.weight(.bold))
+                                    .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+
+                                ForEach(insight.findings) { finding in
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        Text(finding.title)
+                                            .font(.subheadline.weight(.semibold))
+                                            .foregroundStyle(AppColors.primaryText(for: colorScheme))
+                                            .fixedSize(horizontal: false, vertical: true)
+                                        Text(finding.detail)
+                                            .font(.footnote)
+                                            .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                                            .fixedSize(horizontal: false, vertical: true)
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(10)
+                                    .background(
+                                        AppColors.subtleActivityFill(for: colorScheme),
+                                        in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                    )
+                                }
+                            }
+                        }
+
                         ForEach(Array(insight.suggestions.enumerated()), id: \.offset) { index, text in
                             HStack(alignment: .top, spacing: 12) {
                                 Text("\(index + 1)")
@@ -346,6 +373,13 @@ struct AnalysisView: View {
                                     .foregroundStyle(AppColors.primaryText(for: colorScheme))
                                     .fixedSize(horizontal: false, vertical: true)
                             }
+                        }
+
+                        if insight.usedFallback {
+                            Text("模型未返回标准 JSON，已退化为原文展示。")
+                                .font(.caption2)
+                                .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                                .fixedSize(horizontal: false, vertical: true)
                         }
 
                         Button {

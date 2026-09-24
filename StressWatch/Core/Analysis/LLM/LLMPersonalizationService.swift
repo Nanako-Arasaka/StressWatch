@@ -16,13 +16,118 @@ enum LLMServiceError: LocalizedError {
     }
 }
 
-/// 大模型返回的结构化洞察。
-struct LLMInsight {
-    let summary: String
-    let suggestions: [String]
-    let tone: String          // 鼓励 / 警示 / 平稳
-    let generatedAt: Date
+// MARK: - AnalysisPayload（端上已算好的聚合快照，LLM 只解读不重算）
+
+/// 一次健康数据分析任务的结构化输入。
+/// 全部数值来自 FeatureExtractor / WellnessAnalysis / PersonalizationContext /
+/// GoalOptimizer / PersonalizedAdviceGenerator，LLM 不负责重新计算。
+struct AnalysisPayload: Codable {
+    struct BaselineBlock: Codable {
+        let avgHRV: Double
+        let avgRestingHR: Double
+        let avgDailySteps: Double
+        let avgSleepHours: Double
+        let dataWindowDays: Int
+    }
+
+    struct FeatureBlock: Codable {
+        let avgHRV: Double?
+        let hrvTrend: Double?
+        let avgHeartRate: Double?
+        let avgRestingHR: Double?
+        let sleepAverageHours: Double?
+        let sleepConsistency: Double?
+        let remSleepAverageHours: Double?
+        let coreSleepAverageHours: Double?
+        let deepSleepAverageHours: Double?
+        let stepsAverage: Double?
+        let activeEnergyAverage: Double?
+        let exerciseMinutesAverage: Double?
+        let standHoursAverage: Double?
+        let recoveryAverage: Double?
+        let stressAverage: Double?
+        let dataConfidence: Double
+    }
+
+    struct TrendBlock: Codable {
+        let hrv7dDelta: Double?
+        let restingHR7dDelta: Double?
+        let sleep7dDeltaHours: Double?
+        let steps7dDelta: Double?
+    }
+
+    struct GoalBlock: Codable {
+        let sleepTargetHours: Double
+        let stepsTarget: Int
+        let exerciseTargetMin: Int
+        let standTargetHours: Int
+        let rationale: [String]
+    }
+
+    struct RecommendationBlock: Codable {
+        let title: String
+        let detail: String
+    }
+
+    let currentState: String
+    let predictedLabel: String
+    let confidencePercent: Int
+    let analysisSource: String
+    let mlSummary: String
+    let keyFactors: [String]
+    let baseline: BaselineBlock?
+    let features: FeatureBlock
+    let trends7d: TrendBlock
+    let recentCheckInLabelsLast14d: [String]
+    let checkInNote: String?
+    let personalizedGoals: GoalBlock
+    let topRecommendations: [RecommendationBlock]
 }
+
+// MARK: - PersonalizationInsight（一次 LLM 调用的结构化产出）
+
+/// 大模型返回的结构化解析结果；展示在 AnalysisView 个性化分析卡片。
+struct PersonalizationInsight: Codable, Equatable {
+    struct Finding: Codable, Equatable, Identifiable {
+        let title: String
+        let detail: String
+        let metric: String?
+
+        var id: String { "\(title)|\(metric ?? "")" }
+    }
+
+    let summary: String
+    let findings: [Finding]
+    let suggestions: [String]
+    let tone: String
+    let generatedAt: Date
+    let windowDays: Int
+    /// true = JSON 解析失败，已退化为纯文本 summary
+    let usedFallback: Bool
+
+    init(
+        summary: String,
+        findings: [Finding] = [],
+        suggestions: [String] = [],
+        tone: String = "平稳",
+        generatedAt: Date = Date(),
+        windowDays: Int = 7,
+        usedFallback: Bool = false
+    ) {
+        self.summary = summary
+        self.findings = findings
+        self.suggestions = suggestions
+        self.tone = tone
+        self.generatedAt = generatedAt
+        self.windowDays = windowDays
+        self.usedFallback = usedFallback
+    }
+}
+
+/// 兼容旧命名（AnalysisViewModel / 单测若仍用 LLMInsight）。
+typealias LLMInsight = PersonalizationInsight
+
+// MARK: - Service
 
 protocol LLMPersonalizationAnalyzing {
     func generateInsight(
@@ -30,85 +135,134 @@ protocol LLMPersonalizationAnalyzing {
         analysis: PersonalizedAnalysis,
         model: String,
         apiKey: String
-    ) async throws -> LLMInsight
+    ) async throws -> PersonalizationInsight
 }
 
-/// 把端上已经算好的「个性化快照」（基线 / 趋势 / 打卡 / 目标 / 建议）
-/// 以聚合、去标识的形式交给 MiniMax，生成自然语言解读。
-/// 严格遵守数据最小化：只发聚合摘要，不含姓名与精确日期。
+/// 一次健康数据分析任务：
+/// 1) 把端上已算好的结果打成 AnalysisPayload（数据最小化）
+/// 2) 单次 LLM 调用
+/// 3) 严格 Codable 解析为 PersonalizationInsight；失败则 fallback
 struct LLMPersonalizationService: LLMPersonalizationAnalyzing {
     var client: MiniMaxClientProtocol = MiniMaxClient()
+
+    /// 分析窗口：特征近 7 天、打卡近 14 天；展示用 windowDays 取特征窗。
+    static let featureWindowDays = 7
 
     func generateInsight(
         context: PersonalizationContext,
         analysis: PersonalizedAnalysis,
         model: String,
         apiKey: String
-    ) async throws -> LLMInsight {
-        let snapshot = Self.buildSnapshot(context: context, analysis: analysis)
-        let messages = Self.buildMessages(snapshot: snapshot)
+    ) async throws -> PersonalizationInsight {
+        let payload = Self.buildPayload(context: context, analysis: analysis)
+        let messages = Self.buildMessages(payload: payload)
         let text = try await client.complete(messages: messages, model: model, apiKey: apiKey)
-        return try Self.parseInsight(from: text)
+        return Self.parseInsight(from: text, windowDays: Self.featureWindowDays)
     }
 
-    // MARK: - Prompt 构造（数据最小化）
+    // MARK: - AnalysisPayload（只搬运已有计算结果）
 
-    private static func buildSnapshot(context: PersonalizationContext, analysis: PersonalizedAnalysis) -> [String: Any] {
-        var dict: [String: Any] = [:]
-        dict["currentState"] = analysis.state.displayName
-        dict["confidence"] = Int(round(analysis.confidence * 100))
+    static func buildPayload(
+        context: PersonalizationContext,
+        analysis: PersonalizedAnalysis
+    ) -> AnalysisPayload {
+        let base = analysis.base
+        let features = base.features
+        let ml = base.mlInsight
 
-        if let base = context.baseline {
-            dict["baseline"] = [
-                "avgHRV": round1(base.avgHRV),
-                "avgRestingHR": round1(base.avgRestingHR),
-                "avgDailySteps": Int(base.avgDailySteps),
-                "avgSleepHours": round2(base.avgSleepHours)
-            ]
+        let baselineBlock: AnalysisPayload.BaselineBlock? = context.baseline.map {
+            AnalysisPayload.BaselineBlock(
+                avgHRV: round1($0.avgHRV),
+                avgRestingHR: round1($0.avgRestingHR),
+                avgDailySteps: round1($0.avgDailySteps),
+                avgSleepHours: round2($0.avgSleepHours),
+                dataWindowDays: $0.dataWindowDays
+            )
         }
 
-        var trends: [String: Any] = [:]
-        if let v = context.hrvTrend { trends["hrv7dDelta"] = round1(v) }
-        if let v = context.restingHRTrend { trends["restingHR7dDelta"] = round1(v) }
-        if let v = context.sleepTrend { trends["sleep7dDeltaHours"] = round2(v) }
-        if let v = context.stepsTrend { trends["steps7dDelta"] = Int(v) }
-        dict["recentTrends7d"] = trends
+        let featureBlock = AnalysisPayload.FeatureBlock(
+            avgHRV: features.avgHRV.map(round1),
+            hrvTrend: features.hrvTrend.map(round1),
+            avgHeartRate: features.avgHeartRate.map(round1),
+            avgRestingHR: features.avgRestingHR.map(round1),
+            sleepAverageHours: features.sleepAverage.map(round2),
+            sleepConsistency: features.sleepConsistency.map(round2),
+            remSleepAverageHours: features.remSleepAverage.map(round2),
+            coreSleepAverageHours: features.coreSleepAverage.map(round2),
+            deepSleepAverageHours: features.deepSleepAverage.map(round2),
+            stepsAverage: features.stepsAverage.map { round1($0) },
+            activeEnergyAverage: features.activeEnergyAverage.map(round1),
+            exerciseMinutesAverage: features.exerciseMinutesAverage.map(round1),
+            standHoursAverage: features.standHoursAverage.map(round1),
+            recoveryAverage: features.recoveryAverage.map(round1),
+            stressAverage: features.stressAverage.map(round1),
+            dataConfidence: round2(features.dataConfidence)
+        )
 
-        let recentLabels = context.recentCheckIns.suffix(14).map { $0.label.displayName }
-        dict["recentCheckInLabelsLast14d"] = recentLabels
+        let trendBlock = AnalysisPayload.TrendBlock(
+            hrv7dDelta: context.hrvTrend.map(round1),
+            restingHR7dDelta: context.restingHRTrend.map(round1),
+            sleep7dDeltaHours: context.sleepTrend.map(round2),
+            steps7dDelta: context.stepsTrend.map(round1)
+        )
 
-        var goals: [String: Any] = [:]
-        goals["sleepTargetHours"] = round2(analysis.goals.sleepTargetHours)
-        goals["stepsTarget"] = analysis.goals.stepsTarget
-        goals["exerciseTargetMin"] = analysis.goals.exerciseTargetMin
-        goals["standTargetHours"] = analysis.goals.standTargetHours
-        goals["rationale"] = analysis.goals.rationale
-        dict["personalizedGoals"] = goals
+        let checkInLabels = context.recentCheckIns.suffix(14).map(\.label.displayName)
 
-        dict["topRecommendations"] = analysis.recommendations.prefix(4).map {
-            ["title": $0.title, "detail": $0.detail]
+        let goalBlock = AnalysisPayload.GoalBlock(
+            sleepTargetHours: round2(analysis.goals.sleepTargetHours),
+            stepsTarget: analysis.goals.stepsTarget,
+            exerciseTargetMin: analysis.goals.exerciseTargetMin,
+            standTargetHours: analysis.goals.standTargetHours,
+            rationale: Array(analysis.goals.rationale.prefix(4))
+        )
+
+        let topRecs = analysis.recommendations.prefix(4).map {
+            AnalysisPayload.RecommendationBlock(title: $0.title, detail: $0.detail)
         }
 
-        if let rec = analysis.checkInReconciliation, let note = rec.note {
-            dict["checkInNote"] = note
-        }
-
-        return dict
+        return AnalysisPayload(
+            currentState: analysis.state.displayName,
+            predictedLabel: base.predictedLabel,
+            confidencePercent: Int(round(analysis.confidence * 100)),
+            analysisSource: base.source.displayName,
+            mlSummary: ml.summary,
+            keyFactors: Array((base.primaryFactors.isEmpty ? ml.keyFactors : base.primaryFactors).prefix(5)),
+            baseline: baselineBlock,
+            features: featureBlock,
+            trends7d: trendBlock,
+            recentCheckInLabelsLast14d: checkInLabels,
+            checkInNote: analysis.checkInReconciliation?.note,
+            personalizedGoals: goalBlock,
+            topRecommendations: topRecs
+        )
     }
 
-    private static func buildMessages(snapshot: [String: Any]) -> [MiniMaxMessage] {
+    // MARK: - Prompt（单次调用，禁止重算）
+
+    private static func buildMessages(payload: AnalysisPayload) -> [MiniMaxMessage] {
         let system = """
-        你是一位温和、专业的个人健康教练，帮助用户理解自己的健康趋势数据。
-        你只做生活方式层面的解读与建议，不做医疗诊断；遇到明显异常应建议用户咨询专业人士。
-        回答使用简体中文。你将收到该用户最近数据的聚合摘要（已去除任何个人身份信息）。
-        你必须且只能返回一个 JSON 对象，格式严格为：
-        {"summary":"一段 2-4 句的中文总结，结合用户的个人基线指出关键趋势","suggestions":["具体可执行的建议1","建议2","建议3（最多3条）"],"tone":"鼓励|警示|平稳 三选一"}
-        不要使用 markdown 代码块符号，直接输出纯 JSON。
+        你是一位温和、专业的个人健康教练。你将收到一份已经由 App 计算完成的聚合分析载荷（AnalysisPayload）。
+        规则：
+        1. 只做生活方式层面的解读，不做医疗诊断；异常情况建议咨询专业人士。
+        2. 严禁重新计算、推断或改写任何数值；引用时直接使用载荷里的数字与结论。
+        3. 回答使用简体中文。
+        4. 必须且只能返回一个 JSON 对象（不要 markdown 代码块），结构为：
+        {
+          "summary": "2-4 句总结，结合个人基线与关键趋势",
+          "findings": [
+            {"title": "短标题", "detail": "1-2 句依据，可引用载荷数值", "metric": "hrv|sleep|rhr|steps|stress|recovery|other"}
+          ],
+          "suggestions": ["可执行建议1", "建议2", "建议3"],
+          "tone": "鼓励|警示|平稳"
+        }
+        约束：findings 最多 4 条，suggestions 最多 3 条；findings 必须能对应到载荷中的已有结论或数值。
         """
 
-        let jsonData = try? JSONSerialization.data(withJSONObject: snapshot, options: [.prettyPrinted])
-        let jsonString = jsonData.flatMap { String(data: $0, encoding: .utf8) } ?? "{}"
-        let user = "以下是该用户近期健康数据的聚合摘要，请据此生成个性化分析：\n\(jsonString)"
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        let jsonData = (try? encoder.encode(payload)) ?? Data("{}".utf8)
+        let jsonString = String(data: jsonData, encoding: .utf8) ?? "{}"
+        let user = "AnalysisPayload（端上已算好，请据此生成个性化分析）：\n\(jsonString)"
 
         return [
             MiniMaxMessage(role: "system", content: system),
@@ -116,35 +270,80 @@ struct LLMPersonalizationService: LLMPersonalizationAnalyzing {
         ]
     }
 
-    // MARK: - 解析
+    // MARK: - 解析（严格 Codable + fallback）
 
-    private static func parseInsight(from text: String) throws -> LLMInsight {
-        var cleaned = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        if cleaned.contains("```") {
-            if let start = cleaned.firstIndex(of: "{"),
-               let end = cleaned.lastIndex(of: "}") {
-                cleaned = String(cleaned[start...end])
+    private struct InsightDTO: Decodable {
+        struct FindingDTO: Decodable {
+            let title: String
+            let detail: String
+            let metric: String?
+        }
+
+        let summary: String
+        let findings: [FindingDTO]?
+        let suggestions: [String]?
+        let tone: String?
+    }
+
+    static func parseInsight(from text: String, windowDays: Int = featureWindowDays) -> PersonalizationInsight {
+        let cleaned = extractJSONObject(from: text)
+
+        if let data = cleaned.data(using: .utf8),
+           let dto = try? JSONDecoder().decode(InsightDTO.self, from: data),
+           !dto.summary.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            let findings = (dto.findings ?? []).prefix(4).map {
+                PersonalizationInsight.Finding(
+                    title: $0.title,
+                    detail: $0.detail,
+                    metric: $0.metric
+                )
             }
-        }
-        guard let data = cleaned.data(using: .utf8) else { throw LLMServiceError.invalidResponse }
+            let suggestions = Array((dto.suggestions ?? []).prefix(3).map {
+                $0.trimmingCharacters(in: .whitespacesAndNewlines)
+            }.filter { !$0.isEmpty })
+            let tone = normalizeTone(dto.tone)
 
-        struct Payload: Decodable {
-            let summary: String
-            let suggestions: [String]?
-            let tone: String?
+            return PersonalizationInsight(
+                summary: dto.summary.trimmingCharacters(in: .whitespacesAndNewlines),
+                findings: Array(findings),
+                suggestions: suggestions,
+                tone: tone,
+                generatedAt: Date(),
+                windowDays: windowDays,
+                usedFallback: false
+            )
         }
 
-        guard let payload = try? JSONDecoder().decode(Payload.self, from: data) else {
-            // 退化：把整段内容当作 summary 返回，保证可用
-            return LLMInsight(summary: text, suggestions: [], tone: "平稳", generatedAt: Date())
-        }
-
-        return LLMInsight(
-            summary: payload.summary,
-            suggestions: payload.suggestions ?? [],
-            tone: payload.tone ?? "平稳",
-            generatedAt: Date()
+        // fallback：整段当作 summary，保证 UI 始终可展示
+        let rawSummary = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        return PersonalizationInsight(
+            summary: rawSummary.isEmpty ? "模型未返回可用内容，请重试。" : rawSummary,
+            findings: [],
+            suggestions: [],
+            tone: "平稳",
+            generatedAt: Date(),
+            windowDays: windowDays,
+            usedFallback: true
         )
+    }
+
+    private static func extractJSONObject(from text: String) -> String {
+        var cleaned = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        if let start = cleaned.firstIndex(of: "{"),
+           let end = cleaned.lastIndex(of: "}"),
+           start < end {
+            cleaned = String(cleaned[start...end])
+        }
+        return cleaned
+    }
+
+    private static func normalizeTone(_ tone: String?) -> String {
+        guard let tone = tone?.trimmingCharacters(in: .whitespacesAndNewlines), !tone.isEmpty else {
+            return "平稳"
+        }
+        if tone.contains("鼓") { return "鼓励" }
+        if tone.contains("警") { return "警示" }
+        return "平稳"
     }
 
     private static func round1(_ v: Double) -> Double { round(v * 10) / 10 }

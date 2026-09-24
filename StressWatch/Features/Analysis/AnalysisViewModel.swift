@@ -12,7 +12,7 @@ final class AnalysisViewModel: ObservableObject {
 
     // MARK: - AI 个性化分析（MiniMax）
     @Published private(set) var llmInsightState: LLMInsightState = .off
-    @Published private(set) var llmInsight: LLMInsight?
+    @Published private(set) var llmInsight: PersonalizationInsight?
 
     private let metrics: [HealthMetric]
     private let stressScore: StressScore?
