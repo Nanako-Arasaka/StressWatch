@@ -40,17 +40,29 @@ struct AnalysisView: View {
                 assessmentCard
                     .appStaggeredCard(isVisible: contentVisible, delay: 0.09, reduceMotion: reduceMotion)
 
+                keyChangesCard
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.11, reduceMotion: reduceMotion)
+
+                patternCard
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.14, reduceMotion: reduceMotion)
+
                 dailyCheckInCard
-                    .appStaggeredCard(isVisible: contentVisible, delay: 0.12, reduceMotion: reduceMotion)
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.16, reduceMotion: reduceMotion)
 
                 factorsCard
                     .appStaggeredCard(isVisible: contentVisible, delay: 0.18, reduceMotion: reduceMotion)
+
+                relatedFactorsCard
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.21, reduceMotion: reduceMotion)
 
                 adviceCard
                     .appStaggeredCard(isVisible: contentVisible, delay: 0.24, reduceMotion: reduceMotion)
 
                 aiAnalysisCard
                     .appStaggeredCard(isVisible: contentVisible, delay: 0.27, reduceMotion: reduceMotion)
+
+                dataQualityCard
+                    .appStaggeredCard(isVisible: contentVisible, delay: 0.30, reduceMotion: reduceMotion)
 
                 featuresCard
                     .appStaggeredCard(isVisible: contentVisible, delay: 0.33, reduceMotion: reduceMotion)
@@ -408,6 +420,289 @@ struct AnalysisView: View {
                         .buttonStyle(.bordered)
                         .tint(AppColors.primaryBlue)
                     }
+                }
+            }
+        }
+    }
+
+    // MARK: - T7 Key Changes（来自 MetricDeviation）
+
+    private var keyChangesCard: some View {
+        GlassCardView(cornerRadius: 28, padding: 18) {
+            VStack(alignment: .leading, spacing: 12) {
+                GlassSectionHeader(
+                    title: "Key Changes",
+                    subtitle: "今天与个人基线的关键偏离。",
+                    systemImage: "arrow.up.arrow.down.circle"
+                )
+
+                if let result = viewModel.structuredResult, !result.metrics.isEmpty {
+                    ForEach(result.metrics) { metric in
+                        if metric.value != nil {
+                            keyChangeRow(metric)
+                        }
+                    }
+                } else {
+                    Text("暂无足够数据对比个人基线")
+                        .font(.subheadline)
+                        .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                }
+            }
+        }
+    }
+
+    private func keyChangeRow(_ metric: MetricDeviation) -> some View {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(metric.metric.displayName)
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+
+                if let value = metric.value {
+                    let display = value >= 100 ? String(format: "%.0f", value) : String(format: "%.1f", value)
+                    Text("\(display) \(metric.unit)")
+                        .font(.subheadline.weight(.bold))
+                        .foregroundStyle(AppColors.primaryText(for: colorScheme))
+                }
+            }
+
+            Spacer()
+
+            if let dev = metric.deviationPercent {
+                let isDown = dev < 0
+                let color: Color = abs(dev) > 15 ? AppColors.stressWarm : AppColors.chartSecondary
+                HStack(spacing: 4) {
+                    Image(systemName: isDown ? "arrow.down.right" : "arrow.up.right")
+                        .font(.caption2.weight(.bold))
+                    Text(String(format: "%.1f%%", abs(dev)))
+                        .font(.caption.weight(.bold))
+                }
+                .foregroundStyle(color)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(color.opacity(0.12), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+            }
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .background(AppColors.subtleTealFill(for: colorScheme), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
+
+    // MARK: - T7 Recent Pattern（来自 TrendEngine）
+
+    private var patternCard: some View {
+        GlassCardView(cornerRadius: 28, padding: 18) {
+            VStack(alignment: .leading, spacing: 12) {
+                GlassSectionHeader(
+                    title: "Recent Pattern",
+                    subtitle: "近 7 天趋势（基于真实数据）。",
+                    systemImage: "chart.line.uptrend.xyaxis"
+                )
+
+                if let result = viewModel.structuredResult {
+                    let weekTrends = result.trends.filter { $0.window == .days7 }
+                    if weekTrends.isEmpty {
+                        Text("数据积累中，趋势分析将随数据完善而更新。")
+                            .font(.subheadline)
+                            .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                    } else {
+                        ForEach(weekTrends, id: \.metric) { trend in
+                            patternRow(trend)
+                        }
+                    }
+                } else {
+                    Text("暂无趋势数据")
+                        .font(.subheadline)
+                        .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                }
+            }
+        }
+    }
+
+    private func patternRow(_ trend: MetricTrend) -> some View {
+        HStack {
+            Text(trend.metric.displayName)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(AppColors.primaryText(for: colorScheme))
+
+            Spacer()
+
+            HStack(spacing: 6) {
+                if trend.direction == .insufficientData {
+                    Text("还需 \(trend.daysRemaining) 天")
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                } else {
+                    Text(trend.direction.displayName)
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(trendColor(trend.direction))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(trendColor(trend.direction).opacity(0.12), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                }
+            }
+        }
+        .padding(.vertical, 6)
+    }
+
+    private func trendColor(_ direction: TrendDirection) -> Color {
+        switch direction {
+        case .improving: return AppColors.recoveryBlue
+        case .stable: return AppColors.chartSecondary
+        case .declining: return AppColors.stressWarm
+        case .volatile: return AppColors.chartSecondary
+        case .insufficientData: return AppColors.secondaryText(for: colorScheme)
+        }
+    }
+
+    // MARK: - T7 Related Factors（来自 CorrelationEngine）
+
+    private var relatedFactorsCard: some View {
+        GlassCardView(cornerRadius: 28, padding: 18) {
+            VStack(alignment: .leading, spacing: 12) {
+                GlassSectionHeader(
+                    title: "Related Factors",
+                    subtitle: "数据中可观察到的指标关联（非因果）。",
+                    systemImage: "link.circle"
+                )
+
+                if let result = viewModel.structuredResult {
+                    let significant = result.associations.filter {
+                        $0.strength != .none && $0.strength != .weak
+                    }
+                    if significant.isEmpty {
+                        Text("目前数据中还没有观察到清晰的指标关联，再多记录几天会更清楚。")
+                            .font(.subheadline)
+                            .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                            .fixedSize(horizontal: false, vertical: true)
+                    } else {
+                        ForEach(significant.prefix(3)) { assoc in
+                            associationRow(assoc)
+                        }
+                    }
+                } else {
+                    Text("暂无关联分析数据")
+                        .font(.subheadline)
+                        .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                }
+            }
+        }
+    }
+
+    private func associationRow(_ assoc: ObservedAssociation) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text(assoc.description)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(AppColors.primaryText(for: colorScheme))
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Spacer()
+            }
+
+            HStack(spacing: 6) {
+                if assoc.lagDays > 0 {
+                    Text("滞后 \(assoc.lagDays) 天")
+                        .font(.caption2)
+                        .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(AppColors.subtleActivityFill(for: colorScheme), in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+                }
+
+                Text(assoc.strength.displayName)
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(assoc.isBeneficial ? AppColors.recoveryBlue : AppColors.stressWarm)
+
+                Text(assoc.isBeneficial ? "有益" : "需关注")
+                    .font(.caption2)
+                    .foregroundStyle(assoc.isBeneficial ? AppColors.recoveryBlue : AppColors.stressWarm)
+            }
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .background(AppColors.subtleTealFill(for: colorScheme), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
+
+    // MARK: - T7 Data Quality（来自 DataCompleteness）
+
+    private var dataQualityCard: some View {
+        GlassCardView(cornerRadius: 28, padding: 18) {
+            VStack(alignment: .leading, spacing: 12) {
+                GlassSectionHeader(
+                    title: "Data Quality",
+                    subtitle: "本次分析的数据完整度与可信度。",
+                    systemImage: "checkmark.shield"
+                )
+
+                if let result = viewModel.structuredResult {
+                    // 核心完整度
+                    HStack {
+                        Text("核心指标可用率")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(AppColors.primaryText(for: colorScheme))
+
+                        Spacer()
+
+                        Text(String(format: "%.0f%%", result.completeness.coreCompleteness * 100))
+                            .font(.subheadline.weight(.bold))
+                            .foregroundStyle(result.completeness.coreCompleteness >= 0.75 ? AppColors.recoveryBlue : AppColors.stressWarm)
+                    }
+
+                    // 进度条
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(AppColors.subtleActivityFill(for: colorScheme))
+                                .frame(height: 6)
+
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(result.completeness.coreCompleteness >= 0.75 ? AppColors.recoveryBlue : AppColors.stressWarm)
+                                .frame(width: geo.size.width * result.completeness.coreCompleteness, height: 6)
+                        }
+                    }
+                    .frame(height: 6)
+
+                    // 可信度
+                    HStack {
+                        Text("分析可信度")
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+
+                        Spacer()
+
+                        Text(result.confidence.displayName)
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(AppColors.primaryText(for: colorScheme))
+                    }
+
+                    // 缺失指标
+                    if let missing = result.completeness.missingSummary {
+                        HStack(alignment: .top, spacing: 8) {
+                            Image(systemName: "exclamationmark.triangle")
+                                .font(.caption2)
+                                .foregroundStyle(AppColors.chartSecondary)
+
+                            Text(missing)
+                                .font(.caption)
+                                .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+
+                    // warnings
+                    if !result.warnings.isEmpty {
+                        ForEach(result.warnings.prefix(3), id: \.self) { warning in
+                            Text(warning)
+                                .font(.caption2)
+                                .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                } else {
+                    Text("暂无数据质量信息")
+                        .font(.subheadline)
+                        .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                 }
             }
         }

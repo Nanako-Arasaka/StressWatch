@@ -14,6 +14,9 @@ final class AnalysisViewModel: ObservableObject {
     @Published private(set) var llmInsightState: LLMInsightState = .off
     @Published private(set) var llmInsight: PersonalizationInsight?
 
+    // MARK: - T7 结构化分析（供 UI 新卡片消费）
+    @Published private(set) var structuredResult: StructuredAnalysisResult?
+
     private let metrics: [HealthMetric]
     private let stressScore: StressScore?
     private let recoveryScore: RecoveryScore?
@@ -128,7 +131,36 @@ final class AnalysisViewModel: ObservableObject {
         personalizedAnalysis = result
         personalizedGoals = result.goals
         personalizedRecommendations = result.recommendations
+
+        // T7：构建结构化分析结果（供 Key Changes / Trends / Related / Data Quality 卡片）
+        buildStructuredResult()
+
         refreshLLMStatus()
+    }
+
+    /// T7：从当前 metrics 构建 StructuredAnalysisResult。
+    private func buildStructuredResult() {
+        let builder = AnalysisInsightBuilder()
+        let calendar = Calendar.current
+        let now = Date()
+        let windowDays = (try? storage.fetchBaselineWindowDays()) ?? 14
+
+        let history = ((try? storage.fetchDailyMetrics(
+            from: calendar.date(byAdding: .day, value: -30, to: now) ?? now,
+            to: now
+        )) ?? [])
+
+        let baselineEngine = PersonalBaselineEngine(calendar: calendar)
+        let baselines = baselineEngine.baselineSet(from: history, windowDays: windowDays, now: now)
+        let today = history.last
+
+        structuredResult = builder.build(
+            today: today,
+            history: history,
+            baselines: baselines,
+            windowDays: windowDays,
+            now: now
+        )
     }
 
     // MARK: - AI 个性化分析（MiniMax）
