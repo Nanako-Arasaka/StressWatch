@@ -126,6 +126,7 @@
 		FA81D2C54EB068DDB0FC8BDF /* AnalysisPrivacyGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = G9AA3F70D4FAF993FC6279A3 /* AnalysisPrivacyGuard.swift */; };
 		F383763784C2CFCA99A8C9E1 /* InsightSafetyValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = G8DB9DC9103F303DF6CC5264 /* InsightSafetyValidatorTests.swift */; };
 		F2EAB62C88CBE7176C2DC495 /* ArchitectureConstraintTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = GEFF92A20326C69B171F1711 /* ArchitectureConstraintTests.swift */; };
+		F4598BB33ABC287DBD7944AC /* AnalysisInsightBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = GA275D4137D66F96C2D136B9 /* AnalysisInsightBuilder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -283,6 +284,7 @@
 		G9AA3F70D4FAF993FC6279A3 /* AnalysisPrivacyGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Privacy/AnalysisPrivacyGuard.swift; sourceTree = "<group>"; };
 		G8DB9DC9103F303DF6CC5264 /* InsightSafetyValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightSafetyValidatorTests.swift; sourceTree = "<group>"; };
 		GEFF92A20326C69B171F1711 /* ArchitectureConstraintTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchitectureConstraintTests.swift; sourceTree = "<group>"; };
+		GA275D4137D66F96C2D136B9 /* AnalysisInsightBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Insight/AnalysisInsightBuilder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -876,6 +878,7 @@
 			isa = PBXGroup;
 			children = (
 				GBC133DD7B162B88E116822C /* StructuredAnalysisResult.swift */,
+				GA275D4137D66F96C2D136B9 /* AnalysisInsightBuilder.swift */,
 				G4DEF4C0DE8471B7F9B3A928 /* LocalInsightComposer.swift */,
 				G4C9F4910A55EEF88F70E082 /* InsightSafetyValidator.swift */,
 			);
@@ -1065,6 +1068,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F4598BB33ABC287DBD7944AC /* AnalysisInsightBuilder.swift in Sources */,
 				FA81D2C54EB068DDB0FC8BDF /* AnalysisPrivacyGuard.swift in Sources */,
 				F1D0453DCEABC9630B5542F7 /* InsightSafetyValidator.swift in Sources */,
 				FB011EBFF848E29510FD2F50 /* LocalInsightComposer.swift in Sources */,
