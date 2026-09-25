@@ -160,6 +160,20 @@ class LocalStorage: LocalStorageProtocol {
         return try decoder.decode(String.self, from: data)
     }
 
+    func saveAnalysisBackendBaseURL(_ url: String) throws {
+        let data = try encoder.encode(url)
+        try data.write(to: analysisBackendBaseURLFileURL, options: [.atomic])
+    }
+
+    func fetchAnalysisBackendBaseURL() throws -> String {
+        guard FileManager.default.fileExists(atPath: analysisBackendBaseURLFileURL.path) else {
+            return ""
+        }
+
+        let data = try Data(contentsOf: analysisBackendBaseURLFileURL)
+        return try decoder.decode(String.self, from: data)
+    }
+
     private var stressScoresFileURL: URL {
         storageDirectory.appendingPathComponent("stress_scores.json")
     }
@@ -190,6 +204,10 @@ class LocalStorage: LocalStorageProtocol {
 
     private var miniMaxModelFileURL: URL {
         storageDirectory.appendingPathComponent("minimax_model.json")
+    }
+
+    private var analysisBackendBaseURLFileURL: URL {
+        storageDirectory.appendingPathComponent("analysis_backend_base_url.json")
     }
 
     private func loadStressScores() throws -> [StressScore] {

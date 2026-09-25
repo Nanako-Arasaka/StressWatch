@@ -6,6 +6,8 @@ import Security
 enum KeychainKeys {
     static let minimaxService = "com.stresswatch.minimax"
     static let minimaxAccount = "apiKey"
+    static let backendService = "com.stresswatch.analysis-backend"
+    static let backendAccount = "apiToken"
 }
 
 enum KeychainStore {

@@ -127,6 +127,8 @@
 		F383763784C2CFCA99A8C9E1 /* InsightSafetyValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = G8DB9DC9103F303DF6CC5264 /* InsightSafetyValidatorTests.swift */; };
 		F2EAB62C88CBE7176C2DC495 /* ArchitectureConstraintTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = GEFF92A20326C69B171F1711 /* ArchitectureConstraintTests.swift */; };
 		F4598BB33ABC287DBD7944AC /* AnalysisInsightBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = GA275D4137D66F96C2D136B9 /* AnalysisInsightBuilder.swift */; };
+		FDE258E8CCDF104FADB0B5DF /* AnalysisBackendClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = G8B8C287234E9C8181C71284 /* AnalysisBackendClient.swift */; };
+		FA663A6B99AB3DA00E196663 /* AnalysisBackendClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = G0827C64E648DF0823BC9FB0 /* AnalysisBackendClientTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -285,6 +287,8 @@
 		G8DB9DC9103F303DF6CC5264 /* InsightSafetyValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightSafetyValidatorTests.swift; sourceTree = "<group>"; };
 		GEFF92A20326C69B171F1711 /* ArchitectureConstraintTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchitectureConstraintTests.swift; sourceTree = "<group>"; };
 		GA275D4137D66F96C2D136B9 /* AnalysisInsightBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Insight/AnalysisInsightBuilder.swift; sourceTree = "<group>"; };
+		G8B8C287234E9C8181C71284 /* AnalysisBackendClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/LLM/AnalysisBackendClient.swift; sourceTree = "<group>"; };
+		G0827C64E648DF0823BC9FB0 /* AnalysisBackendClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisBackendClientTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -356,6 +360,7 @@
 		A40000000000000000000004 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				H51CB9533897B830C5BE2A53 /* LLM */,
 				HBE1E1853EEE37FEC82117E3 /* Privacy */,
 				H79691B0B8FEB3D6A156C7CB /* Insight */,
 				HCAD0C541AA76758F1603897 /* Correlation */,
@@ -642,6 +647,7 @@
 			children = (
 				A20000000000000000000054 /* MiniMaxClient.swift */,
 				A20000000000000000000055 /* LLMPersonalizationService.swift */,
+				G8B8C287234E9C8181C71284 /* AnalysisBackendClient.swift */,
 			);
 			name = LLM;
 			sourceTree = "<group>";
@@ -890,6 +896,7 @@
 			children = (
 				GEC8A73F4A37DFB5BD61E432 /* AnalysisInsightBuilderTests.swift */,
 				G8DB9DC9103F303DF6CC5264 /* InsightSafetyValidatorTests.swift */,
+				G0827C64E648DF0823BC9FB0 /* AnalysisBackendClientTests.swift */,
 			);
 			path = Insight;
 			sourceTree = "<group>";
@@ -922,6 +929,13 @@
 				GEFF92A20326C69B171F1711 /* ArchitectureConstraintTests.swift */,
 			);
 			path = Architecture;
+			sourceTree = "<group>";
+		};
+		H51CB9533897B830C5BE2A53 /* LLM */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = LLM;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1068,6 +1082,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FDE258E8CCDF104FADB0B5DF /* AnalysisBackendClient.swift in Sources */,
 				F4598BB33ABC287DBD7944AC /* AnalysisInsightBuilder.swift in Sources */,
 				FA81D2C54EB068DDB0FC8BDF /* AnalysisPrivacyGuard.swift in Sources */,
 				F1D0453DCEABC9630B5542F7 /* InsightSafetyValidator.swift in Sources */,
@@ -1176,6 +1191,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA663A6B99AB3DA00E196663 /* AnalysisBackendClientTests.swift in Sources */,
 				F2EAB62C88CBE7176C2DC495 /* ArchitectureConstraintTests.swift in Sources */,
 				F383763784C2CFCA99A8C9E1 /* InsightSafetyValidatorTests.swift in Sources */,
 				FD052388478F72060A9A4B14 /* AnalysisInsightBuilderTests.swift in Sources */,

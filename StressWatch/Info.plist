@@ -35,6 +35,14 @@
 	<string>StressWatch 读取心率、HRV、静息心率、步数和睡眠数据，用于展示个人健康趋势参考。</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>StressWatch 当前不会写入健康数据。</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<!-- 可选自建分析服务器（用户可配置 HTTP/HTTPS）；默认功能不联网。 -->
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>StressWatchAppGroupIdentifier</key>
 	<string>$(APP_GROUP_IDENTIFIER)</string>
 	<key>UIApplicationSceneManifest</key>

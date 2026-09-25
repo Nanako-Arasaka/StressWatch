@@ -30,4 +30,9 @@ protocol LocalStorageProtocol {
     func fetchEnableAIAnalysis() throws -> Bool
     func saveMiniMaxModel(_ model: String) throws
     func fetchMiniMaxModel() throws -> String
+
+    // MARK: - 自建分析服务器（可选，优先于 MiniMax）
+    // Token 存 Keychain；这里只存 base URL。
+    func saveAnalysisBackendBaseURL(_ url: String) throws
+    func fetchAnalysisBackendBaseURL() throws -> String
 }

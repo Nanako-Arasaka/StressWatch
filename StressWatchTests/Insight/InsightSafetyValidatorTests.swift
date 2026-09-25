@@ -134,7 +134,13 @@ final class AnalysisPrivacyGuardTests: XCTestCase {
 
     func test_noKey_cannotSend() {
         XCTAssertFalse(AnalysisPrivacyGuard.canSendHealthDataToLLM(
-            enabled: true, hasKey: false, dataSource: .appleHealth
+            enabled: true, hasKey: false, hasBackend: false, dataSource: .appleHealth
+        ))
+    }
+
+    func test_backendWithoutKey_canSend() {
+        XCTAssertTrue(AnalysisPrivacyGuard.canSendHealthDataToLLM(
+            enabled: true, hasKey: false, hasBackend: true, dataSource: .appleHealth
         ))
     }
 

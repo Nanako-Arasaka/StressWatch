@@ -27,6 +27,7 @@ final class AnalysisViewModel: ObservableObject {
     private let adviceGenerator: any AdviceGenerating
     private let personalizationEngine: any PersonalizationEngineing
     private let llmService: any LLMPersonalizationAnalyzing
+    private let backendClientFactory: @Sendable (String) throws -> any AnalysisBackendClientProtocol
     private var lastContext: PersonalizationContext?
 
     init(
@@ -39,7 +40,10 @@ final class AnalysisViewModel: ObservableObject {
         analyzer: any WellnessAnalyzing = CoreMLWellnessAnalyzer(),
         adviceGenerator: any AdviceGenerating = AdviceGenerator(),
         personalizationEngine: any PersonalizationEngineing = PersonalizationEngine(),
-        llmService: any LLMPersonalizationAnalyzing = LLMPersonalizationService()
+        llmService: any LLMPersonalizationAnalyzing = LLMPersonalizationService(),
+        backendClientFactory: @escaping @Sendable (String) throws -> any AnalysisBackendClientProtocol = { raw in
+            try AnalysisBackendClient.make(from: raw)
+        }
     ) {
         self.metrics = metrics
         self.stressScore = stressScore
@@ -51,6 +55,7 @@ final class AnalysisViewModel: ObservableObject {
         self.adviceGenerator = adviceGenerator
         self.personalizationEngine = personalizationEngine
         self.llmService = llmService
+        self.backendClientFactory = backendClientFactory
 
         let initialFeatures = featureExtractor.extract(
             metrics: metrics,
@@ -163,13 +168,15 @@ final class AnalysisViewModel: ObservableObject {
         )
     }
 
-    // MARK: - AI 个性化分析（MiniMax）
+    // MARK: - AI 个性化分析（自建后端优先，MiniMax 备用）
 
-    /// 根据开关与 Key 是否存在，刷新 AI 卡片应显示的状态（不清除已生成的洞察）。
+    /// 根据开关与凭据是否齐全，刷新 AI 卡片应显示的状态（不清除已生成的洞察）。
     func refreshLLMStatus() {
         let enabled = (try? storage.fetchEnableAIAnalysis()) ?? false
+        let backendRaw = (try? storage.fetchAnalysisBackendBaseURL()) ?? ""
+        let hasBackend = !backendRaw.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let hasKey = KeychainStore.read() != nil
-        if !enabled || !hasKey {
+        if !enabled || (!hasBackend && !hasKey) {
             if case .loading = llmInsightState { return }
             llmInsightState = .off
         } else {
@@ -182,25 +189,94 @@ final class AnalysisViewModel: ObservableObject {
         }
     }
 
-    /// 调用 MiniMax 对当前个性化快照做自然语言解读。
+    /// 生成自然语言解读：自建分析服务器优先，其次 MiniMax。
     @MainActor
     func generateLLMInsight() async {
         guard (try? storage.fetchEnableAIAnalysis()) ?? false else {
             llmInsightState = .off
             return
         }
-        guard let apiKey = KeychainStore.read(), !apiKey.isEmpty else {
+
+        let backendURL = ((try? storage.fetchAnalysisBackendBaseURL()) ?? "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let hasBackend = !backendURL.isEmpty
+        let miniMaxKey = KeychainStore.read().flatMap { $0.isEmpty ? nil : $0 }
+        guard hasBackend || miniMaxKey != nil else {
             llmInsightState = .off
             return
         }
-        guard let context = lastContext, let analysis = personalizedAnalysis else {
+
+        let dataSource = (try? storage.fetchPreferredDataSource()) ?? .demo
+        guard AnalysisPrivacyGuard.canSendHealthDataToLLM(
+            enabled: true,
+            hasKey: miniMaxKey != nil,
+            hasBackend: hasBackend,
+            dataSource: dataSource
+        ) else {
+            llmInsightState = .failure(
+                AnalysisPrivacyGuard.denyReason(
+                    enabled: true,
+                    hasKey: miniMaxKey != nil,
+                    hasBackend: hasBackend,
+                    dataSource: dataSource
+                ) ?? "当前配置无法发送数据进行分析。"
+            )
+            return
+        }
+
+        llmInsightState = .loading
+
+        // 1) 自建后端
+        if hasBackend {
+            do {
+                let client = try backendClientFactory(backendURL)
+                let token = KeychainStore.read(
+                    service: KeychainKeys.backendService,
+                    account: KeychainKeys.backendAccount
+                )
+                let insight: PersonalizationInsight
+                if let structured = structuredResult {
+                    insight = try await client.analyze(
+                        structured: structured,
+                        windowDays: LLMPersonalizationService.featureWindowDays,
+                        apiToken: token
+                    )
+                } else if let context = lastContext, let analysis = personalizedAnalysis {
+                    let payload = LLMPersonalizationService.buildPayload(
+                        context: context,
+                        analysis: analysis
+                    )
+                    insight = try await client.analyze(
+                        payload: payload,
+                        windowDays: LLMPersonalizationService.featureWindowDays,
+                        apiToken: token
+                    )
+                } else {
+                    llmInsightState = .failure("请先完成基础分析")
+                    return
+                }
+                llmInsight = insight
+                llmInsightState = .success
+                return
+            } catch {
+                // 自建后端失败则回落 MiniMax；两者皆无则报错
+                if miniMaxKey == nil {
+                    llmInsightState = .failure(error.localizedDescription)
+                    return
+                }
+            }
+        }
+
+        // 2) MiniMax 备用
+        guard let apiKey = miniMaxKey,
+              let context = lastContext,
+              let analysis = personalizedAnalysis else {
             llmInsightState = .failure("请先完成基础分析")
             return
         }
         let model = (try? storage.fetchMiniMaxModel()).flatMap { MiniMaxModel(rawValue: $0) }?.rawValue
             ?? MiniMaxModel.default.rawValue
 
-        llmInsightState = .loading
         do {
             let insight = try await llmService.generateInsight(
                 context: context,

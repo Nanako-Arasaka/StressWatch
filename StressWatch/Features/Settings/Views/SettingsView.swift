@@ -6,6 +6,8 @@ struct SettingsView: View {
     @ObservedObject var viewModel: SettingsViewModel
     @State private var contentVisible = false
     @State private var apiKeyInput: String = ""
+    @State private var backendURLInput: String = ""
+    @State private var backendTokenInput: String = ""
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -214,6 +216,8 @@ struct SettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 apiKeyInput = viewModel.miniMaxAPIKey
+                backendURLInput = viewModel.analysisBackendBaseURL
+                backendTokenInput = viewModel.analysisBackendToken
                 showContent()
             }
         }
@@ -286,8 +290,8 @@ struct SettingsView: View {
         GlassCardView(cornerRadius: 28, padding: 18) {
             VStack(alignment: .leading, spacing: 14) {
                 GlassSectionHeader(
-                    title: "AI 个性化分析 (MiniMax)",
-                    subtitle: "调用大模型对你近期数据做自然语言解读。",
+                    title: "AI 个性化分析",
+                    subtitle: "可选：自建分析服务器优先，其次 MiniMax。",
                     systemImage: "brain"
                 )
 
@@ -295,6 +299,40 @@ struct SettingsView: View {
                     get: { viewModel.enableAIAnalysis },
                     set: { viewModel.setEnableAIAnalysis($0) }
                 ))
+
+                Text("自建分析服务器（优先）")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(AppColors.secondaryText(for: colorScheme))
+
+                TextField("服务器地址（如 http://115.29.197.244:8090）", text: $backendURLInput)
+                    .textFieldStyle(.roundedBorder)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+
+                SecureField("服务器 Token（可选）", text: $backendTokenInput)
+                    .textFieldStyle(.roundedBorder)
+
+                HStack(spacing: 10) {
+                    Button("保存服务器配置") {
+                        viewModel.setAnalysisBackendBaseURL(backendURLInput)
+                        viewModel.saveAnalysisBackendToken(backendTokenInput)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(AppColors.primaryBlue)
+
+                    Button("清除", role: .destructive) {
+                        backendURLInput = ""
+                        backendTokenInput = ""
+                        viewModel.setAnalysisBackendBaseURL("")
+                        viewModel.clearAnalysisBackendToken()
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(AppColors.stressWarm)
+                }
+
+                Text("MiniMax（备用）")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(AppColors.secondaryText(for: colorScheme))
 
                 SecureField("MiniMax API Key", text: $apiKeyInput)
                     .textFieldStyle(.roundedBorder)
@@ -325,7 +363,7 @@ struct SettingsView: View {
                     viewModel.setMiniMaxModel(model)
                 }
 
-                Text("你的健康数据仅以聚合摘要形式发送给 MiniMax 云端，不含姓名与精确日期；Key 保存在本机钥匙串。关闭此功能则完全不调用网络。")
+                Text("配置了自建服务器时优先调用它；否则走 MiniMax。健康数据仅以聚合摘要发送，不含姓名与精确日期；Token / Key 保存在本机钥匙串。关闭此功能则完全不调用网络。")
                     .font(.footnote)
                     .foregroundStyle(AppColors.secondaryText(for: colorScheme))
                     .fixedSize(horizontal: false, vertical: true)

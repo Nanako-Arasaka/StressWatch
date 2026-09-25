@@ -16,6 +16,10 @@ class SettingsViewModel: ObservableObject {
     @Published var miniMaxModel: String
     @Published var miniMaxAPIKey: String
 
+    // MARK: - 自建分析服务器（可选，优先于 MiniMax）
+    @Published var analysisBackendBaseURL: String
+    @Published var analysisBackendToken: String
+
     private let storage: any LocalStorageProtocol
     private let healthDataProvider: any HealthKitDataProvider
     private let calendar: Calendar
@@ -40,6 +44,11 @@ class SettingsViewModel: ObservableObject {
         self.miniMaxModel = (try? storage.fetchMiniMaxModel()).flatMap { MiniMaxModel(rawValue: $0) }?.rawValue
             ?? MiniMaxModel.default.rawValue
         self.miniMaxAPIKey = KeychainStore.read() ?? ""
+        self.analysisBackendBaseURL = (try? storage.fetchAnalysisBackendBaseURL()) ?? ""
+        self.analysisBackendToken = KeychainStore.read(
+            service: KeychainKeys.backendService,
+            account: KeychainKeys.backendAccount
+        ) ?? ""
 
         print("[SettingsViewModel] init healthDataProvider=\(type(of: healthDataProvider))")
     }
@@ -71,6 +80,39 @@ class SettingsViewModel: ObservableObject {
     func clearMiniMaxAPIKey() {
         KeychainStore.delete()
         miniMaxAPIKey = ""
+    }
+
+    func setAnalysisBackendBaseURL(_ url: String) {
+        let trimmed = url.trimmingCharacters(in: .whitespacesAndNewlines)
+        analysisBackendBaseURL = trimmed
+        try? storage.saveAnalysisBackendBaseURL(trimmed)
+    }
+
+    /// 保存自建分析服务器 Token（空字符串表示清除）。
+    func saveAnalysisBackendToken(_ token: String) {
+        let trimmed = token.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty {
+            KeychainStore.delete(
+                service: KeychainKeys.backendService,
+                account: KeychainKeys.backendAccount
+            )
+            analysisBackendToken = ""
+        } else {
+            KeychainStore.save(
+                trimmed,
+                service: KeychainKeys.backendService,
+                account: KeychainKeys.backendAccount
+            )
+            analysisBackendToken = trimmed
+        }
+    }
+
+    func clearAnalysisBackendToken() {
+        KeychainStore.delete(
+            service: KeychainKeys.backendService,
+            account: KeychainKeys.backendAccount
+        )
+        analysisBackendToken = ""
     }
 
     func updateBaselineWindow(_ days: Int) {

@@ -1,0 +1,16 @@
+services:
+  analysis-proxy:
+    build: .
+    image: stresswatch-analysis-proxy:0.1.0
+    container_name: stresswatch-analysis-proxy
+    # host 网络：直接访问宿主机 127.0.0.1:8080 的 llama-server
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      LLM_BASE_URL: ${LLM_BASE_URL:-http://127.0.0.1:8080/v1}
+      LLM_MODEL: ${LLM_MODEL:-qwen3.8-27b}
+      LLM_TIMEOUT: ${LLM_TIMEOUT:-120}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      API_TOKEN: ${API_TOKEN:-}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-*}
+    # network_mode: host 时 ports 无效，服务监听 8090
