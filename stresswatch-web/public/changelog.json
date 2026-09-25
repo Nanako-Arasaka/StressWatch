@@ -1,14 +1,74 @@
 {
-  "syncedAt": "2026-09-23T01:59:49.703Z",
+  "syncedAt": "2026-09-25T02:05:30.555Z",
   "repo": "Nanako-Arasaka/StressWatch",
-  "commitsTotal": 123,
+  "commitsTotal": 132,
   "releasesCount": 0,
   "releases": [],
   "commitsByMonth": [
     {
       "label": "September 2026",
-      "summary": "11 commits",
+      "summary": "18 commits",
       "entries": [
+        {
+          "date": "Sep 24",
+          "sha": "a0b2097",
+          "title": "docs: rewrite README primary copy in Chinese",
+          "tags": [
+            "Docs"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/a0b20971e5bc5ac64afc519c624c806c6c3fbdb8",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 24",
+          "sha": "27c8d9d",
+          "title": "fix: update changelog locale copy without refresh",
+          "tags": [
+            "Fix"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/27c8d9d2ab301e5f005824c3980426e93b105b8e",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 24",
+          "sha": "95a1e2f",
+          "title": "feat: structured one-shot LLM personalization via AnalysisPayload",
+          "tags": [
+            "Feature"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/95a1e2f2b27bcfbb386f22b115aeca67fe3e60c2",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 24",
+          "sha": "62d7e4a",
+          "title": "Merge remote-tracking branch 'origin/master'",
+          "tags": [
+            "Routing"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/62d7e4a1c790bf965c527ae4ab2f4a173cc38d97",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 24",
+          "sha": "6db1796",
+          "title": "Merge branch 'codex/hrv-notifications-auto-signing'",
+          "tags": [
+            "Routing"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/6db17968a0a073094024410068e4247f94826915",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 23",
+          "sha": "a106091",
+          "title": "chore(changelog): refresh GitHub snapshot [skip ci]",
+          "tags": [
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/a106091aa2dc6a44aee921af7a63624c7b1cf99c",
+          "author": "Nanako-Arasaka"
+        },
         {
           "date": "Sep 21",
           "sha": "32cfd45",
@@ -57,6 +117,16 @@
             "CI"
           ],
           "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/f8fdbc960b0f6110956c999a7685b1fd99ee05f5",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 11",
+          "sha": "de44788",
+          "title": "fix: restore light-mode contrast and HealthKit entitlements for sideloading",
+          "tags": [
+            "Fix"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/de447888e4d7bb981a7508d6d6c8b7ee64489806",
           "author": "Nanako-Arasaka"
         },
         {
@@ -902,7 +972,7 @@
     },
     {
       "label": "July 2026",
-      "summary": "6 commits",
+      "summary": "8 commits",
       "entries": [
         {
           "date": "Jul 17",
@@ -965,6 +1035,26 @@
             "Polish"
           ],
           "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/83c0d88e6269495127216b7be84162df6463bc39",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Jul 12",
+          "sha": "4e049a4",
+          "title": "Refine health chart visualizations",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/4e049a4c37a9f921b183bd94c932cdd9dc14c76f",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Jul 10",
+          "sha": "23dccfe",
+          "title": "Add HRV notifications and signing refresh",
+          "tags": [
+            "Feature"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/23dccfe8c032729dfcc2c20b3b1811b34cc0bc74",
           "author": "Nanako-Arasaka"
         }
       ]
