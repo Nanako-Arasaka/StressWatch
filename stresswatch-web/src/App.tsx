@@ -2829,7 +2829,10 @@ function ChangelogPage() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("./changelog.json", { cache: "no-store" })
+    // Snapshot lives at site root (public/changelog.json → /changelog.json).
+    // This page is mounted at /changelog/, so "./changelog.json" 404s and
+    // silently fell back to the static bilingual copy forever.
+    fetch("../changelog.json", { cache: "no-store" })
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
