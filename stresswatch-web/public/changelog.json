@@ -1,5 +1,5 @@
 {
-  "syncedAt": "2026-09-25T06:46:10.892Z",
+  "syncedAt": "2026-09-25T16:04:55.904Z",
   "repo": "Nanako-Arasaka/StressWatch",
   "commitsTotal": 40,
   "releasesCount": 0,
@@ -7,8 +7,121 @@
   "commitsByMonth": [
     {
       "label": "September 2026",
-      "summary": "19 commits",
+      "summary": "30 commits",
       "entries": [
+        {
+          "date": "Sep 25",
+          "sha": "ea697a0",
+          "title": "feat(web): chart draw-in animations on How and Changelog",
+          "tags": [
+            "Motion",
+            "Feature"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/ea697a09ccbf1816a9707bb9faf48cc30fe112a9",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 25",
+          "sha": "bc0239a",
+          "title": "feat(web): match home scroll-reveal motion on all subpages",
+          "tags": [
+            "CI",
+            "Motion",
+            "Feature"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/bc0239a7d6ea790048df324dabec7bad45d1f04a",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 25",
+          "sha": "681cfaa",
+          "title": "feat(web): surface new analysis stack on the homepage",
+          "tags": [
+            "Feature"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/681cfaae8d2d966148b71774eea1a75603a77c7b",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 25",
+          "sha": "cbabed1",
+          "title": "feat(web): localize changelog commit titles and tags in Chinese",
+          "tags": [
+            "Feature"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/cbabed188f7f316bcf745a73ba436b6a7abfaa35",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 25",
+          "sha": "9678f0b",
+          "title": "fix(web): load changelog snapshot from site root",
+          "tags": [
+            "Fix"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/9678f0b2b6b2735a70152a0b2376529df221e5bc",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 25",
+          "sha": "3b114e1",
+          "title": "feat(backend): self-hosted analysis proxy and iOS client wiring",
+          "tags": [
+            "Feature"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/3b114e1c3f41d5eeb864a75451f18b470b668587",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 25",
+          "sha": "0ac4699",
+          "title": "feat(ui): analysis page with key changes, trends, related factors, data quality (T7)",
+          "tags": [
+            "Feature"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/0ac46999c489bec2dfe1be7c951c58727213f809",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 25",
+          "sha": "aea63b5",
+          "title": "refactor(insight): extract AnalysisInsightBuilder into own file",
+          "tags": [
+            "Polish"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/aea63b55055bce710c7a5dceae5987d282ced8f4",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 25",
+          "sha": "d13c46e",
+          "title": "feat(insight,guard): LLM safety, privacy gate, and architecture contracts (T6.3-T8)",
+          "tags": [
+            "Feature"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/d13c46e25657d95810ab659567682388e44d21f3",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 25",
+          "sha": "a7d0a72",
+          "title": "Merge branch 'master' of https://github.com/Nanako-Arasaka/StressWatch",
+          "tags": [
+            "Routing"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/a7d0a7298a5acb711ed2a366b047afd76d1670fb",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 25",
+          "sha": "094e3d8",
+          "title": "feat(insight): structured analysis result and local insight composer (T6.1-T6.2)",
+          "tags": [
+            "Feature"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/094e3d89f37f0f23307bb8ed841faad06888b8c8",
+          "author": "Nanako-Arasaka"
+        },
         {
           "date": "Sep 25",
           "sha": "046e06e",
@@ -204,7 +317,7 @@
     },
     {
       "label": "August 2026",
-      "summary": "21 commits",
+      "summary": "10 commits",
       "entries": [
         {
           "date": "Aug 16",
@@ -305,117 +418,6 @@
             "Feature"
           ],
           "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/8190557cb67969572ed23c042d232e9cc02126f7",
-          "author": "Nanako-Arasaka"
-        },
-        {
-          "date": "Aug 6",
-          "sha": "0b65b5b",
-          "title": "Heatmap preview: smoother, longer, single-curve Apple feel",
-          "tags": [
-            "Polish"
-          ],
-          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/0b65b5b122da6e79b5cbbdfbd9a9490dc0683ba6",
-          "author": "Nanako-Arasaka"
-        },
-        {
-          "date": "Aug 6",
-          "sha": "1b0fe8c",
-          "title": "Heatmap preview: Apple-style spring entrance + animated exit",
-          "tags": [
-            "Polish"
-          ],
-          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/1b0fe8c881046a68b0c34086ec617e37a169875b",
-          "author": "Nanako-Arasaka"
-        },
-        {
-          "date": "Aug 6",
-          "sha": "09f1592",
-          "title": "Make Trends tile interactive (bar hover tooltip + heatmap cell preview)",
-          "tags": [
-            "Polish"
-          ],
-          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/09f1592d755b6c2f0234af2be9d036560b204619",
-          "author": "Nanako-Arasaka"
-        },
-        {
-          "date": "Aug 6",
-          "sha": "4b12f5e",
-          "title": "Fix cross-subpage nav: from /how/ clicking Changelog went to /how/changelog/ (404)",
-          "tags": [
-            "Fix"
-          ],
-          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/4b12f5e26205793ce0957a772bce28fa1bfa3a3d",
-          "author": "Nanako-Arasaka"
-        },
-        {
-          "date": "Aug 5",
-          "sha": "93c1804",
-          "title": "Add About subpage /about/, drop Company column from footer",
-          "tags": [
-            "Feature"
-          ],
-          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/93c1804801410831987570841b98eab978540135",
-          "author": "Nanako-Arasaka"
-        },
-        {
-          "date": "Aug 5",
-          "sha": "f0473eb",
-          "title": "Fix footer Product column to navigate to home anchors",
-          "tags": [
-            "Fix",
-            "Link"
-          ],
-          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/f0473eb53faa380dc8467a41c55765e9a4b43ece",
-          "author": "Nanako-Arasaka"
-        },
-        {
-          "date": "Aug 5",
-          "sha": "6085319",
-          "title": "Persist language across subpages via localStorage",
-          "tags": [
-            "CI"
-          ],
-          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/6085319faa52dad0f7cc8148dd7adaca0cf4b6a0",
-          "author": "Nanako-Arasaka"
-        },
-        {
-          "date": "Aug 5",
-          "sha": "79ccbca",
-          "title": "Add Privacy subpage /privacy/ mirroring home's Apple design",
-          "tags": [
-            "Feature"
-          ],
-          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/79ccbcaa18d1ccec1ac7d933ca81bc714a0b46a9",
-          "author": "Nanako-Arasaka"
-        },
-        {
-          "date": "Aug 5",
-          "sha": "d29526c",
-          "title": "Wire changelog subpage to a live GitHub snapshot",
-          "tags": [
-            "Polish"
-          ],
-          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/d29526cc03e3b5531c88adc9fce98ce477cef09a",
-          "author": "Nanako-Arasaka"
-        },
-        {
-          "date": "Aug 5",
-          "sha": "cc354f1",
-          "title": "Fix subpage -> home navigation (relative paths)",
-          "tags": [
-            "Fix"
-          ],
-          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/cc354f100b7894eba8d2f9e44e55ba6ce3857283",
-          "author": "Nanako-Arasaka"
-        },
-        {
-          "date": "Aug 5",
-          "sha": "21aa499",
-          "title": "Add Changelog subpage wired to GitHub master commits",
-          "tags": [
-            "Feature"
-          ],
-          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/21aa499d85e4fcfd7333bea21ea950f6d6d1df00",
           "author": "Nanako-Arasaka"
         }
       ]
