@@ -99,6 +99,11 @@
 		F8F7278FF1C55F677B994C31 /* SleepSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = G559E03D7BC7F887C58D0206 /* SleepSession.swift */; };
 		F64DA18AE196FBA1A515D047 /* SleepSessionAggregationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = G8C8281D903668AB14779164 /* SleepSessionAggregationTests.swift */; };
 		F48CC9CC1FC82A0E321E8FFB /* LocalStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = GB1B80C1698F409E869A0929 /* LocalStorageTests.swift */; };
+		F52D46B59D3AAE52A232292F /* RobustStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = G8F174218B5C6A0CC7ABFC86 /* RobustStatistics.swift */; };
+		F634ACC96FDEAFAE367C2570 /* PersonalBaseline.swift in Sources */ = {isa = PBXBuildFile; fileRef = G6776B2949E15B4D0F4B97F5 /* PersonalBaseline.swift */; };
+		F17A30D2A8BFBA0FF0B98115 /* PersonalBaselineEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = G205AB64A9141853680D4563 /* PersonalBaselineEngine.swift */; };
+		F88F67E7B277ACA859ADC3A0 /* RobustStatisticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = G18755F02C2F9A779EBFD3C7 /* RobustStatisticsTests.swift */; };
+		FB0DA5BB8EF39244D64F54D5 /* PersonalBaselineEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = GEAACB6ABE7D69C6607DF811 /* PersonalBaselineEngineTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -229,6 +234,11 @@
 		G559E03D7BC7F887C58D0206 /* SleepSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/SleepSession.swift; sourceTree = "<group>"; };
 		G8C8281D903668AB14779164 /* SleepSessionAggregationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepSessionAggregationTests.swift; sourceTree = "<group>"; };
 		GB1B80C1698F409E869A0929 /* LocalStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStorageTests.swift; sourceTree = "<group>"; };
+		G8F174218B5C6A0CC7ABFC86 /* RobustStatistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Baseline/RobustStatistics.swift; sourceTree = "<group>"; };
+		G6776B2949E15B4D0F4B97F5 /* PersonalBaseline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Baseline/PersonalBaseline.swift; sourceTree = "<group>"; };
+		G205AB64A9141853680D4563 /* PersonalBaselineEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Baseline/PersonalBaselineEngine.swift; sourceTree = "<group>"; };
+		G18755F02C2F9A779EBFD3C7 /* RobustStatisticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobustStatisticsTests.swift; sourceTree = "<group>"; };
+		GEAACB6ABE7D69C6607DF811 /* PersonalBaselineEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalBaselineEngineTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -272,6 +282,8 @@
 		A40000000000000000000002 /* StressWatch */ = {
 			isa = PBXGroup;
 			children = (
+				HFB3AF3A78FDAED05A1A7663 /* Baseline */,
+				H9AE531BF3C675400E515ADE /* Core */,
 				A40000000000000000000010 /* App */,
 				A40000000000000000000011 /* Core */,
 				A40000000000000000000016 /* Features */,
@@ -284,6 +296,7 @@
 		A40000000000000000000003 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				HBA3A32CF4B80ECC959E94EB /* Analysis */,
 				A2000000000000000000001A /* HealthKit.framework */,
 				A2000000000000000000001B /* Charts.framework */,
 			);
@@ -293,6 +306,7 @@
 		A40000000000000000000004 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				H26C7FF3DD141E6DB4F303D7 /* Baseline */,
 				A2000000000000000000001E /* StressWatch.app */,
 				B20000000000000000000003 /* StressWatchWidgetExtension.appex */,
 				C20000000000000000000002 /* StressWatchTests.xctest */,
@@ -453,6 +467,7 @@
 				A20000000000000000000052 /* Core/Analysis/PersonalizedAdviceGenerator.swift */,
 				A20000000000000000000053 /* Core/Analysis/GoalOptimizer.swift */,
 				A40000000000000000000032 /* Metrics */,
+				A40000000000000000000033 /* Baseline */,
 				A40000000000000000000030 /* LLM */,
 			);
 			name = Analysis;
@@ -616,6 +631,7 @@
 				C40000000000000000000010 /* Metrics */,
 				C40000000000000000000011 /* Storage */,
 				C40000000000000000000012 /* Support */,
+				C40000000000000000000013 /* Baseline */,
 			);
 			path = StressWatchTests;
 			sourceTree = "<group>";
@@ -646,6 +662,53 @@
 				G2140CE85F6AD4DCEE6FB7ED /* DailyHealthMetricsFixture.swift */,
 			);
 			path = Support;
+			sourceTree = "<group>";
+		};
+		H9AE531BF3C675400E515ADE /* Core */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		HBA3A32CF4B80ECC959E94EB /* Analysis */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Analysis;
+			sourceTree = "<group>";
+		};
+		H26C7FF3DD141E6DB4F303D7 /* Baseline */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Baseline;
+			sourceTree = "<group>";
+		};
+		HFB3AF3A78FDAED05A1A7663 /* Baseline */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Baseline;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000033 /* Baseline */ = {
+			isa = PBXGroup;
+			children = (
+				G8F174218B5C6A0CC7ABFC86 /* RobustStatistics.swift */,
+				G6776B2949E15B4D0F4B97F5 /* PersonalBaseline.swift */,
+				G205AB64A9141853680D4563 /* PersonalBaselineEngine.swift */,
+			);
+			name = Baseline;
+			sourceTree = "<group>";
+		};
+		C40000000000000000000013 /* Baseline */ = {
+			isa = PBXGroup;
+			children = (
+				G18755F02C2F9A779EBFD3C7 /* RobustStatisticsTests.swift */,
+				GEAACB6ABE7D69C6607DF811 /* PersonalBaselineEngineTests.swift */,
+			);
+			path = Baseline;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -792,6 +855,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F17A30D2A8BFBA0FF0B98115 /* PersonalBaselineEngine.swift in Sources */,
+				F634ACC96FDEAFAE367C2570 /* PersonalBaseline.swift in Sources */,
+				F52D46B59D3AAE52A232292F /* RobustStatistics.swift in Sources */,
 				F8F7278FF1C55F677B994C31 /* SleepSession.swift in Sources */,
 				FA1D328DB94A1F41918889B1 /* DailyMetricsAggregator.swift in Sources */,
 				F33FB63E396133882D1CC867 /* MetricAggregation.swift in Sources */,
@@ -884,6 +950,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FB0DA5BB8EF39244D64F54D5 /* PersonalBaselineEngineTests.swift in Sources */,
+				F88F67E7B277ACA859ADC3A0 /* RobustStatisticsTests.swift in Sources */,
 				F48CC9CC1FC82A0E321E8FFB /* LocalStorageTests.swift in Sources */,
 				F64DA18AE196FBA1A515D047 /* SleepSessionAggregationTests.swift in Sources */,
 				F2235409D21FC06183299E72 /* DailyMetricsAggregatorTests.swift in Sources */,
