@@ -219,6 +219,14 @@ type Copy = {
     assessments: { label: string; value: number; level: string }[];
     ringNote: string;
   };
+  capabilities: {
+    eyebrow: string;
+    title: string;
+    tagline: string;
+    items: { key: string; title: string; desc: string; chip: string }[];
+    note: string;
+    cta: string;
+  };
   trends: { eyebrow: string; title: string; tagline: string; cta: string; monthlyLabel: string; daysLabel: string; heatmapLabel: string; monthlyNote: string; heatmapNote: string; heatmapLow: string; heatmapHigh: string };
   sleep: { eyebrow: string; title: string; tagline: string; cta: string; legendTitle: string; note: string; stages: { key: string; label: string; minutes: number }[] };
   checkIn: { eyebrow: string; title: string; tagline: string; cta: string; items: { title: string; detail: string }[]; addHint: string };
@@ -364,10 +372,10 @@ const copy: Record<Lang, Copy> = {
       badge: "Apple Health · Local-first",
       title: "Read every signal your body sends",
       subtitle:
-        "Track stress, recovery, HRV, sleep, and activity from your Apple Watch. Private by design — your data never leaves your device.",
+        "Track stress, recovery, HRV, sleep, and activity from Apple Watch — or Xiaomi band via Apple Health. Private by design: analysis runs on-device, with an optional self-hosted LLM when you want a deeper write-up.",
       primaryCta: "View dashboard",
       secondaryCta: "Privacy first",
-      trust: "No account · No server upload · Native HealthKit"
+      trust: "No account · Multi-source HealthKit · Optional private LLM"
     },
     dashboard: {
       title: "Today",
@@ -384,7 +392,7 @@ const copy: Record<Lang, Copy> = {
     liveStress: {
       eyebrow: "Live Stress",
       title: "Feel your stress, in real time",
-      tagline: "A live ring reads your heart rate and HRV the moment they change — so you notice tension before it builds.",
+      tagline: "A live ring reads your heart rate and HRV the moment they change — so you notice tension before it builds. Optional HRV notifications keep you posted when a new sample lands.",
       cta: "See live stress",
       live: "LIVE",
       bpmLabel: "BPM",
@@ -393,7 +401,7 @@ const copy: Record<Lang, Copy> = {
     aiAnalysis: {
       eyebrow: "AI Analysis",
       title: "Know your state, with confidence",
-      tagline: "On-device models predict your current state and score four dimensions — stress, sleep, recovery, and HRV.",
+      tagline: "On-device models predict state and score four dimensions — plus key changes, related factors, and data quality so you know what the numbers mean.",
       cta: "Explore analysis",
       predictedState: "Balanced",
       confidence: "confidence",
@@ -404,6 +412,63 @@ const copy: Record<Lang, Copy> = {
         { label: "HRV", value: 52, level: "Steady" }
       ],
       ringNote: "The ring shows how confident the on-device model is in its state prediction."
+    },
+    capabilities: {
+      eyebrow: "Analysis engine",
+      title: "What powers the numbers you see",
+      tagline: "Recent builds add a fuller local stack — robust baselines, scored contributions, lag-aware associations, and an optional private LLM write-up. All of it stays explainable.",
+      items: [
+        {
+          key: "sources",
+          title: "Multi-source HealthKit",
+          desc: "Apple Watch, Xiaomi Fitness via Apple Health, and a labeled demo fallback. Samples keep their writer so badges can show origin.",
+          chip: "Path A"
+        },
+        {
+          key: "baseline",
+          title: "Robust personal baseline",
+          desc: "Medians and outlier-resistant stats over your own history — not a one-size-fits-all population curve.",
+          chip: "T2"
+        },
+        {
+          key: "scoring",
+          title: "Stress & recovery scores",
+          desc: "Personal engines break each score into contributions: sleep quality, activity load, HRV drift, and more.",
+          chip: "T3"
+        },
+        {
+          key: "trend",
+          title: "Five-state trends",
+          desc: "TrendEngine labels long arcs with robust statistics so a noisy week does not rewrite your story.",
+          chip: "T4"
+        },
+        {
+          key: "correlation",
+          title: "Related factors",
+          desc: "Lag-aware Pearson + Spearman checks surface associations like sleep ↔ next-day stress — without causal claims.",
+          chip: "T5"
+        },
+        {
+          key: "insight",
+          title: "Structured insight & safety",
+          desc: "Key changes, data quality, and a local composer first. LLM output is gated, validated, and never medical advice.",
+          chip: "T6"
+        },
+        {
+          key: "llm",
+          title: "Optional private LLM",
+          desc: "Self-hosted analysis proxy (e.g. Qwen) receives only aggregated JSON you opt in to send — no public cloud required.",
+          chip: "T8"
+        },
+        {
+          key: "notify",
+          title: "HRV notifications",
+          desc: "When a new HRV sample arrives, get a local notification with stress and recovery context — still on-device.",
+          chip: "Live"
+        }
+      ],
+      note: "Core ML / rule classifier and Daily Check-in still sit underneath every surface. New engines extend that pipeline — they do not replace your raw HealthKit reads.",
+      cta: "See how it works"
     },
     trends: {
       eyebrow: "Trends",
@@ -726,10 +791,10 @@ const copy: Record<Lang, Copy> = {
     hero: {
       badge: "Apple Health 集成 · 本地优先",
       title: "读懂身体发出的每一个信号",
-      subtitle: "基于 Apple Watch，追踪压力、恢复、HRV、睡眠与活动趋势。隐私优先——数据从不离开你的设备。",
+      subtitle: "基于 Apple Watch——或经 Apple 健康接入的小米手环——追踪压力、恢复、HRV、睡眠与活动。默认本机分析；若需要更深入的解读，可选用自托管大模型。",
       primaryCta: "查看仪表盘",
       secondaryCta: "了解隐私",
-      trust: "无需账号 · 不上传服务器 · HealthKit 原生集成"
+      trust: "无需账号 · 多源 HealthKit · 可选私有 LLM"
     },
     dashboard: {
       title: "今日状态",
@@ -746,7 +811,7 @@ const copy: Record<Lang, Copy> = {
     liveStress: {
       eyebrow: "实时压力",
       title: "实时感知你的压力",
-      tagline: "当心率与 HRV 变化的瞬间，实时环即刻读出——让你在紧张累积前就察觉。",
+      tagline: "当心率与 HRV 变化的瞬间，实时环即刻读出——让你在紧张累积前就察觉。还可选开启 HRV 通知，新样本到达时本地提醒。",
       cta: "查看实时压力",
       live: "实时",
       bpmLabel: "心率",
@@ -755,7 +820,7 @@ const copy: Record<Lang, Copy> = {
     aiAnalysis: {
       eyebrow: "AI 分析",
       title: "读懂状态，更有把握",
-      tagline: "本机模型预测你当前的状态，并为四个维度打分——压力、睡眠、恢复与 HRV。",
+      tagline: "本机模型预测状态并为四个维度打分，同时给出关键变化、相关因素与数据质量，让你知道数字意味着什么。",
       cta: "探索分析",
       predictedState: "较为平衡",
       confidence: "置信度",
@@ -766,6 +831,63 @@ const copy: Record<Lang, Copy> = {
         { label: "HRV", value: 52, level: "平稳" }
       ],
       ringNote: "圆环表示本机模型对当前状态判断的把握程度。"
+    },
+    capabilities: {
+      eyebrow: "分析引擎",
+      title: "数字背后的能力栈",
+      tagline: "近期版本补全了本地分析链路——稳健基线、分数贡献、滞后相关，以及可选的私有 LLM 解读。全程可解释。",
+      items: [
+        {
+          key: "sources",
+          title: "多源 HealthKit",
+          desc: "Apple Watch、经 Apple 健康接入的小米运动健康，以及明确标注的演示数据。样本保留写入方，徽章可显示来源。",
+          chip: "路径 A"
+        },
+        {
+          key: "baseline",
+          title: "稳健个人基线",
+          desc: "用中位数与抗异常值统计刻画你自己的历史，而不是一刀切的人群均值。",
+          chip: "T2"
+        },
+        {
+          key: "scoring",
+          title: "压力与恢复评分",
+          desc: "个人化引擎把分数拆成贡献项：睡眠质量、活动负荷、HRV 漂移等。",
+          chip: "T3"
+        },
+        {
+          key: "trend",
+          title: "五状态趋势",
+          desc: "TrendEngine 用稳健统计标注长期走向，避免一周噪声改写你的故事。",
+          chip: "T4"
+        },
+        {
+          key: "correlation",
+          title: "相关因素",
+          desc: "带滞后的 Pearson + Spearman 交叉验证，呈现睡眠 ↔ 次日压力等关联，且不作因果断言。",
+          chip: "T5"
+        },
+        {
+          key: "insight",
+          title: "结构化洞察与安全",
+          desc: "关键变化、数据质量与本地解读优先。LLM 输出经门控与校验，不作医疗建议。",
+          chip: "T6"
+        },
+        {
+          key: "llm",
+          title: "可选私有 LLM",
+          desc: "自托管分析代理（如 Qwen）只接收你主动提交的聚合 JSON，无需公有云。",
+          chip: "T8"
+        },
+        {
+          key: "notify",
+          title: "HRV 通知",
+          desc: "新 HRV 样本到达时本地通知，附带压力与恢复上下文——仍不离开设备。",
+          chip: "实时"
+        }
+      ],
+      note: "Core ML / 规则分类与每日打卡仍是所有界面的底座。新引擎是扩展流水线，不会替代你的原始 HealthKit 读取。",
+      cta: "了解工作原理"
     },
     trends: {
       eyebrow: "趋势",
@@ -1187,6 +1309,7 @@ function HomePage() {
         <HeroSection language={language} t={t} />
         <LiveStressTile t={t} />
         <AIAnalysisTile t={t} />
+        <CapabilitiesTile t={t} />
         <TrendsTile t={t} />
         <SleepTile t={t} />
         <CheckInTile t={t} />
@@ -1804,6 +1927,46 @@ function AIAnalysisMockup({ t, active }: { t: Copy; active: boolean }) {
         ))}
       </div>
     </div>
+  );
+}
+
+/* ───────────────────────── Capabilities — analysis engine ───────────────────────── */
+function CapabilitiesTile({ t }: { t: Copy }) {
+  const { active, ref } = useRevealOnView<HTMLDivElement>();
+  const c = t.capabilities;
+  return (
+    <Tile theme="light" id="capabilities">
+      <div ref={ref} className={`reveal-group ${active ? "is-active" : ""}`}>
+        <div className="reveal-item mx-auto max-w-[720px] text-center">
+          <span className="type-eyebrow text-blue">{c.eyebrow}</span>
+          <h2 className="type-display mt-3 text-ink">{c.title}</h2>
+          <p className="type-lead mt-4 text-ink-2">{c.tagline}</p>
+        </div>
+
+        <div className="mx-auto mt-14 grid max-w-[1040px] gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {c.items.map((item, i) => (
+            <div
+              key={item.key}
+              className="reveal-item mockup-card product-shadow flex h-full flex-col rounded-[24px] border border-black/10 bg-white p-6"
+              style={{ transitionDelay: `${i * 0.06}s` }}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className="rounded-full bg-blue/10 px-2.5 py-1 text-[11px] font-semibold text-blue">{item.chip}</span>
+              </div>
+              <h3 className="type-tagline mt-4 text-ink">{item.title}</h3>
+              <p className="type-body mt-2 text-[14px] text-ink-2">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        <p className="reveal-item mx-auto mt-12 max-w-[680px] text-center text-[14px] text-ink-2">{c.note}</p>
+        <div className="reveal-item mt-6 text-center">
+          <a href="./how/" className="apple-cta-link text-blue">
+            {c.cta} ›
+          </a>
+        </div>
+      </div>
+    </Tile>
   );
 }
 
