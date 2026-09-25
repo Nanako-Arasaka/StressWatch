@@ -1,5 +1,5 @@
 {
-  "syncedAt": "2026-09-25T06:43:35.397Z",
+  "syncedAt": "2026-09-25T06:46:10.892Z",
   "repo": "Nanako-Arasaka/StressWatch",
   "commitsTotal": 40,
   "releasesCount": 0,
@@ -7,8 +7,28 @@
   "commitsByMonth": [
     {
       "label": "September 2026",
-      "summary": "17 commits",
+      "summary": "19 commits",
       "entries": [
+        {
+          "date": "Sep 25",
+          "sha": "046e06e",
+          "title": "feat(web): complete How-it-works page and surface xiaomihealth in changelog",
+          "tags": [
+            "Feature"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/046e06e36187495e293efea18ac9872c3de3a471",
+          "author": "Nanako-Arasaka"
+        },
+        {
+          "date": "Sep 25",
+          "sha": "b74221d",
+          "title": "feat(correlation): lag-aware association analysis (T5.1-T5.2)",
+          "tags": [
+            "Feature"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/b74221d31c33469ffb332038c580a571bdc3dc13",
+          "author": "Nanako-Arasaka"
+        },
         {
           "date": "Sep 25",
           "sha": "f0f03e8",
@@ -184,7 +204,7 @@
     },
     {
       "label": "August 2026",
-      "summary": "23 commits",
+      "summary": "21 commits",
       "entries": [
         {
           "date": "Aug 16",
@@ -396,27 +416,6 @@
             "Feature"
           ],
           "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/21aa499d85e4fcfd7333bea21ea950f6d6d1df00",
-          "author": "Nanako-Arasaka"
-        },
-        {
-          "date": "Aug 5",
-          "sha": "6400220",
-          "title": "Add How-it-works subpage and wire navigation across pages",
-          "tags": [
-            "CI",
-            "Feature"
-          ],
-          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/6400220879556ead60378aaf2935f52eef823023",
-          "author": "Nanako-Arasaka"
-        },
-        {
-          "date": "Aug 5",
-          "sha": "0487104",
-          "title": "Point Download CTAs to GitHub repo (open in new tab)",
-          "tags": [
-            "Polish"
-          ],
-          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/04871048d94f2531a1b2d661a11b1d8452c5598f",
           "author": "Nanako-Arasaka"
         }
       ]
