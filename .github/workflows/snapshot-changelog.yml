@@ -1,14 +1,15 @@
 name: Snapshot changelog
 
 # Refreshes stresswatch-web/public/changelog.json from the live
-# GitHub master branch every 2 days (and on manual dispatch).
-# If the file changes, the change is committed back to master,
-# which triggers the Pages deploy workflow.
+# GitHub master branch every 12 hours (and on manual dispatch).
+# If the file changes, the change is committed back to master.
+# Do NOT put [skip ci] in the commit message — that used to block
+# Deploy StressWatch Web, so Pages never picked up the new snapshot.
 
 on:
   schedule:
-    # Every 2 days at 00:00 UTC (odd days of the month: 1st, 3rd, 5th, ...)
-    - cron: "0 0 */2 * *"
+    # Every 12 hours at 00:00 and 12:00 UTC
+    - cron: "0 */12 * * *"
   workflow_dispatch:
   push:
     # Allow a manual refresh via a one-liner label
@@ -60,5 +61,6 @@ jobs:
           git config user.name "Nanako-Arasaka"
           git config user.email "3143445389@qq.com"
           git add stresswatch-web/public/changelog.json
-          git commit -m "chore(changelog): refresh GitHub snapshot [skip ci]"
+          # No [skip ci]: this push must trigger Deploy StressWatch Web
+          git commit -m "chore(changelog): refresh GitHub snapshot"
           git push origin HEAD:master
