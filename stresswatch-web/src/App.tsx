@@ -1332,6 +1332,173 @@ function buildSmoothPath(points: Array<{ x: number; y: number }>) {
   }, "");
 }
 
+/** Shared line chart that draws itself on reveal — same motion as the home hero. */
+function AnimatedLineChart({
+  active,
+  values,
+  labels,
+  ariaLabel,
+  height = 140
+}: {
+  active: boolean;
+  values: number[];
+  labels?: string[];
+  ariaLabel: string;
+  height?: number;
+}) {
+  const w = 580;
+  const padX = 28;
+  const top = 16;
+  const bottom = height - 28;
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const span = Math.max(1, max - min);
+  const points = values.map((v, i) => ({
+    x: padX + (i * (w - padX * 2)) / Math.max(1, values.length - 1),
+    y: bottom - ((v - min) / span) * (bottom - top)
+  }));
+  const linePath = buildSmoothPath(points);
+  const areaPath = points.length
+    ? `${linePath} L ${points[points.length - 1].x} ${bottom} L ${points[0].x} ${bottom} Z`
+    : "";
+
+  return (
+    <svg
+      className="h-full w-full"
+      viewBox={`0 0 ${w} ${height}`}
+      role="img"
+      aria-label={ariaLabel}
+    >
+      <defs>
+        <linearGradient id={`lineFill-${ariaLabel.replace(/\W/g, "")}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#0066cc" stopOpacity="0.14" />
+          <stop offset="100%" stopColor="#0066cc" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      {[0.25, 0.5, 0.75].map((t) => {
+        const y = top + (bottom - top) * t;
+        return <line key={t} x1={0} x2={w} y1={y} y2={y} stroke="#1d1d1f" strokeOpacity="0.06" />;
+      })}
+      <path d={areaPath} fill={`url(#lineFill-${ariaLabel.replace(/\W/g, "")})`} />
+      <path
+        className={active ? "animate-[draw_1.4s_ease-out_both]" : "chart-line-hidden"}
+        d={linePath}
+        fill="none"
+        stroke="#0066cc"
+        strokeDasharray="620"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {points.map((p, i) => (
+        <circle
+          key={i}
+          cx={p.x}
+          cy={p.y}
+          r={4}
+          fill="#0066cc"
+          className={active ? "cell-pop is-on" : "cell-pop"}
+          style={{ transitionDelay: `${200 + i * 70}ms` }}
+        />
+      ))}
+      {labels?.map((label, i) => (
+        <text
+          key={`${label}-${i}`}
+          x={points[i]?.x ?? 0}
+          y={height - 6}
+          textAnchor="middle"
+          fill="#6e6e73"
+          fontSize="11"
+        >
+          {label}
+        </text>
+      ))}
+    </svg>
+  );
+}
+
+/** Shared bar chart that grows from the baseline on reveal — same as home Trends. */
+function AnimatedBarChart({
+  active,
+  values,
+  labels,
+  ariaLabel,
+  barColor = "#2997ff",
+  height = 160
+}: {
+  active: boolean;
+  values: number[];
+  labels?: string[];
+  ariaLabel: string;
+  barColor?: string;
+  height?: number;
+}) {
+  const w = 600;
+  const h = height;
+  const pad = 12;
+  const max = Math.max(...values, 1);
+  const bw = (w - pad * 2) / Math.max(1, values.length) - 8;
+
+  return (
+    <svg className="h-full w-full" viewBox={`0 0 ${w} ${h}`} role="img" aria-label={ariaLabel}>
+      {[0.33, 0.66].map((t) => {
+        const y = 12 + (h - 40) * t;
+        return <line key={t} x1={0} x2={w} y1={y} y2={y} stroke="#1d1d1f" strokeOpacity="0.06" />;
+      })}
+      {values.map((v, i) => {
+        const bh = Math.max(6, (v / max) * (h - 48));
+        const x = pad + i * ((w - pad * 2) / values.length) + 4;
+        const y = h - 28 - bh;
+        return (
+          <g key={i}>
+            <rect
+              className={`bar-grow ${active ? "is-on" : ""}`}
+              x={x}
+              y={y}
+              width={bw}
+              height={bh}
+              rx={4}
+              fill={barColor}
+              opacity={0.55 + (v / max) * 0.45}
+              style={{ transitionDelay: `${i * 60}ms` }}
+            />
+            {labels?.[i] ? (
+              <text x={x + bw / 2} y={h - 8} textAnchor="middle" fill="#6e6e73" fontSize="11">
+                {labels[i]}
+              </text>
+            ) : null}
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+/** Home-style product card that hosts one animated chart. */
+function AnimatedChartCard({
+  title,
+  note,
+  children
+}: {
+  title: string;
+  note?: string;
+  children: (active: boolean) => ReactNode;
+}) {
+  const { active, ref } = useRevealOnView<HTMLDivElement>();
+  return (
+    <div
+      ref={ref}
+      className="mockup-card product-shadow w-full rounded-[28px] border border-black/10 bg-white p-6 sm:p-8"
+    >
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-[15px] font-semibold text-ink">{title}</p>
+      </div>
+      <div className="mt-5 h-[160px] w-full sm:h-[180px]">{children(active)}</div>
+      {note ? <p className="mt-4 text-[12px] leading-snug text-ink-2">{note}</p> : null}
+    </div>
+  );
+}
+
 /* ───────────────────────── Language persistence ───────────────────────── */
 const LANG_KEY = "stresswatch.lang";
 
@@ -3318,7 +3485,26 @@ function ChangelogPage() {
         {/* Timeline */}
         <section className="bg-parchment px-5 pb-24 pt-4 sm:pt-8">
           <RevealBlock>
-          <RevealBlock>
+            <div className="reveal-item mx-auto mb-10 max-w-[1040px]">
+              <AnimatedChartCard
+                title={language === "zh" ? "提交活跃度" : "Commit activity"}
+                note={
+                  language === "zh"
+                    ? "柱高按该月提交量，进入视口时从底部长出。"
+                    : "Bar height is commits that month; they grow from the baseline on enter."
+                }
+              >
+                {(chartActive) => (
+                  <AnimatedBarChart
+                    active={chartActive}
+                    values={snapshotGroups.map((g) => Math.max(1, g.entries.length))}
+                    labels={snapshotGroups.map((g) => g.label.split(" ")[0]?.slice(0, 3) ?? g.label.slice(0, 3))}
+                    ariaLabel="Commits per month"
+                    barColor="#2997ff"
+                  />
+                )}
+              </AnimatedChartCard>
+            </div>
             <div className="reveal-item mx-auto flex max-w-[1040px] gap-8 sm:gap-12">
               <div className="hidden w-1 shrink-0 self-stretch bg-[#D2D2D7] sm:block" aria-hidden="true" />
               <div className="flex flex-1 flex-col gap-10">
@@ -3339,7 +3525,6 @@ function ChangelogPage() {
                 ))}
               </div>
             </div>
-          </RevealBlock>
           </RevealBlock>
         </section>
 
@@ -3855,6 +4040,11 @@ function HowPage() {
           <HowPipelineSection h={h} />
         </Tile>
 
+        {/* Charts — sample of the motion language used on the dashboard */}
+        <Tile theme="parchment" id="how-charts">
+          <HowChartsSection language={language} />
+        </Tile>
+
         {/* Signals — list of HK identifiers the app actually queries */}
         <Tile theme="parchment" id="signals">
           <HowSignalsSection h={h} />
@@ -3962,6 +4152,53 @@ function HowPipelineSection({ h }: { h: Copy["how"] }) {
       </ol>
 
       <p className="reveal-item mx-auto mt-12 max-w-[680px] text-center text-[14px] text-ink-2">{h.pipelineNote}</p>
+    </div>
+  );
+}
+
+function HowChartsSection({ language }: { language: Lang }) {
+  const { active, ref } = useRevealOnView<HTMLDivElement>();
+  return (
+    <div ref={ref} className={`reveal-group ${active ? "is-active" : ""}`}>
+      <div className="reveal-item mx-auto max-w-[720px] text-center">
+        <span className="type-eyebrow text-blue">{language === "zh" ? "动效" : "Motion"}</span>
+        <h2 className="type-display mt-3 text-ink">
+          {language === "zh" ? "图表会自己画出来，和仪表盘一致" : "Charts draw themselves, like on the dashboard"}
+        </h2>
+        <p className="type-lead mt-4 text-ink-2">
+          {language === "zh"
+            ? "折线沿路径绘出、柱状从基线长起、圆点依次弹出——与实时压力、趋势同一套语言。"
+            : "Line strokes reveal along the path, bars grow from the baseline, and points pop in — the same vocabulary as Live Stress and Trends."}
+        </p>
+      </div>
+
+      <div className="mx-auto mt-14 grid max-w-[1040px] gap-6 lg:grid-cols-2">
+        <AnimatedChartCard
+          title={language === "zh" ? "7 日压力趋势" : "7-day stress trend"}
+          note={language === "zh" ? "折线用 stroke-dash 绘出，圆点随后弹出。" : "Line draws with stroke-dash, then points pop in."}
+        >
+          {(chartActive) => (
+            <AnimatedLineChart
+              active={chartActive}
+              values={[42, 58, 51, 64, 72, 60, 68]}
+              labels={["一", "二", "三", "四", "五", "六", "日"]}
+              ariaLabel="Sample seven day stress trend"
+            />
+          )}
+        </AnimatedChartCard>
+        <AnimatedChartCard
+          title={language === "zh" ? "月度压力柱状" : "Monthly stress bars"}
+          note={language === "zh" ? "每根柱从基线错落长起。" : "Each bar grows from the baseline with a staggered delay."}
+        >
+          {(chartActive) => (
+            <AnimatedBarChart
+              active={chartActive}
+              values={[55, 62, 48, 70, 58, 44, 66, 52, 60, 49, 57, 63, 46, 54]}
+              ariaLabel="Sample monthly stress bars"
+            />
+          )}
+        </AnimatedChartCard>
+      </div>
     </div>
   );
 }
