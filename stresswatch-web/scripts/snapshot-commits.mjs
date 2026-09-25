@@ -41,7 +41,10 @@ const OUT = resolve(
   "..",
   args.out ?? "public/changelog.json",
 );
-const COMMITS = Number(args.commits ?? process.env.COMMITS ?? 30);
+const COMMITS = Number(args.commits ?? process.env.COMMITS ?? 50);
+// Snapshot self-commits only churn the list and hide real product work
+// (e.g. the xiaomihealth merge). Drop them from the published timeline.
+const IGNORE_SUBJECT = /^chore\(changelog\):\s*refresh/i;
 const HEADERS = {
   Accept: "application/vnd.github+json",
   "X-GitHub-Api-Version": "2022-11-28",
@@ -131,14 +134,17 @@ async function main() {
 
   // Pull recent commits
   const commitData = await fetchAll(`${base}/commits?sha=master&per_page=${COMMITS}`);
-  const commits = commitData.map((c) => ({
-    sha: shortSha(c.sha),
-    fullSha: c.sha,
-    date: c.commit?.author?.date ?? c.commit?.committer?.date,
-    subject: c.commit?.message?.split("\n", 1)[0] ?? "(no subject)",
-    author: c.commit?.author?.name ?? c.author?.login ?? "unknown",
-    url: c.html_url,
-  }));
+  const commits = commitData
+    .map((c) => ({
+      sha: shortSha(c.sha),
+      fullSha: c.sha,
+      date: c.commit?.author?.date ?? c.commit?.committer?.date,
+      subject: c.commit?.message?.split("\n", 1)[0] ?? "(no subject)",
+      author: c.commit?.author?.name ?? c.author?.login ?? "unknown",
+      url: c.html_url,
+    }))
+    .filter((c) => !IGNORE_SUBJECT.test(c.subject))
+    .slice(0, Math.min(COMMITS, 40));
 
   // Group commits by month
   const buckets = new Map();

@@ -267,10 +267,15 @@ type Copy = {
   how: {
     badge: string;
     eyebrow: string;
-    title: string;
+    title1: string;
+    title2: string;
     subtitle: string;
     primaryCta: string;
     secondaryCta: string;
+    sourcesEyebrow: string;
+    sourcesTitle: string;
+    sourcesSubtitle: string;
+    sources: { key: string; title: string; desc: string }[];
     pipelineEyebrow: string;
     pipelineTitle: string;
     pipelineSubtitle: string;
@@ -509,10 +514,31 @@ const copy: Record<Lang, Copy> = {
     how: {
       badge: "How it works",
       eyebrow: "From signal to insight",
-      title: "Every number on the dashboard starts with a single Apple Health reading",
-      subtitle: "StressWatch reads seven HealthKit signals on-device, computes a baseline, runs a Core ML classifier (with a rule-based fallback), and surfaces a state, a confidence score, and four dimensions. Nothing leaves your iPhone.",
+      title1: "Every dashboard number",
+      title2: "starts with one Health sample",
+      subtitle: "StressWatch reads HealthKit on-device — including samples written by Xiaomi Fitness via Apple Health — builds a personal baseline, classifies state (Core ML with a rule fallback), and can hand a structured snapshot to an LLM for a one-shot personalized summary. Nothing requires a cloud account.",
       primaryCta: "View dashboard",
       secondaryCta: "Read privacy",
+      sourcesEyebrow: "Data sources",
+      sourcesTitle: "Apple Watch, or Xiaomi band — both enter through Apple Health",
+      sourcesSubtitle: "Path A: Mi Fitness syncs into Apple Health, then StressWatch reads the same HealthKit types. Samples keep their writer name so the dashboard can show where a metric came from.",
+      sources: [
+        {
+          key: "watch",
+          title: "Apple Watch / HealthKit",
+          desc: "Primary path. Heart rate, HRV, sleep stages, steps, energy, exercise — queried locally with bounded reads."
+        },
+        {
+          key: "xiaomi",
+          title: "Xiaomi Fitness → Apple Health",
+          desc: "Enable “Sync to Apple Health” in Mi Fitness. StressWatch merges those writes and badges the source (e.g. Apple Health · 小米运动健康)."
+        },
+        {
+          key: "demo",
+          title: "Demo data fallback",
+          desc: "If permissions are missing, the UI switches to a clearly labeled demo set so the rest of the product still works."
+        }
+      ],
       pipelineEyebrow: "Pipeline",
       pipelineTitle: "Five steps from raw signal to a state on the screen",
       pipelineSubtitle: "Each stage runs locally on the device. The Core ML model is optional — if it isn't compiled, the same pipeline degrades to a transparent rule-based analyzer with the same output shape.",
@@ -522,8 +548,8 @@ const copy: Record<Lang, Copy> = {
           key: "collect",
           title: "Collect signals",
           tag: "HealthKit",
-          body: "Read heart rate, HRV (SDNN), resting heart rate, sleep analysis stages, steps, active energy, and exercise time. Apple Stand Time is read on iOS 18+. Each fetch is capped to 600 samples to stay battery-friendly.",
-          chips: ["7 HK types", "iOS 18+ Stand", "Bounded reads"]
+          body: "Read heart rate, HRV (SDNN), resting heart rate, sleep analysis stages, steps, active energy, and exercise time. Apple Stand Time is read on iOS 18+. Third-party writers (Xiaomi Fitness, etc.) are merged the same way. Each fetch is capped to 600 samples.",
+          chips: ["7 HK types", "Multi-source", "Bounded reads"]
         },
         {
           num: "02",
@@ -546,19 +572,19 @@ const copy: Record<Lang, Copy> = {
           key: "model",
           title: "Classify state",
           tag: "Core ML · fallback",
-          body: "The bundled Core ML classifier outputs one of 7 classes (attention stress, high stress, mild stress, normal, recovery good, sleep debt, low activity). When the model can't load — or to keep output explainable — a rule-based WellnessAnalyzer with the same 6-state vocabulary takes over.",
-          chips: ["7-class output", "Probability vector", "Rule fallback"]
+          body: "The bundled Core ML classifier outputs one of 7 classes. When the model can't load — or to keep output explainable — a rule-based WellnessAnalyzer with the same 6-state vocabulary takes over. Scoring engines also compute personal stress & recovery.",
+          chips: ["7-class output", "Stress / Recovery", "Rule fallback"]
         },
         {
           num: "05",
           key: "surface",
-          title: "Surface the state",
-          tag: "Dashboard · Widget",
-          body: "You see one of six WellnessStates with a confidence percentage and four dimensions (Stress / Sleep / Recovery / HRV). Daily check-ins and personalized factors are generated locally; a small home-screen widget snapshots the same numbers every 30 minutes.",
-          chips: ["6 states", "Confidence %", "Widget snapshot"]
+          title: "Surface the insight",
+          tag: "Dashboard · LLM",
+          body: "You see WellnessState with confidence and four dimensions. Optionally, AnalysisPayload (precomputed stats only) goes to one LLM call and returns PersonalizationInsight JSON — findings and suggestions in the Analysis card. A home-screen widget mirrors the numbers.",
+          chips: ["6 states", "AnalysisPayload", "Widget snapshot"]
         }
       ],
-      pipelineNote: "Five steps run locally. From the seventh day onwards you get personalized baselines; until then the analyzer shows a guided \"getting to know you\" state.",
+      pipelineNote: "Five steps run locally. From the seventh day onwards you get personalized baselines; until then the analyzer shows a guided \"getting to know you\" state. LLM analysis is opt-in and only receives aggregated stats.",
       signalsEyebrow: "Signals",
       signalsTitle: "What the app actually reads from Apple Health",
       signalsSubtitle: "Seven HealthKit quantity / category identifiers are queried. Missing permissions degrade to a clearly-labeled demo dataset so the rest of the app still works.",
@@ -849,10 +875,31 @@ const copy: Record<Lang, Copy> = {
     how: {
       badge: "工作原理",
       eyebrow: "从信号到洞察",
-      title: "仪表盘上的每一个数字，都来自一条 Apple Health 读数",
-      subtitle: "StressWatch 在本机读取 7 类 HealthKit 信号，构建个人基线，调用 Core ML 分类器（必要时回退规则版），输出状态、可信度与四个维度的评分。一切都在你的 iPhone 上完成。",
+      title1: "仪表盘上的每一个数字",
+      title2: "都来自一条健康读数",
+      subtitle: "StressWatch 在本机读取 HealthKit——包括小米运动健康经 Apple 健康写入的样本——构建个人基线，分类状态（Core ML / 规则兜底），并可将结构化快照交给大模型生成一次个性化解读。无需云端账号。",
       primaryCta: "查看仪表盘",
       secondaryCta: "阅读隐私说明",
+      sourcesEyebrow: "数据来源",
+      sourcesTitle: "Apple Watch 或小米手环，都经由 Apple 健康汇入",
+      sourcesSubtitle: "路径 A：小米运动健康同步到 Apple 健康后，StressWatch 读取同一套 HealthKit 类型。样本保留写入方名称，仪表盘可标注指标来自谁。",
+      sources: [
+        {
+          key: "watch",
+          title: "Apple Watch / HealthKit",
+          desc: "主路径。心率、HRV、睡眠分期、步数、活动能量、锻炼时长——本机查询，限流拉取。"
+        },
+        {
+          key: "xiaomi",
+          title: "小米运动健康 → Apple 健康",
+          desc: "在小米运动健康中开启「同步到 Apple 健康」。StressWatch 合并写入并标注来源（如 Apple Health · 小米运动健康）。"
+        },
+        {
+          key: "demo",
+          title: "演示数据兜底",
+          desc: "权限不足时切换到明确标注的演示数据，其余功能仍可使用。"
+        }
+      ],
       pipelineEyebrow: "流水线",
       pipelineTitle: "从原始信号到屏幕上的状态，五步完成",
       pipelineSubtitle: "每一步都在本机执行。Core ML 模型可选——若未编译，同一条流水线会自动降级到规则版 WellnessAnalyzer，输出形态保持一致。",
@@ -862,8 +909,8 @@ const copy: Record<Lang, Copy> = {
           key: "collect",
           title: "采集信号",
           tag: "HealthKit",
-          body: "读取心率、HRV（SDNN）、静息心率、睡眠分析分期、步数、活动能量与锻炼时长。iOS 18+ 额外读取 Apple Stand Time。每次拉取上限 600 条以兼顾续航。",
-          chips: ["7 类 HK", "iOS 18+ Stand", "限流拉取"]
+          body: "读取心率、HRV（SDNN）、静息心率、睡眠分析分期、步数、活动能量与锻炼时长。iOS 18+ 额外读取 Apple Stand Time。第三方写入（小米运动健康等）同样合并。每次拉取上限 600 条。",
+          chips: ["7 类 HK", "多源合并", "限流拉取"]
         },
         {
           num: "02",
@@ -884,27 +931,27 @@ const copy: Record<Lang, Copy> = {
         {
           num: "04",
           key: "model",
-          title: "分类状态",
+          title: "分类与评分",
           tag: "Core ML · 规则兜底",
-          body: "内置 Core ML 分类器输出 7 个类别之一（注意力压力、高压力、轻度压力、正常、恢复良好、睡眠负债、活动不足）。当模型无法加载时——或为保证可解释性——使用同一套 6 状态词汇的规则版 WellnessAnalyzer 接管。",
-          chips: ["7 类输出", "概率向量", "规则兜底"]
+          body: "内置 Core ML 分类器输出 7 个类别之一。模型不可用时，规则版 WellnessAnalyzer 以同一套 6 状态词汇接管。压力 / 恢复评分引擎同步输出个性化分数。",
+          chips: ["7 类输出", "压力 / 恢复", "规则兜底"]
         },
         {
           num: "05",
           key: "surface",
-          title: "呈现状态",
-          tag: "仪表盘 · 小组件",
-          body: "你看到 6 种 WellnessState 之一，附可信度百分比与四个维度（压力 / 睡眠 / 恢复 / HRV）。每日打卡与个性化因素在本机生成；主屏小组件每 30 分钟同步相同数字。",
-          chips: ["6 状态", "可信度 %", "小组件快照"]
+          title: "呈现洞察",
+          tag: "仪表盘 · LLM",
+          body: "展示 WellnessState、可信度与四个维度。可选：把 AnalysisPayload（仅已算好的聚合数据）做一次 LLM 调用，返回 PersonalizationInsight JSON，在分析页展示发现与建议。主屏小组件同步数字。",
+          chips: ["6 状态", "AnalysisPayload", "小组件快照"]
         }
       ],
-      pipelineNote: "五步均在本地执行。从第 7 天起获得个性化基线；之前为引导式的「正在认识你」状态。",
+      pipelineNote: "五步均在本地执行。从第 7 天起获得个性化基线；之前为引导式的「正在认识你」状态。LLM 分析可选开启，且只接收聚合统计。",
       signalsEyebrow: "信号",
       signalsTitle: "App 真正从 Apple Health 读取了什么",
       signalsSubtitle: "实际查询 7 个 HealthKit 标识符。权限缺失时会降级到明确标注的演示数据，其余功能不受影响。",
       signals: [
         { key: "hr", label: "心率", source: "HKQuantityTypeIdentifier.heartRate", what: "BPM 采样，最多取最近 600 条", unit: "bpm" },
-        { key: "hrv", label: "HRV (SDNN)", source: "HKQuantityTypeIdentifier.heartRateVariabilitySDNN", what: "NN 间期的标准差，来自 Apple Watch", unit: "ms" },
+        { key: "hrv", label: "HRV (SDNN)", source: "HKQuantityTypeIdentifier.heartRateVariabilitySDNN", what: "NN 间期的标准差，来自手表或手环写入", unit: "ms" },
         { key: "rhr", label: "静息心率", source: "HKQuantityTypeIdentifier.restingHeartRate", what: "每日静息心率，用于趋势与恢复评估", unit: "bpm" },
         { key: "sleep", label: "睡眠分析", source: "HKCategoryTypeIdentifier.sleepAnalysis", what: "按晚拆解清醒 / REM / Core / 深睡阶段", unit: "stage" },
         { key: "steps", label: "步数", source: "HKQuantityTypeIdentifier.stepCount", what: "日总量，与基线对比得出活动情境", unit: "steps" },
@@ -3385,7 +3432,11 @@ function HowPage() {
         <section className="bg-white px-5 pb-20 pt-28 sm:pb-24 sm:pt-36">
           <div className="mx-auto max-w-[820px] text-center">
             <span className="type-eyebrow text-blue">{h.badge}</span>
-            <h1 className="type-hero mt-3 text-ink">{h.title}</h1>
+            <h1 className="type-hero mt-3 text-ink">
+              {h.title1}
+              <br />
+              {h.title2}
+            </h1>
             <p className="type-lead mx-auto mt-5 max-w-[680px] text-ink-2">{h.subtitle}</p>
             <div className="mt-7 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
               <a
@@ -3401,13 +3452,18 @@ function HowPage() {
           </div>
         </section>
 
+        {/* Sources — Apple Watch + Xiaomi Path A + demo fallback */}
+        <Tile theme="parchment" id="sources">
+          <HowSourcesSection h={h} />
+        </Tile>
+
         {/* Pipeline — five steps, alternating tile themes, full-bleed */}
-        <Tile theme="parchment" id="pipeline">
+        <Tile theme="light" id="pipeline">
           <HowPipelineSection h={h} />
         </Tile>
 
         {/* Signals — list of HK identifiers the app actually queries */}
-        <Tile theme="light" id="signals">
+        <Tile theme="parchment" id="signals">
           <HowSignalsSection h={h} />
         </Tile>
 
@@ -3431,6 +3487,53 @@ function HowPage() {
   );
 }
 
+function HowSourcesSection({ h }: { h: Copy["how"] }) {
+  const { active, ref } = useRevealOnView<HTMLDivElement>();
+  return (
+    <div ref={ref} className={`reveal-group ${active ? "is-active" : ""}`}>
+      <div className="reveal-item mx-auto max-w-[720px] text-center">
+        <span className="type-eyebrow text-blue">{h.sourcesEyebrow}</span>
+        <h2 className="type-display mt-3 text-ink">{h.sourcesTitle}</h2>
+        <p className="type-lead mt-4 text-ink-2">{h.sourcesSubtitle}</p>
+      </div>
+
+      <div className="mx-auto mt-14 grid max-w-[1040px] gap-6 md:grid-cols-3">
+        {h.sources.map((s, i) => (
+          <div
+            key={s.key}
+            className="reveal-item mockup-card product-shadow flex h-full flex-col rounded-[24px] border border-black/10 bg-white p-7"
+            style={{ transitionDelay: `${i * 0.1}s` }}
+          >
+            <div className="grid h-10 w-10 place-items-center rounded-xl bg-blue/10 text-blue">
+              <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                {s.key === "watch" ? (
+                  <>
+                    <rect x="6" y="3" width="12" height="18" rx="4" />
+                    <path d="M12 8v4l2 1" />
+                  </>
+                ) : s.key === "xiaomi" ? (
+                  <>
+                    <path d="M7 12h10" />
+                    <path d="M12 7v10" />
+                    <circle cx="12" cy="12" r="9" />
+                  </>
+                ) : (
+                  <>
+                    <rect x="3" y="5" width="18" height="14" rx="3" />
+                    <path d="M8 12h8" />
+                  </>
+                )}
+              </svg>
+            </div>
+            <h3 className="type-tagline mt-5 text-ink">{s.title}</h3>
+            <p className="type-body mt-3 text-[15px] text-ink-2">{s.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function HowPipelineSection({ h }: { h: Copy["how"] }) {
   const { active, ref } = useRevealOnView<HTMLDivElement>();
   return (
@@ -3445,7 +3548,7 @@ function HowPipelineSection({ h }: { h: Copy["how"] }) {
         {h.steps.map((step, i) => (
           <li
             key={step.key}
-            className="reveal-item mockup-card product-shadow flex h-full flex-col rounded-2xl border border-black/10 bg-white p-6"
+            className="reveal-item mockup-card product-shadow flex h-full flex-col rounded-[24px] border border-black/10 bg-white p-6"
             style={{ transitionDelay: `${i * 0.08}s` }}
           >
             <div className="flex items-center justify-between">
@@ -3484,7 +3587,7 @@ function HowSignalsSection({ h }: { h: Copy["how"] }) {
         {h.signals.map((s, i) => (
           <div
             key={s.key}
-            className="reveal-item mockup-card product-shadow flex flex-col gap-3 rounded-2xl border border-black/10 bg-white p-5 sm:flex-row sm:items-center sm:justify-between"
+            className="reveal-item mockup-card product-shadow flex flex-col gap-3 rounded-[24px] border border-black/10 bg-white p-5 sm:flex-row sm:items-center sm:justify-between"
             style={{ transitionDelay: `${i * 0.06}s` }}
           >
             <div className="flex items-start gap-4">
@@ -3518,7 +3621,7 @@ function HowPrivacySection({ h }: { h: Copy["how"] }) {
         {h.privacyPoints.map((p, i) => (
           <div
             key={p.title}
-            className="reveal-item mockup-card flex h-full flex-col rounded-2xl border border-white/10 bg-black/40 p-6"
+            className="reveal-item mockup-card flex h-full flex-col rounded-[24px] border border-white/10 bg-black/40 p-6"
             style={{ transitionDelay: `${i * 0.08}s` }}
           >
             <h3 className="text-[17px] font-semibold text-white">{p.title}</h3>
@@ -3579,7 +3682,7 @@ function HowSurfacesSection({ h }: { h: Copy["how"] }) {
         {h.surfaces.map((s, i) => (
           <div
             key={s.key}
-            className="reveal-item mockup-card product-shadow flex h-full flex-col rounded-2xl border border-black/10 bg-white p-6"
+            className="reveal-item mockup-card product-shadow flex h-full flex-col rounded-[24px] border border-black/10 bg-white p-6"
             style={{ transitionDelay: `${i * 0.07}s` }}
           >
             <div className="grid h-10 w-10 place-items-center rounded-xl bg-blue/10 text-blue">{icons[s.key] ?? null}</div>
