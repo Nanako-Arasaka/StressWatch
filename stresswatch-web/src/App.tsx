@@ -2725,18 +2725,161 @@ function CursorParticles() {
 /* ───────────────────────── Changelog — subpage ───────────────────────── */
 // One entry: date / short SHA / title / pill tags. Visually mirrors the
 // Ardot design (left meta column, right title + tag row).
-function ChangelogEntry({ entry }: { entry: { date: string; sha: string; title: string; tags: string[] } }) {
+
+/** Conventional-commit prefixes and this repo's recurring phrases → 中文. */
+const COMMIT_TITLE_ZH: [RegExp, string][] = [
+  [/^feat(\([^)]*\))?:\s*/i, "新功能："],
+  [/^fix(\([^)]*\))?:\s*/i, "修复："],
+  [/^docs?(\([^)]*\))?:\s*/i, "文档："],
+  [/^ci(\([^)]*\))?:\s*/i, "CI："],
+  [/^chore(\([^)]*\))?:\s*/i, "杂务："],
+  [/^polish(\([^)]*\))?:\s*/i, "打磨："],
+  [/^refactor(\([^)]*\))?:\s*/i, "重构："],
+  [/^test(\([^)]*\))?:\s*/i, "测试："],
+  [/^Merge pull request #(\d+) from (\S+)/i, "合并 PR #$1（$2）"],
+  [/^Merge branch '([^']+)'/i, "合并分支「$1」"],
+  [/^Merge remote-tracking branch.*/i, "合并远程分支"],
+  [/^Retry Pages deploy$/i, "重试 Pages 部署"],
+  [/^initial import with privacy-safe gitignore$/i, "初始导入（含隐私安全 gitignore）"],
+];
+
+const COMMIT_PHRASE_ZH: [string, string][] = [
+  ["path A Xiaomi Fitness via Apple Health", "路径 A：小米运动健康经 Apple 健康接入"],
+  ["Xiaomi Fitness via Apple Health", "小米运动健康经 Apple 健康接入"],
+  ["structured one-shot LLM personalization via AnalysisPayload", "经 AnalysisPayload 的结构化一次性 LLM 个性化分析"],
+  ["load changelog snapshot from site root", "从站点根目录加载 changelog 快照"],
+  ["complete How-it-works page and surface xiaomihealth in changelog", "完善「工作原理」页并在 changelog 展示 xiaomihealth"],
+  ["update changelog locale copy without refresh", "切换语言后立即更新 changelog 文案（无需刷新）"],
+  ["deploy changelog snapshot and refresh every 12 hours", "部署 changelog 快照并改为每 12 小时刷新"],
+  ["dispatch Pages deploy after changelog snapshot", "changelog 快照后显式触发 Pages 部署"],
+  ["rewrite README primary copy in Chinese", "README 主文案改为中文"],
+  ["refresh GitHub snapshot", "刷新 GitHub 快照"],
+  ["self-hosted analysis proxy and iOS client wiring", "自托管分析代理与 iOS 客户端接入"],
+  ["analysis page with key changes, trends, related factors", "分析页：关键变化、趋势、相关因素"],
+  ["lag-aware association analysis", "带滞后的关联分析"],
+  ["remove synthetic data and demo mixing", "移除合成数据与演示数据混用"],
+  ["five-state TrendEngine with robust statistics", "五状态 TrendEngine 与稳健统计"],
+  ["personal stress & recovery engines", "个人压力与恢复引擎"],
+  ["score contributions, activity load, sleep quality", "分数贡献、活动负荷、睡眠质量"],
+  ["personal baseline with robust statistics", "稳健统计的个人基线"],
+  ["regroup Xcode project files into proper hierarchy", "整理 Xcode 工程文件层级"],
+  ["daily metrics pipeline with sleep sessions and unit tests", "含睡眠会话与单测的每日指标流水线"],
+  ["restore light-mode contrast and HealthKit entitlements for sideloading", "恢复浅色对比度与侧载 HealthKit entitlements"],
+  ["How-it-works subpage and wire navigation across pages", "「工作原理」二级页并打通跨页导航"],
+  ["Point Download CTAs to GitHub repo", "Download CTA 指向 GitHub 仓库"],
+  ["Boost responsive design and micro-interactions", "强化响应式设计与微交互"],
+  ["recovery heatmap: multi-hue scale + legend", "恢复热力图：多色色阶 + 图例"],
+  ["scroll-driven reveal + strengthen cursor particles", "滚动驱动 reveal 并强化鼠标粒子"],
+  ["directional reveal, cursor particles, and chart annotations", "方向感知 reveal、鼠标粒子与图表注释"],
+  ["landing-page motion (Apple-style reveal & data animations)", "落地页动效（Apple 式 reveal 与数据动画）"],
+  ["Redesign landing page in Apple design language", "按 Apple 设计语言重做落地页"],
+  ["Add project handoff README", "新增项目交接 README"],
+  ["Track web dependency lockfile for reproducible builds", "锁定 Web 依赖以保证可复现构建"],
+  ["Persist language across subpages via localStorage", "跨二级页用 localStorage 持久化语言"],
+  ["Add Privacy subpage", "新增隐私二级页"],
+  ["Add About subpage", "新增关于二级页"],
+  ["Wire changelog subpage to a live GitHub snapshot", "changelog 二级页接入 GitHub 快照"],
+  ["Add Changelog subpage", "新增更新日志二级页"],
+  ["Fix cross-subpage nav", "修复跨二级页导航"],
+  ["Fix footer Product column", "修复页脚 Product 栏链接"],
+  ["Fix subpage -> home navigation", "修复二级页返回首页导航"],
+  ["Make Trends tile interactive", "趋势区块交互（柱状提示 + 热力预览）"],
+  ["HealthKit", "HealthKit"],
+  ["Apple Health", "Apple 健康"],
+  ["Apple Watch", "Apple Watch"],
+  ["Core ML", "Core ML"],
+  ["Live Stress", "实时压力"],
+  ["widget", "小组件"],
+  ["README", "README"],
+  ["Xcode", "Xcode"],
+  ["Pages", "Pages"],
+  ["changelog", "changelog"],
+  ["landing page", "落地页"],
+  ["heatmap", "热力图"],
+  ["baseline", "基线"],
+  ["scoring", "评分"],
+  ["trend", "趋势"],
+  ["dashboard", "仪表盘"],
+  ["analysis", "分析"],
+  ["privacy", "隐私"],
+  ["signing", "签名"],
+  ["HRV notifications", "HRV 通知"],
+  ["chart visualizations", "图表可视化"],
+  ["unit tests", "单元测试"],
+  ["without refresh", "无需刷新"],
+  ["every 12 hours", "每 12 小时"],
+  ["site root", "站点根目录"],
+  ["demo mixing", "演示数据混用"],
+  ["synthetic data", "合成数据"],
+];
+
+function localizeCommitTitle(title: string, lang: Lang): string {
+  if (lang !== "zh") return title;
+  if (/[一-鿿]/.test(title)) return title;
+
+  let out = title;
+  for (const [pattern, replacement] of COMMIT_TITLE_ZH) {
+    if (pattern.test(out)) {
+      out = out.replace(pattern, replacement);
+      break;
+    }
+  }
+  // Longest-phrase-first so "Xiaomi Fitness via Apple Health" wins over "Apple Health"
+  const phrases = [...COMMIT_PHRASE_ZH].sort((a, b) => b[0].length - a[0].length);
+  for (const [en, zh] of phrases) {
+    if (out.includes(en)) out = out.split(en).join(zh);
+  }
+  return out;
+}
+
+function localizeCommitDate(date: string, lang: Lang): string {
+  if (lang !== "zh") return date;
+  const m = /^([A-Za-z]{3,})\s+(\d{1,2})$/.exec(date.trim());
+  if (!m) return date;
+  const months: Record<string, number> = {
+    jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6,
+    jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12,
+  };
+  const month = months[m[1].slice(0, 3).toLowerCase()];
+  if (!month) return date;
+  return `${month} 月 ${Number(m[2])} 日`;
+}
+
+const TAG_LABEL_ZH: Record<string, string> = {
+  Feature: "功能",
+  Fix: "修复",
+  Polish: "打磨",
+  Docs: "文档",
+  CI: "CI",
+  Motion: "动效",
+  Link: "链接",
+  Routing: "导航",
+  AI: "AI",
+};
+
+function ChangelogEntry({
+  entry,
+  language,
+}: {
+  entry: { date: string; sha: string; title: string; tags: string[] };
+  language: Lang;
+}) {
+  const displayTitle = localizeCommitTitle(entry.title, language);
+  const showOriginal = language === "zh" && displayTitle !== entry.title;
   return (
     <article className="flex flex-col gap-3 rounded-[18px] border border-black/10 bg-white px-6 py-4 sm:flex-row sm:items-center sm:gap-6 sm:px-7 sm:py-5">
       <div className="flex w-full shrink-0 items-center justify-between gap-3 text-[12px] text-ink-2 sm:w-[150px] sm:flex-col sm:items-start sm:justify-center sm:text-[13px]">
-        <span className="font-medium text-ink-2">{entry.date}</span>
+        <span className="font-medium text-ink-2">{localizeCommitDate(entry.date, language)}</span>
         <span className="font-mono text-ink">{entry.sha}</span>
       </div>
       <div className="flex flex-1 flex-col gap-2">
-        <p className="text-[15px] font-semibold tracking-tight text-ink sm:text-[17px]">{entry.title}</p>
+        <p className="text-[15px] font-semibold tracking-tight text-ink sm:text-[17px]">{displayTitle}</p>
+        {showOriginal ? (
+          <p className="text-[12px] leading-snug text-ink-3">{entry.title}</p>
+        ) : null}
         <div className="flex flex-wrap items-center gap-2">
           {entry.tags.map((tag) => (
-            <ChangelogTag key={tag} label={tag} />
+            <ChangelogTag key={tag} label={tag} language={language} />
           ))}
         </div>
       </div>
@@ -2759,14 +2902,15 @@ const TAG_STYLE: Record<string, { bg: string; text: string }> = {
   AI: { bg: "#EAF7E8", text: "#187A2F" }
 };
 
-function ChangelogTag({ label }: { label: string }) {
+function ChangelogTag({ label, language = "en" }: { label: string; language?: Lang }) {
   const s = TAG_STYLE[label] ?? { bg: "#F1F1F4", text: "#1D1D1F" };
+  const text = language === "zh" ? TAG_LABEL_ZH[label] ?? label : label;
   return (
     <span
       className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold"
       style={{ backgroundColor: s.bg, color: s.text }}
     >
-      {label}
+      {text}
     </span>
   );
 }
@@ -2954,7 +3098,7 @@ function ChangelogPage() {
                   </div>
                   <div className="flex flex-col gap-3">
                     {g.entries.map((e) => (
-                      <ChangelogEntry key={e.sha} entry={e} />
+                      <ChangelogEntry key={e.sha} entry={e} language={language} />
                     ))}
                   </div>
                 </div>
