@@ -116,6 +116,9 @@
 		FF42D5BA60E66340A5666EB0 /* PersonalRecoveryEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = G44CE1B56821989DCB83948E /* PersonalRecoveryEngineTests.swift */; };
 		F7AC631F7D8ED0FCBE07C6C4 /* TrendEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = GB11415FC89C3BF6AB76BC94 /* TrendEngine.swift */; };
 		FC3A2E3C5BBCD7490279E3BB /* TrendEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = G756D086C12BD46E2A663469 /* TrendEngineTests.swift */; };
+		F83BADEEC57EFA13EC07B7D9 /* CorrelationPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = G8592B71DFEFC9B679B52C74 /* CorrelationPair.swift */; };
+		FD1C877D3C2C852159FBBE4B /* CorrelationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = G4814460D27CA74FEE96F878 /* CorrelationEngine.swift */; };
+		F5A7D64B96E9BC00FADC5337 /* CorrelationEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = G3EE01B524C4848DCA2C0F3D /* CorrelationEngineTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -263,6 +266,9 @@
 		G44CE1B56821989DCB83948E /* PersonalRecoveryEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalRecoveryEngineTests.swift; sourceTree = "<group>"; };
 		GB11415FC89C3BF6AB76BC94 /* TrendEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Trend/TrendEngine.swift; sourceTree = "<group>"; };
 		G756D086C12BD46E2A663469 /* TrendEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendEngineTests.swift; sourceTree = "<group>"; };
+		G8592B71DFEFC9B679B52C74 /* CorrelationPair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Correlation/CorrelationPair.swift; sourceTree = "<group>"; };
+		G4814460D27CA74FEE96F878 /* CorrelationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Correlation/CorrelationEngine.swift; sourceTree = "<group>"; };
+		G3EE01B524C4848DCA2C0F3D /* CorrelationEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorrelationEngineTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -306,6 +312,7 @@
 		A40000000000000000000002 /* StressWatch */ = {
 			isa = PBXGroup;
 			children = (
+				H40F1E4E65347A8F69F17C30 /* Correlation */,
 				H0F592569BC4BE550526D742 /* Trend */,
 				H04BE0ED06348AABBC78A8AC /* Scoring */,
 				H9AE531BF3C675400E515ADE /* Core */,
@@ -331,6 +338,7 @@
 		A40000000000000000000004 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				HCAD0C541AA76758F1603897 /* Correlation */,
 				HB2C4FC0C725552A0F98A882 /* Trend */,
 				H9420B95B5E8EAF7558B2800 /* Scoring */,
 				A2000000000000000000001E /* StressWatch.app */,
@@ -496,6 +504,7 @@
 				A40000000000000000000033 /* Baseline */,
 				A40000000000000000000034 /* Scoring */,
 				A40000000000000000000035 /* Trend */,
+				A40000000000000000000036 /* Correlation */,
 				A40000000000000000000030 /* LLM */,
 			);
 			name = Analysis;
@@ -682,6 +691,7 @@
 				C40000000000000000000013 /* Baseline */,
 				C40000000000000000000014 /* Scoring */,
 				C40000000000000000000015 /* Trend */,
+				C40000000000000000000016 /* Correlation */,
 				C40000000000000000000011 /* Storage */,
 				C40000000000000000000012 /* Support */,
 			);
@@ -793,6 +803,37 @@
 				G756D086C12BD46E2A663469 /* TrendEngineTests.swift */,
 			);
 			path = Trend;
+			sourceTree = "<group>";
+		};
+		HCAD0C541AA76758F1603897 /* Correlation */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Correlation;
+			sourceTree = "<group>";
+		};
+		H40F1E4E65347A8F69F17C30 /* Correlation */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Correlation;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000036 /* Correlation */ = {
+			isa = PBXGroup;
+			children = (
+				G8592B71DFEFC9B679B52C74 /* CorrelationPair.swift */,
+				G4814460D27CA74FEE96F878 /* CorrelationEngine.swift */,
+			);
+			name = Correlation;
+			sourceTree = "<group>";
+		};
+		C40000000000000000000016 /* Correlation */ = {
+			isa = PBXGroup;
+			children = (
+				G3EE01B524C4848DCA2C0F3D /* CorrelationEngineTests.swift */,
+			);
+			path = Correlation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -939,6 +980,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD1C877D3C2C852159FBBE4B /* CorrelationEngine.swift in Sources */,
+				F83BADEEC57EFA13EC07B7D9 /* CorrelationPair.swift in Sources */,
 				F7AC631F7D8ED0FCBE07C6C4 /* TrendEngine.swift in Sources */,
 				F4EF90CE24890DE5684A4AF8 /* PersonalRecoveryEngine.swift in Sources */,
 				F32DCB66C06E379CF52C8286 /* PersonalStressEngine.swift in Sources */,
@@ -1040,6 +1083,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F5A7D64B96E9BC00FADC5337 /* CorrelationEngineTests.swift in Sources */,
 				FC3A2E3C5BBCD7490279E3BB /* TrendEngineTests.swift in Sources */,
 				FF42D5BA60E66340A5666EB0 /* PersonalRecoveryEngineTests.swift in Sources */,
 				FE7986CB71F8A2805B7E92EA /* PersonalStressEngineTests.swift in Sources */,
