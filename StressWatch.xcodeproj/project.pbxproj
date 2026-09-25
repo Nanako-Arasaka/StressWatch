@@ -87,6 +87,35 @@
 		A10000000000000000000054 /* MiniMaxClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000054 /* MiniMaxClient.swift */; };
 		A10000000000000000000055 /* LLMPersonalizationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000055 /* LLMPersonalizationService.swift */; };
 		A10000000000000000000056 /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000056 /* KeychainStore.swift */; };
+		C10000000000000000000001 /* StressWatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20000000000000000000001 /* StressWatchTests.swift */; };
+		FF1146BEBF419CE42ABC69A5 /* DailyHealthMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = G90B6D2CFFA0453851C6B3C2 /* DailyHealthMetrics.swift */; };
+		F33FB63E396133882D1CC867 /* MetricAggregation.swift in Sources */ = {isa = PBXBuildFile; fileRef = GADBD1B2F8CE4BF446EE0626 /* MetricAggregation.swift */; };
+		FA1D328DB94A1F41918889B1 /* DailyMetricsAggregator.swift in Sources */ = {isa = PBXBuildFile; fileRef = G7FA9A0B03FE413FCA63486F /* DailyMetricsAggregator.swift */; };
+		F28B49F6DE768F5A07B5CEED /* TestCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = G1657650E6547197AC9EB7B4 /* TestCalendar.swift */; };
+		FF5F736E4B7A78576734603E /* HealthMetricFixture.swift in Sources */ = {isa = PBXBuildFile; fileRef = GEAB7D353F58B0BD53BCD485 /* HealthMetricFixture.swift */; };
+		F3FF78BC410D5AF33E668731 /* DailyHealthMetricsFixture.swift in Sources */ = {isa = PBXBuildFile; fileRef = G2140CE85F6AD4DCEE6FB7ED /* DailyHealthMetricsFixture.swift */; };
+		F5FA704FE9BC7A3EE002C071 /* MetricAggregationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = G6C6327B153B324D66F31E75 /* MetricAggregationTests.swift */; };
+		F2235409D21FC06183299E72 /* DailyMetricsAggregatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = G1718CE3293E0603A0BAD8C3 /* DailyMetricsAggregatorTests.swift */; };
+		F8F7278FF1C55F677B994C31 /* SleepSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = G559E03D7BC7F887C58D0206 /* SleepSession.swift */; };
+		F64DA18AE196FBA1A515D047 /* SleepSessionAggregationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = G8C8281D903668AB14779164 /* SleepSessionAggregationTests.swift */; };
+		F48CC9CC1FC82A0E321E8FFB /* LocalStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = GB1B80C1698F409E869A0929 /* LocalStorageTests.swift */; };
+		F52D46B59D3AAE52A232292F /* RobustStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = G8F174218B5C6A0CC7ABFC86 /* RobustStatistics.swift */; };
+		F634ACC96FDEAFAE367C2570 /* PersonalBaseline.swift in Sources */ = {isa = PBXBuildFile; fileRef = G6776B2949E15B4D0F4B97F5 /* PersonalBaseline.swift */; };
+		F17A30D2A8BFBA0FF0B98115 /* PersonalBaselineEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = G205AB64A9141853680D4563 /* PersonalBaselineEngine.swift */; };
+		F88F67E7B277ACA859ADC3A0 /* RobustStatisticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = G18755F02C2F9A779EBFD3C7 /* RobustStatisticsTests.swift */; };
+		FB0DA5BB8EF39244D64F54D5 /* PersonalBaselineEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = GEAACB6ABE7D69C6607DF811 /* PersonalBaselineEngineTests.swift */; };
+		F2AC2D4166CF5ABF3E0A2F2A /* ScoreContribution.swift in Sources */ = {isa = PBXBuildFile; fileRef = G6B7A1EDD7AABA63D6C1AE60 /* ScoreContribution.swift */; };
+		F345AF6F460732D431F56863 /* ActivityLoadEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = G0E4B4ECBBEDE541EF14916E /* ActivityLoadEngine.swift */; };
+		FCDBE625B40462EDC3528704 /* SleepQualityEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = G61B28178323FF6D21E789C8 /* SleepQualityEngine.swift */; };
+		F86D8E46B307728102223035 /* DataCompletenessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = GED792D2E78F80C603D9B81E /* DataCompletenessTests.swift */; };
+		F1AE653893A05AA6978E9DB9 /* ActivityLoadEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = GC82B33FACCF778F5D826BD4 /* ActivityLoadEngineTests.swift */; };
+		F42879F9E7950926F29F1CAA /* SleepQualityEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = G761571E8E1260BA4388C3DF /* SleepQualityEngineTests.swift */; };
+		F32DCB66C06E379CF52C8286 /* PersonalStressEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = GDD6B26B4825679B0B372FCC /* PersonalStressEngine.swift */; };
+		F4EF90CE24890DE5684A4AF8 /* PersonalRecoveryEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = G383D736E9098C73C3E222DC /* PersonalRecoveryEngine.swift */; };
+		FE7986CB71F8A2805B7E92EA /* PersonalStressEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = GA8AF7B38FF6CCCBA623237F /* PersonalStressEngineTests.swift */; };
+		FF42D5BA60E66340A5666EB0 /* PersonalRecoveryEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = G44CE1B56821989DCB83948E /* PersonalRecoveryEngineTests.swift */; };
+		F7AC631F7D8ED0FCBE07C6C4 /* TrendEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = GB11415FC89C3BF6AB76BC94 /* TrendEngine.swift */; };
+		FC3A2E3C5BBCD7490279E3BB /* TrendEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = G756D086C12BD46E2A663469 /* TrendEngineTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -96,6 +125,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = B50000000000000000000001;
 			remoteInfo = StressWatchWidgetExtension;
+		};
+		C60000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A60000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A50000000000000000000001;
+			remoteInfo = StressWatch;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -197,6 +233,36 @@
 		A20000000000000000000054 /* MiniMaxClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/LLM/MiniMaxClient.swift; sourceTree = "<group>"; };
 		A20000000000000000000055 /* LLMPersonalizationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/LLM/LLMPersonalizationService.swift; sourceTree = "<group>"; };
 		A20000000000000000000056 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Security/KeychainStore.swift; sourceTree = "<group>"; };
+		C20000000000000000000001 /* StressWatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressWatchTests.swift; sourceTree = "<group>"; };
+		C20000000000000000000002 /* StressWatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StressWatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		G90B6D2CFFA0453851C6B3C2 /* DailyHealthMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Metrics/DailyHealthMetrics.swift; sourceTree = "<group>"; };
+		GADBD1B2F8CE4BF446EE0626 /* MetricAggregation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Metrics/MetricAggregation.swift; sourceTree = "<group>"; };
+		G7FA9A0B03FE413FCA63486F /* DailyMetricsAggregator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Metrics/DailyMetricsAggregator.swift; sourceTree = "<group>"; };
+		G1657650E6547197AC9EB7B4 /* TestCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCalendar.swift; sourceTree = "<group>"; };
+		GEAB7D353F58B0BD53BCD485 /* HealthMetricFixture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthMetricFixture.swift; sourceTree = "<group>"; };
+		G2140CE85F6AD4DCEE6FB7ED /* DailyHealthMetricsFixture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyHealthMetricsFixture.swift; sourceTree = "<group>"; };
+		G6C6327B153B324D66F31E75 /* MetricAggregationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricAggregationTests.swift; sourceTree = "<group>"; };
+		G1718CE3293E0603A0BAD8C3 /* DailyMetricsAggregatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyMetricsAggregatorTests.swift; sourceTree = "<group>"; };
+		G559E03D7BC7F887C58D0206 /* SleepSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/SleepSession.swift; sourceTree = "<group>"; };
+		G8C8281D903668AB14779164 /* SleepSessionAggregationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepSessionAggregationTests.swift; sourceTree = "<group>"; };
+		GB1B80C1698F409E869A0929 /* LocalStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStorageTests.swift; sourceTree = "<group>"; };
+		G8F174218B5C6A0CC7ABFC86 /* RobustStatistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Baseline/RobustStatistics.swift; sourceTree = "<group>"; };
+		G6776B2949E15B4D0F4B97F5 /* PersonalBaseline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Baseline/PersonalBaseline.swift; sourceTree = "<group>"; };
+		G205AB64A9141853680D4563 /* PersonalBaselineEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Baseline/PersonalBaselineEngine.swift; sourceTree = "<group>"; };
+		G18755F02C2F9A779EBFD3C7 /* RobustStatisticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobustStatisticsTests.swift; sourceTree = "<group>"; };
+		GEAACB6ABE7D69C6607DF811 /* PersonalBaselineEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalBaselineEngineTests.swift; sourceTree = "<group>"; };
+		G6B7A1EDD7AABA63D6C1AE60 /* ScoreContribution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Scoring/ScoreContribution.swift; sourceTree = "<group>"; };
+		G0E4B4ECBBEDE541EF14916E /* ActivityLoadEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Scoring/ActivityLoadEngine.swift; sourceTree = "<group>"; };
+		G61B28178323FF6D21E789C8 /* SleepQualityEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Scoring/SleepQualityEngine.swift; sourceTree = "<group>"; };
+		GED792D2E78F80C603D9B81E /* DataCompletenessTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCompletenessTests.swift; sourceTree = "<group>"; };
+		GC82B33FACCF778F5D826BD4 /* ActivityLoadEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityLoadEngineTests.swift; sourceTree = "<group>"; };
+		G761571E8E1260BA4388C3DF /* SleepQualityEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepQualityEngineTests.swift; sourceTree = "<group>"; };
+		GDD6B26B4825679B0B372FCC /* PersonalStressEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Scoring/PersonalStressEngine.swift; sourceTree = "<group>"; };
+		G383D736E9098C73C3E222DC /* PersonalRecoveryEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Scoring/PersonalRecoveryEngine.swift; sourceTree = "<group>"; };
+		GA8AF7B38FF6CCCBA623237F /* PersonalStressEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalStressEngineTests.swift; sourceTree = "<group>"; };
+		G44CE1B56821989DCB83948E /* PersonalRecoveryEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalRecoveryEngineTests.swift; sourceTree = "<group>"; };
+		GB11415FC89C3BF6AB76BC94 /* TrendEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Trend/TrendEngine.swift; sourceTree = "<group>"; };
+		G756D086C12BD46E2A663469 /* TrendEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendEngineTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -216,6 +282,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C30000000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -224,6 +297,7 @@
 			children = (
 				A40000000000000000000002 /* StressWatch */,
 				B40000000000000000000002 /* StressWatchWidgetExtension */,
+				C40000000000000000000001 /* StressWatchTests */,
 				A40000000000000000000003 /* Frameworks */,
 				A40000000000000000000004 /* Products */,
 			);
@@ -232,6 +306,9 @@
 		A40000000000000000000002 /* StressWatch */ = {
 			isa = PBXGroup;
 			children = (
+				H0F592569BC4BE550526D742 /* Trend */,
+				H04BE0ED06348AABBC78A8AC /* Scoring */,
+				H9AE531BF3C675400E515ADE /* Core */,
 				A40000000000000000000010 /* App */,
 				A40000000000000000000011 /* Core */,
 				A40000000000000000000016 /* Features */,
@@ -244,6 +321,7 @@
 		A40000000000000000000003 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				HBA3A32CF4B80ECC959E94EB /* Analysis */,
 				A2000000000000000000001A /* HealthKit.framework */,
 				A2000000000000000000001B /* Charts.framework */,
 			);
@@ -253,8 +331,11 @@
 		A40000000000000000000004 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				HB2C4FC0C725552A0F98A882 /* Trend */,
+				H9420B95B5E8EAF7558B2800 /* Scoring */,
 				A2000000000000000000001E /* StressWatch.app */,
 				B20000000000000000000003 /* StressWatchWidgetExtension.appex */,
+				C20000000000000000000002 /* StressWatchTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -273,9 +354,9 @@
 				A40000000000000000000024 /* HealthKit */,
 				A40000000000000000000025 /* Storage */,
 				A40000000000000000000026 /* Analysis */,
-				A40000000000000000000031 /* Security */,
-				A4000000000000000000002F /* LiveStress */,
 				A40000000000000000000027 /* Models */,
+				A4000000000000000000002F /* LiveStress */,
+				A40000000000000000000031 /* Security */,
 				A40000000000000000000028 /* Utils */,
 				A40000000000000000000029 /* Extensions */,
 			);
@@ -411,9 +492,45 @@
 				A20000000000000000000051 /* Core/Analysis/PersonalizationEngine.swift */,
 				A20000000000000000000052 /* Core/Analysis/PersonalizedAdviceGenerator.swift */,
 				A20000000000000000000053 /* Core/Analysis/GoalOptimizer.swift */,
+				A40000000000000000000032 /* Metrics */,
+				A40000000000000000000033 /* Baseline */,
+				A40000000000000000000034 /* Scoring */,
+				A40000000000000000000035 /* Trend */,
 				A40000000000000000000030 /* LLM */,
 			);
 			name = Analysis;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000032 /* Metrics */ = {
+			isa = PBXGroup;
+			children = (
+				G90B6D2CFFA0453851C6B3C2 /* DailyHealthMetrics.swift */,
+				GADBD1B2F8CE4BF446EE0626 /* MetricAggregation.swift */,
+				G7FA9A0B03FE413FCA63486F /* DailyMetricsAggregator.swift */,
+			);
+			name = Metrics;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000033 /* Baseline */ = {
+			isa = PBXGroup;
+			children = (
+				G8F174218B5C6A0CC7ABFC86 /* RobustStatistics.swift */,
+				G6776B2949E15B4D0F4B97F5 /* PersonalBaseline.swift */,
+				G205AB64A9141853680D4563 /* PersonalBaselineEngine.swift */,
+			);
+			name = Baseline;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000034 /* Scoring */ = {
+			isa = PBXGroup;
+			children = (
+				G6B7A1EDD7AABA63D6C1AE60 /* ScoreContribution.swift */,
+				G0E4B4ECBBEDE541EF14916E /* ActivityLoadEngine.swift */,
+				G61B28178323FF6D21E789C8 /* SleepQualityEngine.swift */,
+				GDD6B26B4825679B0B372FCC /* PersonalStressEngine.swift */,
+				G383D736E9098C73C3E222DC /* PersonalRecoveryEngine.swift */,
+			);
+			name = Scoring;
 			sourceTree = "<group>";
 		};
 		A40000000000000000000027 /* Models */ = {
@@ -424,6 +541,7 @@
 				A20000000000000000000004 /* Core/Models/StressScore.swift */,
 				A20000000000000000000005 /* Core/Models/RecoveryScore.swift */,
 				A20000000000000000000040 /* Core/Models/DailyWellnessCheckIn.swift */,
+				G559E03D7BC7F887C58D0206 /* SleepSession.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -556,6 +674,127 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		C40000000000000000000001 /* StressWatchTests */ = {
+			isa = PBXGroup;
+			children = (
+				C20000000000000000000001 /* StressWatchTests.swift */,
+				C40000000000000000000010 /* Metrics */,
+				C40000000000000000000013 /* Baseline */,
+				C40000000000000000000014 /* Scoring */,
+				C40000000000000000000015 /* Trend */,
+				C40000000000000000000011 /* Storage */,
+				C40000000000000000000012 /* Support */,
+			);
+			path = StressWatchTests;
+			sourceTree = "<group>";
+		};
+		C40000000000000000000010 /* Metrics */ = {
+			isa = PBXGroup;
+			children = (
+				G1718CE3293E0603A0BAD8C3 /* DailyMetricsAggregatorTests.swift */,
+				G6C6327B153B324D66F31E75 /* MetricAggregationTests.swift */,
+				G8C8281D903668AB14779164 /* SleepSessionAggregationTests.swift */,
+			);
+			path = Metrics;
+			sourceTree = "<group>";
+		};
+		C40000000000000000000013 /* Baseline */ = {
+			isa = PBXGroup;
+			children = (
+				G18755F02C2F9A779EBFD3C7 /* RobustStatisticsTests.swift */,
+				GEAACB6ABE7D69C6607DF811 /* PersonalBaselineEngineTests.swift */,
+			);
+			path = Baseline;
+			sourceTree = "<group>";
+		};
+		C40000000000000000000014 /* Scoring */ = {
+			isa = PBXGroup;
+			children = (
+				GED792D2E78F80C603D9B81E /* DataCompletenessTests.swift */,
+				GC82B33FACCF778F5D826BD4 /* ActivityLoadEngineTests.swift */,
+				G761571E8E1260BA4388C3DF /* SleepQualityEngineTests.swift */,
+				GA8AF7B38FF6CCCBA623237F /* PersonalStressEngineTests.swift */,
+				G44CE1B56821989DCB83948E /* PersonalRecoveryEngineTests.swift */,
+			);
+			path = Scoring;
+			sourceTree = "<group>";
+		};
+		C40000000000000000000011 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				GB1B80C1698F409E869A0929 /* LocalStorageTests.swift */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
+		C40000000000000000000012 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				G1657650E6547197AC9EB7B4 /* TestCalendar.swift */,
+				GEAB7D353F58B0BD53BCD485 /* HealthMetricFixture.swift */,
+				G2140CE85F6AD4DCEE6FB7ED /* DailyHealthMetricsFixture.swift */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		H9AE531BF3C675400E515ADE /* Core */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		HBA3A32CF4B80ECC959E94EB /* Analysis */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Analysis;
+			sourceTree = "<group>";
+		};
+		H9420B95B5E8EAF7558B2800 /* Scoring */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Scoring;
+			sourceTree = "<group>";
+		};
+		H04BE0ED06348AABBC78A8AC /* Scoring */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Scoring;
+			sourceTree = "<group>";
+		};
+		HB2C4FC0C725552A0F98A882 /* Trend */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Trend;
+			sourceTree = "<group>";
+		};
+		H0F592569BC4BE550526D742 /* Trend */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Trend;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000035 /* Trend */ = {
+			isa = PBXGroup;
+			children = (
+				GB11415FC89C3BF6AB76BC94 /* TrendEngine.swift */,
+			);
+			name = Trend;
+			sourceTree = "<group>";
+		};
+		C40000000000000000000015 /* Trend */ = {
+			isa = PBXGroup;
+			children = (
+				G756D086C12BD46E2A663469 /* TrendEngineTests.swift */,
+			);
+			path = Trend;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -595,6 +834,24 @@
 			productReference = B20000000000000000000003 /* StressWatchWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		C50000000000000000000001 /* StressWatchTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C90000000000000000000001 /* Build configuration list for PBXNativeTarget "StressWatchTests" */;
+			buildPhases = (
+				C30000000000000000000001 /* Sources */,
+				C30000000000000000000002 /* Frameworks */,
+				C30000000000000000000003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C60000000000000000000002 /* PBXTargetDependency */,
+			);
+			name = StressWatchTests;
+			productName = StressWatchTests;
+			productReference = C20000000000000000000002 /* StressWatchTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -624,6 +881,10 @@
 							};
 						};
 					};
+					C50000000000000000000001 = {
+						CreatedOnToolsVersion = 15.3;
+						TestTargetID = A50000000000000000000001;
+					};
 				};
 			};
 			buildConfigurationList = A90000000000000000000001 /* Build configuration list for PBXProject "StressWatch" */;
@@ -641,6 +902,7 @@
 			targets = (
 				A50000000000000000000001 /* StressWatch */,
 				B50000000000000000000001 /* StressWatchWidgetExtension */,
+				C50000000000000000000001 /* StressWatchTests */,
 			);
 		};
 /* End PBXProject section */
@@ -663,6 +925,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C30000000000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -670,6 +939,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F7AC631F7D8ED0FCBE07C6C4 /* TrendEngine.swift in Sources */,
+				F4EF90CE24890DE5684A4AF8 /* PersonalRecoveryEngine.swift in Sources */,
+				F32DCB66C06E379CF52C8286 /* PersonalStressEngine.swift in Sources */,
+				FCDBE625B40462EDC3528704 /* SleepQualityEngine.swift in Sources */,
+				F345AF6F460732D431F56863 /* ActivityLoadEngine.swift in Sources */,
+				F2AC2D4166CF5ABF3E0A2F2A /* ScoreContribution.swift in Sources */,
+				F17A30D2A8BFBA0FF0B98115 /* PersonalBaselineEngine.swift in Sources */,
+				F634ACC96FDEAFAE367C2570 /* PersonalBaseline.swift in Sources */,
+				F52D46B59D3AAE52A232292F /* RobustStatistics.swift in Sources */,
+				F8F7278FF1C55F677B994C31 /* SleepSession.swift in Sources */,
+				FA1D328DB94A1F41918889B1 /* DailyMetricsAggregator.swift in Sources */,
+				F33FB63E396133882D1CC867 /* MetricAggregation.swift in Sources */,
+				FF1146BEBF419CE42ABC69A5 /* DailyHealthMetrics.swift in Sources */,
 				A10000000000000000000001 /* App/StressWatchApp.swift in Sources */,
 				A10000000000000000000002 /* Core/Models/HealthMetric.swift in Sources */,
 				A10000000000000000000003 /* Core/Models/Baseline.swift in Sources */,
@@ -754,6 +1036,29 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C30000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FC3A2E3C5BBCD7490279E3BB /* TrendEngineTests.swift in Sources */,
+				FF42D5BA60E66340A5666EB0 /* PersonalRecoveryEngineTests.swift in Sources */,
+				FE7986CB71F8A2805B7E92EA /* PersonalStressEngineTests.swift in Sources */,
+				F42879F9E7950926F29F1CAA /* SleepQualityEngineTests.swift in Sources */,
+				F1AE653893A05AA6978E9DB9 /* ActivityLoadEngineTests.swift in Sources */,
+				F86D8E46B307728102223035 /* DataCompletenessTests.swift in Sources */,
+				FB0DA5BB8EF39244D64F54D5 /* PersonalBaselineEngineTests.swift in Sources */,
+				F88F67E7B277ACA859ADC3A0 /* RobustStatisticsTests.swift in Sources */,
+				F48CC9CC1FC82A0E321E8FFB /* LocalStorageTests.swift in Sources */,
+				F64DA18AE196FBA1A515D047 /* SleepSessionAggregationTests.swift in Sources */,
+				F2235409D21FC06183299E72 /* DailyMetricsAggregatorTests.swift in Sources */,
+				F5FA704FE9BC7A3EE002C071 /* MetricAggregationTests.swift in Sources */,
+				F3FF78BC410D5AF33E668731 /* DailyHealthMetricsFixture.swift in Sources */,
+				FF5F736E4B7A78576734603E /* HealthMetricFixture.swift in Sources */,
+				F28B49F6DE768F5A07B5CEED /* TestCalendar.swift in Sources */,
+				C10000000000000000000001 /* StressWatchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -761,6 +1066,11 @@
 			isa = PBXTargetDependency;
 			target = B50000000000000000000001 /* StressWatchWidgetExtension */;
 			targetProxy = B60000000000000000000001 /* PBXContainerItemProxy */;
+		};
+		C60000000000000000000002 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A50000000000000000000001 /* StressWatch */;
+			targetProxy = C60000000000000000000001 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -999,6 +1309,56 @@
 			};
 			name = Release;
 		};
+		C80000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H8L2CAGP84;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stresswatch.demo.StressWatchTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StressWatch.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/StressWatch";
+				BUNDLE_LOADER = "$(TEST_HOST)";
+			};
+			name = Debug;
+		};
+		C80000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H8L2CAGP84;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stresswatch.demo.StressWatchTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StressWatch.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/StressWatch";
+				BUNDLE_LOADER = "$(TEST_HOST)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1025,6 +1385,15 @@
 			buildConfigurations = (
 				B80000000000000000000001 /* Debug */,
 				B80000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C90000000000000000000001 /* Build configuration list for PBXNativeTarget "StressWatchTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C80000000000000000000001 /* Debug */,
+				C80000000000000000000002 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

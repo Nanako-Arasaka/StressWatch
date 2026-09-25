@@ -25,3 +25,17 @@ ml_training/data/*.csv
 ml_training/output/*.joblib
 ml_training/output/*.mlmodel
 ml_training/output/*.json
+
+# pbxproj 备份（Scripts/add_swift_files.py 每次运行自动生成）
+*.pbxproj.bak
+*.pbxproj.bak-*
+
+# 构建产物与本地工具目录
+build/
+DerivedData/
+*.ipa
+.DS_Store
+.git-rewrite/
+.workbuddy/
+__pycache__/
+*.pyc
