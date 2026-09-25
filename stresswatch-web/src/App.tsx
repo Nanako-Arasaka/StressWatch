@@ -1253,6 +1253,75 @@ function useRevealOnView<T extends Element>() {
   return { active, ref };
 }
 
+/** Scroll-reveal wrapper matching the home tiles (`.reveal-group.is-active`). */
+function RevealBlock({
+  className,
+  children
+}: {
+  className?: string;
+  children: ReactNode;
+}) {
+  const { active, ref } = useRevealOnView<HTMLDivElement>();
+  return (
+    <div ref={ref} className={`reveal-group ${active ? "is-active" : ""} ${className ?? ""}`}>
+      {children}
+    </div>
+  );
+}
+
+/** Staggered child for `RevealBlock` / `SubpageHero`. */
+function RevealItem({
+  className,
+  delay = 0,
+  children
+}: {
+  className?: string;
+  delay?: number;
+  children: ReactNode;
+}) {
+  return (
+    <div className={`reveal-item ${className ?? ""}`} style={{ transitionDelay: `${delay}s` }}>
+      {children}
+    </div>
+  );
+}
+
+/**
+ * Subpage hero with the same entrance as the home hero:
+ * eyebrow/title/lead rise in as one group; optional trailing slot (CTAs,
+ * chips, status row) staggers after.
+ */
+function SubpageHero({
+  className = "bg-white px-5 pb-20 pt-28 sm:pb-24 sm:pt-36",
+  eyebrow,
+  title1,
+  title2,
+  subtitle,
+  trailing
+}: {
+  className?: string;
+  eyebrow: ReactNode;
+  title1: ReactNode;
+  title2: ReactNode;
+  subtitle: ReactNode;
+  trailing?: ReactNode;
+}) {
+  return (
+    <RevealBlock className={className}>
+      <RevealItem className="mx-auto max-w-[820px] text-center">
+        <span className="type-eyebrow text-blue">{eyebrow}</span>
+        <h1 className="type-hero mt-3 text-ink">
+          {title1}
+          <br />
+          {title2}
+        </h1>
+        <p className="type-lead mx-auto mt-5 max-w-[680px] text-ink-2">{subtitle}</p>
+        {trailing}
+      </RevealItem>
+    </RevealBlock>
+  );
+}
+
 function buildSmoothPath(points: Array<{ x: number; y: number }>) {
   if (points.length === 0) return "";
   return points.reduce((path, point, index) => {
@@ -3030,7 +3099,7 @@ function ChangelogEntry({
   const displayTitle = localizeCommitTitle(entry.title, language);
   const showOriginal = language === "zh" && displayTitle !== entry.title;
   return (
-    <article className="flex flex-col gap-3 rounded-[18px] border border-black/10 bg-white px-6 py-4 sm:flex-row sm:items-center sm:gap-6 sm:px-7 sm:py-5">
+    <article className="mockup-card flex flex-col gap-3 rounded-[18px] border border-black/10 bg-white px-6 py-4 sm:flex-row sm:items-center sm:gap-6 sm:px-7 sm:py-5">
       <div className="flex w-full shrink-0 items-center justify-between gap-3 text-[12px] text-ink-2 sm:w-[150px] sm:flex-col sm:items-start sm:justify-center sm:text-[13px]">
         <span className="font-medium text-ink-2">{localizeCommitDate(entry.date, language)}</span>
         <span className="font-mono text-ink">{entry.sha}</span>
@@ -3208,15 +3277,13 @@ function ChangelogPage() {
         <NavBar language={language} setLanguage={switchLanguage} t={t} variant="changelog" />
 
         {/* Hero */}
-        <section className="bg-white px-5 pb-20 pt-28 sm:pb-24 sm:pt-36">
-          <div className="mx-auto max-w-[820px] text-center">
-            <span className="type-eyebrow text-blue">{c.eyebrow}</span>
-            <h1 className="type-hero mt-3 text-ink">
-              {c.title1}
-              <br />
-              {c.title2}
-            </h1>
-            <p className="type-lead mx-auto mt-5 max-w-[680px] text-ink-2">{c.subtitle}</p>
+        <SubpageHero
+          className="bg-white px-5 pb-20 pt-28 sm:pb-24 sm:pt-36"
+          eyebrow={c.eyebrow}
+          title1={c.title1}
+          title2={c.title2}
+          subtitle={c.subtitle}
+          trailing={
             <div className="mt-7 flex flex-col items-center justify-center gap-3 text-[13px] sm:flex-row sm:gap-5">
               <a
                 className="text-blue"
@@ -3245,43 +3312,52 @@ function ChangelogPage() {
                 </span>
               ) : null}
             </div>
-          </div>
-        </section>
+          }
+        />
 
         {/* Timeline */}
         <section className="bg-parchment px-5 pb-24 pt-4 sm:pt-8">
-          <div className="mx-auto flex max-w-[1040px] gap-8 sm:gap-12">
-            <div className="hidden w-1 shrink-0 self-stretch bg-[#D2D2D7] sm:block" aria-hidden="true" />
-            <div className="flex flex-1 flex-col gap-10">
-              {snapshotGroups.map((g) => (
-                <div key={g.label} className="flex flex-col gap-4">
-                  <div className="flex flex-col gap-1">
-                    <span className="type-eyebrow text-blue">{g.label}</span>
-                    <p className="text-[14px] text-ink-2">{g.summary}</p>
+          <RevealBlock>
+          <RevealBlock>
+            <div className="reveal-item mx-auto flex max-w-[1040px] gap-8 sm:gap-12">
+              <div className="hidden w-1 shrink-0 self-stretch bg-[#D2D2D7] sm:block" aria-hidden="true" />
+              <div className="flex flex-1 flex-col gap-10">
+                {snapshotGroups.map((g, gi) => (
+                  <div key={g.label} className="flex flex-col gap-4">
+                    <RevealItem className="flex flex-col gap-1" delay={gi * 0.08}>
+                      <span className="type-eyebrow text-blue">{g.label}</span>
+                      <p className="text-[14px] text-ink-2">{g.summary}</p>
+                    </RevealItem>
+                    <div className="flex flex-col gap-3">
+                      {g.entries.map((e, ei) => (
+                        <RevealItem key={e.sha} delay={0.1 + ei * 0.06}>
+                          <ChangelogEntry entry={e} language={language} />
+                        </RevealItem>
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-3">
-                    {g.entries.map((e) => (
-                      <ChangelogEntry key={e.sha} entry={e} language={language} />
-                    ))}
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          </RevealBlock>
+          </RevealBlock>
         </section>
 
         {/* Source note */}
         <section className="bg-white px-5 py-16">
-          <div className="mx-auto flex max-w-[820px] flex-col items-center gap-3 text-center">
+          <RevealBlock>
+          <div className="reveal-item mx-auto flex max-w-[820px] flex-col items-center gap-3 text-center">
             <span className="type-eyebrow text-blue">{c.sourceTitle}</span>
             <p className="max-w-[820px] text-[14px] leading-relaxed text-ink-2">{c.sourceBody}</p>
             <p className="text-[12px] font-medium text-ink">{c.tagLegend}</p>
           </div>
+          </RevealBlock>
         </section>
 
         {/* CTA */}
         <section className="bg-parchment px-5 py-20">
-          <div className="mx-auto flex max-w-[820px] flex-col items-center gap-6 text-center">
+          <RevealBlock>
+          <div className="reveal-item mx-auto flex max-w-[820px] flex-col items-center gap-6 text-center">
             <h2 className="text-[34px] font-semibold leading-tight tracking-tight text-ink sm:text-[40px]">
               {c.ctaTitle}
             </h2>
@@ -3298,6 +3374,7 @@ function ChangelogPage() {
               {c.backHome} ›
             </a>
           </div>
+          </RevealBlock>
         </section>
 
         <Footer t={t} variant="changelog" />
@@ -3330,44 +3407,44 @@ function PrivacyPage() {
         <NavBar language={language} setLanguage={switchLanguage} t={t} variant="subpage" />
 
         {/* Hero — light parchment */}
-        <section className="bg-parchment px-5 pb-20 pt-28 sm:pb-24 sm:pt-36">
-          <div className="mx-auto max-w-[820px] text-center">
-            <span className="type-eyebrow text-blue">{p.eyebrow}</span>
-            <h1 className="type-hero mt-3 text-ink">
-              {p.title1}
-              <br />
-              {p.title2}
-            </h1>
-            <p className="type-lead mx-auto mt-5 max-w-[680px] text-ink-2">{p.subtitle}</p>
+        <SubpageHero
+          className="bg-parchment px-5 pb-20 pt-28 sm:pb-24 sm:pt-36"
+          eyebrow={p.eyebrow}
+          title1={p.title1}
+          title2={p.title2}
+          subtitle={p.subtitle}
+          trailing={
             <div className="mt-7 flex flex-wrap items-center justify-center gap-2">
-              {p.introChips.map((chip) => (
-                <span
-                  key={chip}
-                  className="inline-flex items-center rounded-full bg-white px-3 py-1 text-[12px] font-semibold text-ink-2 shadow-product"
-                >
-                  {chip}
-                </span>
+              {p.introChips.map((chip, i) => (
+                <RevealItem key={chip} delay={0.18 + i * 0.07} className="inline-flex">
+                  <span className="inline-flex items-center rounded-full bg-white px-3 py-1 text-[12px] font-semibold text-ink-2 shadow-product">
+                    {chip}
+                  </span>
+                </RevealItem>
               ))}
             </div>
-          </div>
-        </section>
+          }
+        />
 
         {/* Intro — light, single product card */}
         <section className="bg-white px-5 py-16">
-          <div className="mx-auto max-w-[820px] text-center">
+          <RevealBlock>
+          <div className="reveal-item mx-auto max-w-[820px] text-center">
             <span className="type-eyebrow text-blue">{p.introEyebrow}</span>
             <h2 className="mt-3 text-[34px] font-semibold leading-tight tracking-tight text-ink sm:text-[40px]">
               {p.introTitle}
             </h2>
-            <p className="mx-auto mt-5 max-w-[680px] text-[18px] leading-relaxed text-ink-2">
+            <p className="reveal-item mx-auto mt-5 max-w-[680px] text-[18px] leading-relaxed text-ink-2">
               {p.introBody}
             </p>
           </div>
+          </RevealBlock>
         </section>
 
         {/* Four pillars — parchment, two-column cards */}
         <section className="bg-parchment px-5 py-20">
-          <div className="mx-auto flex max-w-[1040px] flex-col items-center gap-12">
+          <RevealBlock>
+          <div className="reveal-item mx-auto flex max-w-[1040px] flex-col items-center gap-12">
             <div className="text-center">
               <span className="type-eyebrow text-blue">{p.pillarsHeading}</span>
               <h2 className="mt-3 text-[34px] font-semibold leading-tight tracking-tight text-ink sm:text-[40px]">
@@ -3389,11 +3466,13 @@ function PrivacyPage() {
               ))}
             </div>
           </div>
+          </RevealBlock>
         </section>
 
         {/* HealthKit reads — light, two-column: list + reads card */}
         <section className="bg-white px-5 py-20">
-          <div className="mx-auto flex max-w-[1040px] flex-col gap-10 sm:flex-row sm:gap-12">
+          <RevealBlock>
+          <div className="reveal-item mx-auto flex max-w-[1040px] flex-col gap-10 sm:flex-row sm:gap-12">
             <div className="flex flex-1 flex-col gap-4">
               <span className="type-eyebrow text-blue">{p.hkBadge}</span>
               <h2 className="text-[34px] font-semibold leading-tight tracking-tight text-ink sm:text-[40px]">
@@ -3418,17 +3497,19 @@ function PrivacyPage() {
               </div>
             </div>
           </div>
+          </RevealBlock>
         </section>
 
         {/* Networking inventory — dark tile, two-tone row */}
         <section className="bg-[#272729] px-5 py-20 text-white">
-          <div className="mx-auto flex max-w-[1040px] flex-col gap-12">
+          <RevealBlock>
+          <div className="reveal-item mx-auto flex max-w-[1040px] flex-col gap-12">
             <div className="text-center">
               <span className="type-eyebrow text-blue-sky">{p.analyticsBadge}</span>
               <h2 className="mt-3 text-[34px] font-semibold leading-tight tracking-tight sm:text-[40px]">
                 {p.analyticsTitle}
               </h2>
-              <p className="mx-auto mt-4 max-w-[680px] text-[18px] leading-relaxed text-white/65">
+              <p className="reveal-item mx-auto mt-4 max-w-[680px] text-[18px] leading-relaxed text-white/65">
                 {p.analyticsBody}
               </p>
             </div>
@@ -3460,11 +3541,13 @@ function PrivacyPage() {
               ))}
             </div>
           </div>
+          </RevealBlock>
         </section>
 
         {/* Documentation — parchment */}
         <section className="bg-parchment px-5 py-20">
-          <div className="mx-auto flex max-w-[820px] flex-col items-center gap-4 text-center">
+          <RevealBlock>
+          <div className="reveal-item mx-auto flex max-w-[820px] flex-col items-center gap-4 text-center">
             <span className="type-eyebrow text-blue">{p.sourceBadge}</span>
             <h2 className="text-[34px] font-semibold leading-tight tracking-tight text-ink sm:text-[40px]">
               {p.sourceTitle}
@@ -3483,11 +3566,13 @@ function PrivacyPage() {
               ))}
             </div>
           </div>
+          </RevealBlock>
         </section>
 
         {/* CTA — light */}
         <section className="bg-white px-5 py-20">
-          <div className="mx-auto flex max-w-[820px] flex-col items-center gap-6 text-center">
+          <RevealBlock>
+          <div className="reveal-item mx-auto flex max-w-[820px] flex-col items-center gap-6 text-center">
             <h2 className="text-[34px] font-semibold leading-tight tracking-tight text-ink sm:text-[40px]">
               {p.ctaTitle}
             </h2>
@@ -3507,6 +3592,7 @@ function PrivacyPage() {
               {p.backHome} ›
             </a>
           </div>
+          </RevealBlock>
         </section>
 
         <Footer t={t} variant="subpage" />
@@ -3540,21 +3626,18 @@ function AboutPage() {
         <NavBar language={language} setLanguage={switchLanguage} t={t} variant="subpage" />
 
         {/* Hero — parchment, mirrors the other subpages */}
-        <section className="bg-parchment px-5 pb-20 pt-28 sm:pb-24 sm:pt-36">
-          <div className="mx-auto max-w-[820px] text-center">
-            <span className="type-eyebrow text-blue">{a.eyebrow}</span>
-            <h1 className="type-hero mt-3 text-ink">
-              {a.title1}
-              <br />
-              {a.title2}
-            </h1>
-            <p className="type-lead mx-auto mt-5 max-w-[680px] text-ink-2">{a.subtitle}</p>
-          </div>
-        </section>
+        <SubpageHero
+          className="bg-parchment px-5 pb-20 pt-28 sm:pb-24 sm:pt-36"
+          eyebrow={a.eyebrow}
+          title1={a.title1}
+          title2={a.title2}
+          subtitle={a.subtitle}
+        />
 
         {/* Profile — light, two-column: avatar block + bio */}
         <section className="bg-white px-5 py-20">
-          <div className="mx-auto flex max-w-[1040px] flex-col gap-10 sm:flex-row sm:gap-14">
+          <RevealBlock>
+          <div className="reveal-item mx-auto flex max-w-[1040px] flex-col gap-10 sm:flex-row sm:gap-14">
             {/* Avatar / role card — single product shadow, mirrors Privacy hero card */}
             <aside className="flex flex-1 flex-col items-center gap-5 rounded-[24px] border border-black/10 bg-parchment p-8 shadow-product">
               <div
@@ -3612,17 +3695,19 @@ function AboutPage() {
               </div>
             </div>
           </div>
+          </RevealBlock>
         </section>
 
         {/* Contact — parchment, two stacked rows: GitHub + Email */}
         <section className="bg-parchment px-5 py-20">
-          <div className="mx-auto flex max-w-[820px] flex-col gap-8">
+          <RevealBlock>
+          <div className="reveal-item mx-auto flex max-w-[820px] flex-col gap-8">
             <div className="text-center">
               <span className="type-eyebrow text-blue">{a.contactBadge}</span>
               <h2 className="mt-3 text-[34px] font-semibold leading-tight tracking-tight text-ink sm:text-[40px]">
                 {a.contactTitle}
               </h2>
-              <p className="mx-auto mt-4 max-w-[680px] text-[16px] leading-relaxed text-ink-2">
+              <p className="reveal-item mx-auto mt-4 max-w-[680px] text-[16px] leading-relaxed text-ink-2">
                 {a.contactSub}
               </p>
             </div>
@@ -3677,11 +3762,13 @@ function AboutPage() {
               <span className="shrink-0 text-[18px] text-blue" aria-hidden="true">›</span>
             </a>
           </div>
+          </RevealBlock>
         </section>
 
         {/* CTA — light, mirrors Privacy subpage */}
         <section className="bg-white px-5 py-20">
-          <div className="mx-auto flex max-w-[820px] flex-col items-center gap-6 text-center">
+          <RevealBlock>
+          <div className="reveal-item mx-auto flex max-w-[820px] flex-col items-center gap-6 text-center">
             <h2 className="text-[34px] font-semibold leading-tight tracking-tight text-ink sm:text-[40px]">
               {a.ctaTitle}
             </h2>
@@ -3701,6 +3788,7 @@ function AboutPage() {
               {a.backHome} ›
             </a>
           </div>
+          </RevealBlock>
         </section>
 
         <Footer t={t} variant="subpage" />
@@ -3739,28 +3827,23 @@ function HowPage() {
         <NavBar language={language} setLanguage={switchLanguage} t={t} variant="subpage" />
 
         {/* Hero — same visual language as the home hero */}
-        <section className="bg-white px-5 pb-20 pt-28 sm:pb-24 sm:pt-36">
-          <div className="mx-auto max-w-[820px] text-center">
-            <span className="type-eyebrow text-blue">{h.badge}</span>
-            <h1 className="type-hero mt-3 text-ink">
-              {h.title1}
-              <br />
-              {h.title2}
-            </h1>
-            <p className="type-lead mx-auto mt-5 max-w-[680px] text-ink-2">{h.subtitle}</p>
+        <SubpageHero
+          className="bg-white px-5 pb-20 pt-28 sm:pb-24 sm:pt-36"
+          eyebrow={h.badge}
+          title1={h.title1}
+          title2={h.title2}
+          subtitle={h.subtitle}
+          trailing={
             <div className="mt-7 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
-              <a
-                href="../#hero"
-                className="apple-cta-primary"
-              >
+              <a href="../#hero" className="apple-cta-primary">
                 {h.primaryCta}
               </a>
               <a href="../#privacy" className="apple-cta-link text-blue">
                 {h.secondaryCta} ›
               </a>
             </div>
-          </div>
-        </section>
+          }
+        />
 
         {/* Sources — Apple Watch + Xiaomi Path A + demo fallback */}
         <Tile theme="parchment" id="sources">
