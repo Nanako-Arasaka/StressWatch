@@ -504,10 +504,11 @@ class HealthKitService: HealthKitDataProvider {
                 }
 
                 var values: [Date: Double] = [:]
+                let calendar = self.calendar
                 collection.enumerateStatistics(from: from, to: to) { statistics, _ in
                     let value = statistics.sumQuantity()?.doubleValue(for: unit) ?? 0
                     if value > 0 {
-                        values[self.calendar.startOfDay(for: statistics.startDate)] = value
+                        values[calendar.startOfDay(for: statistics.startDate)] = value
                     }
                 }
 

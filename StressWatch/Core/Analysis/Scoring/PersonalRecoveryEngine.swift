@@ -125,7 +125,7 @@ struct PersonalRecoveryEngine {
         }
 
         // 4. Activity Load 分量（权重 0.15）—— ACR 惩罚
-        if let today = today,
+        if today != nil,
            let acr = loadEngine.acr(history: history, baselines: baselines, now: Date()) {
             // ACR = 1 → loadScore = 50；ACR > 1.3 → 下降；ACR < 1 → 上升
             let loadScore = min(100, max(0, 100 - (acr - 0.5) * 60))

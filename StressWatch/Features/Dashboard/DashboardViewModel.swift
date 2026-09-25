@@ -253,10 +253,11 @@ class DashboardViewModel: ObservableObject {
             )
 
             let appleMetricTypes = Set(appleMetrics.map(\.type))
-            let fallbackMetrics = demoMetrics.filter { !appleMetricTypes.contains($0.type) }
+            // T4.3 数据源分离：Apple Health 模式下不再用 demo 补齐缺失指标。
+            // 缺失指标直接没有数据（卡片显示"暂无"），不混入演示值。
             let displaySource: AppDataSource = hasUsableAppleHealthData(appleMetrics) ? .appleHealth : .demo
-            print("[DashboardViewModel] fetchMetrics apple=\(appleMetrics.count) fallback=\(fallbackMetrics.count) display=\(displaySource)")
-            return (appleMetrics + fallbackMetrics, displaySource, appleMetricTypes)
+            print("[DashboardViewModel] fetchMetrics apple=\(appleMetrics.count) display=\(displaySource)")
+            return (appleMetrics, displaySource, appleMetricTypes)
         } catch {
             print("[DashboardViewModel] fetchMetrics apple failed, using demo: \(error)")
             return (demoMetrics, .demo, [])
@@ -324,7 +325,10 @@ class DashboardViewModel: ObservableObject {
 
         let cards = [
             stressMetric(stressScore, trend: stressTrend, source: source(for: [.heartRate, .hrv, .steps, .sleep], appleMetricTypes: appleMetricTypes, metrics: metrics)),
-            recoveryMetric(recoveryScore, trend: hrvTrend, source: source(for: [.hrv, .restingHeartRate, .sleep], appleMetricTypes: appleMetricTypes, metrics: metrics)),
+            // T4.2 修正：recovery 卡的 sparkline 不再用 HRV 序列冒充，
+            // 改用真实 stress 历史的趋势（语义：恢复压力的走势）。
+            // 数据不足时传空，UI 显示 "—"。
+            recoveryMetric(recoveryScore, trend: stressTrend, source: source(for: [.hrv, .restingHeartRate, .sleep], appleMetricTypes: appleMetricTypes, metrics: metrics)),
             hrvMetric(todayMetrics: todayMetrics, baseline: baseline, trend: hrvTrend, source: source(for: [.hrv], appleMetricTypes: appleMetricTypes, metrics: metrics)),
             heartRateMetric(todayMetrics: todayMetrics, trend: heartTrend, source: source(for: [.heartRate, .restingHeartRate], appleMetricTypes: appleMetricTypes, metrics: metrics)),
             sleepMetric(todayMetrics: todayMetrics, baseline: baseline, source: source(for: [.sleep], appleMetricTypes: appleMetricTypes, metrics: metrics)),
@@ -521,30 +525,11 @@ class DashboardViewModel: ObservableObject {
     ) -> [StressScore] {
         let cachedScores = (try? storage.fetchStressScores(from: startDate, to: endDate)) ?? []
 
+        // T4.2 去造假：数据不足时返回空，不再用假 sparkline 兜底
         if cachedScores.count >= 3 {
             return Array(cachedScores.suffix(7))
         }
-
-        return demoStressTrendScores(from: metrics, fallbackScore: currentScore, startDate: startDate)
-    }
-
-    private func demoStressTrendScores(
-        from metrics: [HealthMetric],
-        fallbackScore: StressScore,
-        startDate: Date
-    ) -> [StressScore] {
-        let fallbackValues = [42, 46, 51, 56, 61, 59, fallbackScore.value]
-
-        return fallbackValues.enumerated().map { index, value in
-            let date = calendar.date(byAdding: .day, value: index, to: startDate) ?? fallbackScore.date
-            return StressScore(
-                id: UUID(),
-                value: value,
-                level: stressLevel(for: value),
-                date: date,
-                components: fallbackScore.components
-            )
-        }
+        return []
     }
 
     private func dailyLatestValues(for type: MetricType, in metrics: [HealthMetric]) -> [Double] {
