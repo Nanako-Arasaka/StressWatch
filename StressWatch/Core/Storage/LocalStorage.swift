@@ -90,6 +90,30 @@ class LocalStorage: LocalStorageProtocol {
         return try decoder.decode(AppDataSource.self, from: data)
     }
 
+    // MARK: - 每日聚合指标（T1.5）
+
+    func saveDailyMetrics(_ metrics: [DailyHealthMetrics]) throws {
+        guard !metrics.isEmpty else { return }
+
+        // 按天的 upsert：同一天重复保存只保留最后一次，天然幂等
+        // （与 saveStressScore / saveDailyCheckIn 同一套做法）。
+        let stored = (try? loadDailyMetrics()) ?? []
+        var byDay = Dictionary(uniqueKeysWithValues: stored.map { ($0.day, $0) })
+        for day in metrics {
+            byDay[day.day] = day
+        }
+
+        let merged = byDay.values.sorted { $0.day < $1.day }
+        let data = try encoder.encode(merged)
+        try writeHealthData(data, to: dailyMetricsFileURL)
+    }
+
+    func fetchDailyMetrics(from: Date, to: Date) throws -> [DailyHealthMetrics] {
+        try loadDailyMetrics()
+            .filter { $0.day >= from && $0.day <= to }
+            .sorted { $0.day < $1.day }
+    }
+
     func saveDailyCheckIn(_ checkIn: DailyWellnessCheckIn) throws {
         var checkIns = try loadDailyCheckIns()
         let calendar = Calendar.current
@@ -138,6 +162,10 @@ class LocalStorage: LocalStorageProtocol {
 
     private var stressScoresFileURL: URL {
         storageDirectory.appendingPathComponent("stress_scores.json")
+    }
+
+    private var dailyMetricsFileURL: URL {
+        storageDirectory.appendingPathComponent("daily_metrics.json")
     }
 
     private var baselineFileURL: URL {
@@ -190,5 +218,43 @@ class LocalStorage: LocalStorageProtocol {
     private func saveDailyCheckIns(_ checkIns: [DailyWellnessCheckIn]) throws {
         let data = try encoder.encode(checkIns)
         try data.write(to: dailyCheckInsFileURL, options: [.atomic])
+    }
+
+    // MARK: - 每日聚合指标读写
+
+    /// 解码失败时**先备份再返回空**，不静默丢弃。
+    /// 旧实现里 `try? decode` 失败会直接让用户丢失全部历史且毫无提示
+    /// （Whoordan 也有同类问题：单文件快照 decode 失败即清空）。
+    private func loadDailyMetrics() throws -> [DailyHealthMetrics] {
+        guard FileManager.default.fileExists(atPath: dailyMetricsFileURL.path) else {
+            return []
+        }
+
+        let data = try Data(contentsOf: dailyMetricsFileURL)
+        do {
+            return try decoder.decode([DailyHealthMetrics].self, from: data)
+        } catch {
+            Self.backupCorruptedFile(at: dailyMetricsFileURL)
+            print("[LocalStorage] daily_metrics.json 解码失败，已备份原文件：\(error)")
+            return []
+        }
+    }
+
+    /// 健康数据落盘：原子写 + 文件级保护。
+    /// `.completeUnlessOpen` 表示设备锁屏后文件不可读，直到下次解锁
+    /// （Whoordan `LocalStore` 同款设置）。
+    private func writeHealthData(_ data: Data, to url: URL) throws {
+        try data.write(to: url, options: [.atomic])
+        try? (url as NSURL).setResourceValue(
+            URLFileProtection.completeUnlessOpen,
+            forKey: .fileProtectionKey
+        )
+    }
+
+    private static func backupCorruptedFile(at url: URL) {
+        let suffix = Int(Date().timeIntervalSince1970)
+        let backupURL = url.deletingPathExtension()
+            .appendingPathExtension("corrupt-\(suffix).json")
+        try? FileManager.default.copyItem(at: url, to: backupURL)
     }
 }

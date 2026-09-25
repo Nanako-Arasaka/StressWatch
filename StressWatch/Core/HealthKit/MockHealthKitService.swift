@@ -21,6 +21,34 @@ class MockHealthKitService: HealthKitDataProvider {
         }
     }
 
+    // MARK: - 区间型数据（T1.4）
+    //
+    // 演示数据同样提供睡眠区间，否则 Demo 模式下 bedtime / wakeTime 恒为 nil，
+    // HRV 的睡眠期取样与睡眠规律性在预览里永远看不到效果。
+    // 这里从既有的 .sleep 指标反推（该指标落在当日 06:00），不改动原有生成逻辑。
+
+    func fetchSleepSessions(from: Date, to: Date) async throws -> [SleepSession] {
+        let sleepMetrics = try await fetchMetrics(types: [.sleep], from: from, to: to)
+        return sleepMetrics.compactMap { metric -> SleepSession? in
+            guard metric.value > 0 else { return nil }
+            let wakeTime = metric.date
+            guard let bedtime = calendar.date(
+                byAdding: .second,
+                value: -Int(metric.value * 3600),
+                to: wakeTime
+            ) else { return nil }
+
+            return SleepSession(
+                day: calendar.startOfDay(for: wakeTime),
+                bedtime: bedtime,
+                wakeTime: wakeTime,
+                asleepHours: metric.value,
+                inBedHours: nil
+            )
+        }
+        .sorted { $0.day < $1.day }
+    }
+
     private var fixedMetrics: [HealthMetric] {
         let today = calendar.startOfDay(for: Date())
         let pattern: [(hr: Double, hrv: Double, restingHR: Double, steps: Double, sleep: Double, energy: Double, exercise: Double, stand: Double)] = [

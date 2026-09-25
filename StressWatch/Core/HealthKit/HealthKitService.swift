@@ -104,6 +104,87 @@ class HealthKitService: HealthKitDataProvider {
         return sortedMetrics
     }
 
+    // MARK: - 区间型数据（T1.4）
+
+    func fetchSleepSessions(from: Date, to: Date) async throws -> [SleepSession] {
+        guard let categoryType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) else {
+            throw HealthKitServiceError.unavailable
+        }
+
+        let predicate = HKQuery.predicateForSamples(withStart: from, end: to)
+        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)
+        let samples = try await executeSampleQuery(
+            sampleType: categoryType,
+            predicate: predicate,
+            sortDescriptors: [sortDescriptor]
+        ).compactMap { $0 as? HKCategorySample }
+
+        struct Accumulator {
+            var bedtime: Date?
+            var wakeTime: Date?
+            var asleepHours: Double = 0
+            var inBedHours: Double = 0
+        }
+
+        var byDay: [Date: Accumulator] = [:]
+        for sample in samples {
+            let hours = max(0, sample.endDate.timeIntervalSince(sample.startDate) / 3600)
+            // 归属日与 fetchDailySleepAnalysis 保持一致：按醒来日（endDate）
+            let day = calendar.startOfDay(for: sample.endDate)
+            var accumulator = byDay[day] ?? Accumulator()
+
+            if accumulator.bedtime == nil || sample.startDate < accumulator.bedtime! {
+                accumulator.bedtime = sample.startDate
+            }
+            if accumulator.wakeTime == nil || sample.endDate > accumulator.wakeTime! {
+                accumulator.wakeTime = sample.endDate
+            }
+
+            switch sample.value {
+            case HKCategoryValueSleepAnalysis.inBed.rawValue:
+                accumulator.inBedHours += hours
+            case HKCategoryValueSleepAnalysis.asleepUnspecified.rawValue,
+                 HKCategoryValueSleepAnalysis.asleepCore.rawValue,
+                 HKCategoryValueSleepAnalysis.asleepDeep.rawValue,
+                 HKCategoryValueSleepAnalysis.asleepREM.rawValue:
+                accumulator.asleepHours += hours
+            default:
+                break
+            }
+
+            byDay[day] = accumulator
+        }
+
+        return byDay
+            .compactMap { day, accumulator -> SleepSession? in
+                guard let bedtime = accumulator.bedtime,
+                      let wakeTime = accumulator.wakeTime,
+                      wakeTime > bedtime else {
+                    return nil
+                }
+                return SleepSession(
+                    day: day,
+                    bedtime: bedtime,
+                    wakeTime: wakeTime,
+                    asleepHours: accumulator.asleepHours > 0 ? accumulator.asleepHours : nil,
+                    inBedHours: accumulator.inBedHours > 0 ? accumulator.inBedHours : nil
+                )
+            }
+            .sorted { $0.day < $1.day }
+    }
+
+    func fetchWorkoutIntervals(from: Date, to: Date) async throws -> [WorkoutInterval] {
+        let predicate = HKQuery.predicateForSamples(withStart: from, end: to)
+        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)
+        let samples = try await executeSampleQuery(
+            sampleType: HKObjectType.workoutType(),
+            predicate: predicate,
+            sortDescriptors: [sortDescriptor]
+        ).compactMap { $0 as? HKWorkout }
+
+        return samples.map { WorkoutInterval(start: $0.startDate, end: $0.endDate) }
+    }
+
     func startObservingHRVUpdates(onUpdate: @escaping () async -> Void) throws {
         guard hrvObserverQuery == nil else {
             return
@@ -164,6 +245,10 @@ class HealthKitService: HealthKitDataProvider {
            let standTime = HKObjectType.quantityType(forIdentifier: standTimeIdentifier) {
             readTypes.insert(standTime)
         }
+
+        // 运动区间用于把体力活动从压力信号里剔除（Soma `filterSedentary` 思路）。
+        // 用户未授权时 fetchWorkoutIntervals 返回空，过滤器自然降级，不影响其它指标。
+        readTypes.insert(HKObjectType.workoutType())
 
         return readTypes
     }
@@ -315,6 +400,7 @@ class HealthKitService: HealthKitDataProvider {
 
         // 总睡眠只累计真正 asleep 阶段；awake 只作为阶段摘要展示，不计入总时长。
         var totalsByDay: [Date: Double] = [:]
+        var inBedHoursByDay: [Date: Double] = [:]
         var stageHoursByTypeAndDay: [MetricType: [Date: Double]] = [
             .sleepREM: [:],
             .sleepCore: [:],
@@ -341,6 +427,8 @@ class HealthKitService: HealthKitDataProvider {
                 stageHoursByTypeAndDay[.sleepDeep, default: [:]][day, default: 0] += hours
             case HKCategoryValueSleepAnalysis.awake.rawValue:
                 stageHoursByTypeAndDay[.sleepAwake, default: [:]][day, default: 0] += hours
+            case HKCategoryValueSleepAnalysis.inBed.rawValue:
+                inBedHoursByDay[day, default: 0] += hours
             default:
                 break
             }
@@ -349,6 +437,12 @@ class HealthKitService: HealthKitDataProvider {
             if !sourceName.isEmpty {
                 sleepSourceNames.insert(sourceName)
             }
+        }
+
+        // InBed 兜底（参考 healthkit-exporter）：部分设备 / 第三方 App 只写 InBed，
+        // 不写分期。此时若只累计 asleep* 会得到 0 小时，等同于"没睡"。
+        for (day, hours) in inBedHoursByDay where (totalsByDay[day] ?? 0) <= 0 {
+            totalsByDay[day] = hours
         }
 
         var metrics = totalsByDay.map { day, hours in

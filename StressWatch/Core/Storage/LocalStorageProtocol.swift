@@ -15,6 +15,11 @@ protocol LocalStorageProtocol {
     func fetchBaselineWindowDays() throws -> Int
     func savePreferredDataSource(_ source: AppDataSource) throws
     func fetchPreferredDataSource() throws -> AppDataSource
+    // MARK: - 每日聚合指标（T1.5）
+    // Baseline / Trend / Correlation 都需要按天对齐的历史，不能每次从原始样本现算。
+    func saveDailyMetrics(_ metrics: [DailyHealthMetrics]) throws
+    func fetchDailyMetrics(from: Date, to: Date) throws -> [DailyHealthMetrics]
+
     func saveDailyCheckIn(_ checkIn: DailyWellnessCheckIn) throws
     func fetchDailyCheckIns() throws -> [DailyWellnessCheckIn]
     func fetchTodayCheckIn() throws -> DailyWellnessCheckIn?
