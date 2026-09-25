@@ -136,6 +136,13 @@ protocol LLMPersonalizationAnalyzing {
         model: String,
         apiKey: String
     ) async throws -> PersonalizationInsight
+
+    /// T6.3：优先消费 StructuredAnalysisResult（带 deviation/trend/provenance/completeness）。
+    func generateInsight(
+        structured: StructuredAnalysisResult,
+        model: String,
+        apiKey: String
+    ) async throws -> PersonalizationInsight
 }
 
 /// 一次健康数据分析任务：
@@ -158,6 +165,54 @@ struct LLMPersonalizationService: LLMPersonalizationAnalyzing {
         let messages = Self.buildMessages(payload: payload)
         let text = try await client.complete(messages: messages, model: model, apiKey: apiKey)
         return Self.parseInsight(from: text, windowDays: Self.featureWindowDays)
+    }
+
+    /// T6.3：用 StructuredAnalysisResult 生成洞察（首选路径）。
+    func generateInsight(
+        structured: StructuredAnalysisResult,
+        model: String,
+        apiKey: String
+    ) async throws -> PersonalizationInsight {
+        let messages = Self.buildStructuredMessages(result: structured)
+        let text = try await client.complete(messages: messages, model: model, apiKey: apiKey)
+        return Self.parseInsight(from: text, windowDays: 7)
+    }
+
+    // MARK: - Structured messages（T6.3 强化 prompt）
+
+    static func buildStructuredMessages(result: StructuredAnalysisResult) -> [MiniMaxMessage] {
+        let system = """
+        你是一位温和、专业的个人健康教练。你将收到一份已经由 App 计算完成的结构化分析结果。
+        规则：
+        1. 只做生活方式层面的解读，不做医疗诊断；异常情况建议咨询专业人士。
+        2. 严禁重新计算、推断或改写任何数值；引用时直接使用载荷里的数字与结论。
+        3. 回答使用简体中文。
+        4. 相关性与因果：数据中的 "association" 只表示"同时观察到"，不得使用「导致」「因为」「说明」「证明」「引起」等因果动词。必须使用「可能」「与…相关」「数据显示」「可以观察到」「倾向于」。
+        5. 数据边界：provenance = "estimated" 的值是估算值，不得描述为「你的实测…」；provenance = "demo" 的值是演示数据，必须在文案中说明。
+        6. 缺失处理：dataCompleteness 中标记为 missing 的指标，必须说明"该因素未纳入本次判断"，不得推断。
+        7. 不编造：只允许引用载荷中出现的数值。任何载荷中不存在的数值、日期、趋势都不得生成。
+        8. 必须且只能返回一个 JSON 对象（不要 markdown 代码块），结构为：
+        {
+          "summary": "2-4 句总结，结合个人基线与关键趋势",
+          "findings": [
+            {"title": "短标题", "detail": "1-2 句依据，可引用载荷数值", "metric": "hrv|sleep|rhr|steps|stress|recovery|other"}
+          ],
+          "suggestions": ["可执行建议1", "建议2", "建议3"],
+          "tone": "鼓励|警示|平稳"
+        }
+        约束：findings 最多 4 条，suggestions 最多 3 条；findings 必须能对应到载荷中的已有结论或数值。
+        """
+
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        let jsonData = (try? encoder.encode(result)) ?? Data("{}".utf8)
+        let jsonString = String(data: jsonData, encoding: .utf8) ?? "{}"
+        let user = "StructuredAnalysisResult（端上已算好，请据此生成个性化分析）：\n\(jsonString)"
+
+        return [
+            MiniMaxMessage(role: "system", content: system),
+            MiniMaxMessage(role: "user", content: user)
+        ]
     }
 
     // MARK: - AnalysisPayload（只搬运已有计算结果）

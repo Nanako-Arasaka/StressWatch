@@ -122,6 +122,10 @@
 		FE813FD5FC276C618E395727 /* StructuredAnalysisResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = GBC133DD7B162B88E116822C /* StructuredAnalysisResult.swift */; };
 		FB011EBFF848E29510FD2F50 /* LocalInsightComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = G4DEF4C0DE8471B7F9B3A928 /* LocalInsightComposer.swift */; };
 		FD052388478F72060A9A4B14 /* AnalysisInsightBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = GEC8A73F4A37DFB5BD61E432 /* AnalysisInsightBuilderTests.swift */; };
+		F1D0453DCEABC9630B5542F7 /* InsightSafetyValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = G4C9F4910A55EEF88F70E082 /* InsightSafetyValidator.swift */; };
+		FA81D2C54EB068DDB0FC8BDF /* AnalysisPrivacyGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = G9AA3F70D4FAF993FC6279A3 /* AnalysisPrivacyGuard.swift */; };
+		F383763784C2CFCA99A8C9E1 /* InsightSafetyValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = G8DB9DC9103F303DF6CC5264 /* InsightSafetyValidatorTests.swift */; };
+		F2EAB62C88CBE7176C2DC495 /* ArchitectureConstraintTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = GEFF92A20326C69B171F1711 /* ArchitectureConstraintTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -275,6 +279,10 @@
 		GBC133DD7B162B88E116822C /* StructuredAnalysisResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Insight/StructuredAnalysisResult.swift; sourceTree = "<group>"; };
 		G4DEF4C0DE8471B7F9B3A928 /* LocalInsightComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Insight/LocalInsightComposer.swift; sourceTree = "<group>"; };
 		GEC8A73F4A37DFB5BD61E432 /* AnalysisInsightBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisInsightBuilderTests.swift; sourceTree = "<group>"; };
+		G4C9F4910A55EEF88F70E082 /* InsightSafetyValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Insight/InsightSafetyValidator.swift; sourceTree = "<group>"; };
+		G9AA3F70D4FAF993FC6279A3 /* AnalysisPrivacyGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Analysis/Privacy/AnalysisPrivacyGuard.swift; sourceTree = "<group>"; };
+		G8DB9DC9103F303DF6CC5264 /* InsightSafetyValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightSafetyValidatorTests.swift; sourceTree = "<group>"; };
+		GEFF92A20326C69B171F1711 /* ArchitectureConstraintTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchitectureConstraintTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -318,6 +326,7 @@
 		A40000000000000000000002 /* StressWatch */ = {
 			isa = PBXGroup;
 			children = (
+				H67D7BF9B977A8A1A56AC770 /* Architecture */,
 				HE2EC4C126B94A10069AA3F8 /* Insight */,
 				H40F1E4E65347A8F69F17C30 /* Correlation */,
 				H0F592569BC4BE550526D742 /* Trend */,
@@ -345,6 +354,7 @@
 		A40000000000000000000004 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				HBE1E1853EEE37FEC82117E3 /* Privacy */,
 				H79691B0B8FEB3D6A156C7CB /* Insight */,
 				HCAD0C541AA76758F1603897 /* Correlation */,
 				HB2C4FC0C725552A0F98A882 /* Trend */,
@@ -514,6 +524,7 @@
 				A40000000000000000000035 /* Trend */,
 				A40000000000000000000036 /* Correlation */,
 				A40000000000000000000037 /* Insight */,
+				A40000000000000000000038 /* Privacy */,
 				A40000000000000000000030 /* LLM */,
 			);
 			name = Analysis;
@@ -702,6 +713,7 @@
 				C40000000000000000000015 /* Trend */,
 				C40000000000000000000016 /* Correlation */,
 				C40000000000000000000017 /* Insight */,
+				C40000000000000000000018 /* Architecture */,
 				C40000000000000000000011 /* Storage */,
 				C40000000000000000000012 /* Support */,
 			);
@@ -865,6 +877,7 @@
 			children = (
 				GBC133DD7B162B88E116822C /* StructuredAnalysisResult.swift */,
 				G4DEF4C0DE8471B7F9B3A928 /* LocalInsightComposer.swift */,
+				G4C9F4910A55EEF88F70E082 /* InsightSafetyValidator.swift */,
 			);
 			name = Insight;
 			sourceTree = "<group>";
@@ -873,8 +886,39 @@
 			isa = PBXGroup;
 			children = (
 				GEC8A73F4A37DFB5BD61E432 /* AnalysisInsightBuilderTests.swift */,
+				G8DB9DC9103F303DF6CC5264 /* InsightSafetyValidatorTests.swift */,
 			);
 			path = Insight;
+			sourceTree = "<group>";
+		};
+		HBE1E1853EEE37FEC82117E3 /* Privacy */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Privacy;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000038 /* Privacy */ = {
+			isa = PBXGroup;
+			children = (
+				G9AA3F70D4FAF993FC6279A3 /* AnalysisPrivacyGuard.swift */,
+			);
+			name = Privacy;
+			sourceTree = "<group>";
+		};
+		H67D7BF9B977A8A1A56AC770 /* Architecture */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Architecture;
+			sourceTree = "<group>";
+		};
+		C40000000000000000000018 /* Architecture */ = {
+			isa = PBXGroup;
+			children = (
+				GEFF92A20326C69B171F1711 /* ArchitectureConstraintTests.swift */,
+			);
+			path = Architecture;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1021,6 +1065,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA81D2C54EB068DDB0FC8BDF /* AnalysisPrivacyGuard.swift in Sources */,
+				F1D0453DCEABC9630B5542F7 /* InsightSafetyValidator.swift in Sources */,
 				FB011EBFF848E29510FD2F50 /* LocalInsightComposer.swift in Sources */,
 				FE813FD5FC276C618E395727 /* StructuredAnalysisResult.swift in Sources */,
 				FD1C877D3C2C852159FBBE4B /* CorrelationEngine.swift in Sources */,
@@ -1126,6 +1172,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F2EAB62C88CBE7176C2DC495 /* ArchitectureConstraintTests.swift in Sources */,
+				F383763784C2CFCA99A8C9E1 /* InsightSafetyValidatorTests.swift in Sources */,
 				FD052388478F72060A9A4B14 /* AnalysisInsightBuilderTests.swift in Sources */,
 				F5A7D64B96E9BC00FADC5337 /* CorrelationEngineTests.swift in Sources */,
 				FC3A2E3C5BBCD7490279E3BB /* TrendEngineTests.swift in Sources */,
