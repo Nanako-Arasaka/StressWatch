@@ -19,6 +19,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   snapshot:
@@ -61,6 +62,13 @@ jobs:
           git config user.name "Nanako-Arasaka"
           git config user.email "3143445389@qq.com"
           git add stresswatch-web/public/changelog.json
-          # No [skip ci]: this push must trigger Deploy StressWatch Web
+          # No [skip ci]. GITHUB_TOKEN pushes still do not trigger
+          # on:push workflows, so we dispatch Deploy explicitly below.
           git commit -m "chore(changelog): refresh GitHub snapshot"
           git push origin HEAD:master
+
+      - name: Trigger Pages deploy
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy-stresswatch-web.yml --ref master
