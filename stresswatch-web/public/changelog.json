@@ -1,14 +1,36 @@
 {
-  "syncedAt": "2026-09-26T02:24:31.218Z",
+  "syncedAt": "2026-09-26T15:18:48.626Z",
   "repo": "Nanako-Arasaka/StressWatch",
   "commitsTotal": 40,
-  "releasesCount": 0,
-  "releases": [],
+  "releasesCount": 1,
+  "releases": [
+    {
+      "tag": "v1.0.0",
+      "name": "StressWatch v1.0.0",
+      "date": "2026-09-26T06:35:14Z",
+      "body": "## StressWatch v1.0.0 (sideload)\n\n无签名 IPA，用 **Sideloadly / AltStore** 重签安装到 iPhone。\n\n### 安装\n1. 下载 `StressWatch.ipa`\n2. Sideloadly 拖入 IPA → 选设备 → 填 Apple ID → Start\n3. Advanced 建议勾选 HealthKit / App Groups\n4. 首次打开：设置 → 通用 → VPN 与设备管理 → 信任开发者\n\n### 本版包含\n- Dashboard / Analysis / Trends，压力与恢复分\n- 个性化分析（可选自建后端 / MiniMax）\n- Widget、本地优先数据处理\n\n### 构建\n- Commit: `ea697a0`\n- Bundle: `com.stresswatch.demo`\n- iOS 16+ / arm64\n\n> 免费账号签名有效期约 7 天，过期后重新 sideload 即可。",
+      "sha": "master",
+      "assetCount": 1,
+      "url": "https://github.com/Nanako-Arasaka/StressWatch/releases/tag/v1.0.0",
+      "isPrerelease": false,
+      "isDraft": false
+    }
+  ],
   "commitsByMonth": [
     {
       "label": "September 2026",
-      "summary": "30 commits",
+      "summary": "31 commits",
       "entries": [
+        {
+          "date": "Sep 26",
+          "sha": "cf50eae",
+          "title": "docs: redesign README to match the product site tone",
+          "tags": [
+            "Docs"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/cf50eae6827e61cc74ebfea1e454566a78375b32",
+          "author": "Nanako-Arasaka"
+        },
         {
           "date": "Sep 25",
           "sha": "ea697a0",
@@ -317,7 +339,7 @@
     },
     {
       "label": "August 2026",
-      "summary": "10 commits",
+      "summary": "9 commits",
       "entries": [
         {
           "date": "Aug 16",
@@ -408,16 +430,6 @@
             "Polish"
           ],
           "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/a7db54fcc93936db563d18e29113c4917e1f2def",
-          "author": "Nanako-Arasaka"
-        },
-        {
-          "date": "Aug 6",
-          "sha": "8190557",
-          "title": "Add design.md: source of truth for the StressWatch web design system",
-          "tags": [
-            "Feature"
-          ],
-          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/8190557cb67969572ed23c042d232e9cc02126f7",
           "author": "Nanako-Arasaka"
         }
       ]
