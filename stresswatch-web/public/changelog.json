@@ -1,5 +1,5 @@
 {
-  "syncedAt": "2026-10-13T04:22:35.870Z",
+  "syncedAt": "2026-10-13T18:37:46.011Z",
   "repo": "Nanako-Arasaka/StressWatch",
   "commitsTotal": 40,
   "releasesCount": 1,
@@ -17,6 +17,23 @@
     }
   ],
   "commitsByMonth": [
+    {
+      "label": "October 2026",
+      "summary": "1 commit",
+      "entries": [
+        {
+          "date": "Oct 13",
+          "sha": "a6f5003",
+          "title": "fix(web): pin Pages custom domain via CNAME (watch.silencecf.me)",
+          "tags": [
+            "Fix",
+            "CI"
+          ],
+          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/a6f50038f520ddb0fa961bd0b47e944093557b89",
+          "author": "Nanako-Arasaka"
+        }
+      ]
+    },
     {
       "label": "September 2026",
       "summary": "31 commits",
@@ -339,7 +356,7 @@
     },
     {
       "label": "August 2026",
-      "summary": "9 commits",
+      "summary": "8 commits",
       "entries": [
         {
           "date": "Aug 16",
@@ -420,16 +437,6 @@
             "Motion"
           ],
           "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/6dc2afa364e8fc921dc1b42a4ca311636bfac1c1",
-          "author": "Nanako-Arasaka"
-        },
-        {
-          "date": "Aug 6",
-          "sha": "a7db54f",
-          "title": "Expand design.md: every rule now has a copy-pasteable code recipe",
-          "tags": [
-            "Polish"
-          ],
-          "url": "https://github.com/Nanako-Arasaka/StressWatch/commit/a7db54fcc93936db563d18e29113c4917e1f2def",
           "author": "Nanako-Arasaka"
         }
       ]
